@@ -1,0 +1,19 @@
+doctype
+html
+    head
+        title Actano - Absentees
+        link(rel='stylesheet', href='/styles.css')
+    body
+        h1 Actano - Absentees
+        p List of teams and its members, <span class="absent">grayed out</span> members are not <a href="#hint">available</a> today.
+        ul
+            for result in results
+                li
+                    h2=result.name
+                    ul
+                        for member in result.members
+                            - styleClass = ''
+                            - if (result.absentees.indexOf(member) != -1) {styleClass='absent'}
+                            li(class=styleClass)=member
+        P(id='hint')
+            small (available) can be with clients, on paid or sick leave, university, you name it.

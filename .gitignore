@@ -1,0 +1,12 @@
+.*
+node_modules
+build
+/log
+/public
+*.iml
+*.map
+*.log
+cookbooks
+tmp
+tags
+test_reports
