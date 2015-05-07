@@ -26,7 +26,7 @@ app.use stylus.middleware {src, dest}
 app.get '/', Promise.coroutine (req, res) ->
     results = []
 
-    today = new moment({hour: 0, minute: 1}).add(1, 'days')
+    today = new moment({hour: 0, minute: 1})
     tomorrow = today.add(1, 'days').subtract(2, 'minutes')
 
 
@@ -51,6 +51,8 @@ app.get '/', Promise.coroutine (req, res) ->
                 result.absentees.push icalEvent.summary
 
             else if icalEvent.isRecurring() and icalEvent.getRecurrenceTypes()?.WEEKLY and start.day() is today.day()
+#                if icalEvent.summary is "Andreas Lubbe"
+#                    console.log icalEvent.iterator()
                 result.absentees.push icalEvent.summary
 
         results.push result
