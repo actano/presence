@@ -8,7 +8,7 @@ html
         p List of teams and its members, <span class="absent">grayed out</span> members are <a href="#hint">not available</a> today.
         ul
             for result in results
-                li
+                li(id=result.name)
                     h2=result.name
                     ul
                         for member in result.members
