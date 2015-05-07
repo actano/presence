@@ -6,7 +6,7 @@ html
     body
         h1 Actano - Absentees
         p List of teams and its members, <span class="absent">grayed out</span> members are <a href="#hint">not available</a> today.
-        ul
+        ul.teams
             for result in results
                 li(id=result.name)
                     h2=result.name
