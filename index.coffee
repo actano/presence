@@ -25,8 +25,9 @@ app.use stylus.middleware {src, dest}
 
 app.get '/', Promise.coroutine (req, res) ->
     results = []
-    today = new moment(0,'hh')
-    tomorrow = today.add(1, 'days')
+
+    today = new moment({hour: 0, minute: 1}).add(1, 'days')
+    tomorrow = today.add(1, 'days').subtract(2, 'minutes')
 
 
     for team in teams
@@ -47,6 +48,9 @@ app.get '/', Promise.coroutine (req, res) ->
             end = moment icalEvent.endDate?.toJSDate()
 
             if start.isBefore(tomorrow) and end.isAfter(today)
+                result.absentees.push icalEvent.summary
+
+            else if icalEvent.isRecurring() and icalEvent.getRecurrenceTypes()?.WEEKLY and start.day() is today.day()
                 result.absentees.push icalEvent.summary
 
         results.push result
