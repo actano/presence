@@ -5,7 +5,7 @@ moment = require 'moment'
 Promise = require 'bluebird'
 Promise.promisifyAll request
 
-# load team meta data from json
+# load team meta data
 teams = require './teams'
 
 module.exports = Promise.coroutine ->
