@@ -42,9 +42,20 @@ module.exports = Promise.coroutine ->
             else if icalEvent.isRecurring() and
                     icalEvent.getRecurrenceTypes()?.WEEKLY and
                     start.day() is today.day()
-                # TODO RX-2895 handle exceptions
-                # if icalEvent.summary is "Andreas Lubbe"
-                #   console.log icalEvent.iterator()
-                result.absentees.push icalEvent.summary
+
+                isAbsent = true
+
+                # hand parse the exceptions and recurrence end date (until)
+                # see https://tools.ietf.org/html/rfc5545#section-3.8.5
+                icalEvent.component.jCal[1].map ([name, meta, type, value]) ->
+                    if name is 'exdate' and moment(value).isSame today, 'day'
+                        isAbsent = false
+
+                    if name is 'rrule'
+                        untilDateString = /UNTIL=(.*);/.exec(value)?[1]
+                        if untilDateString and moment(untilDateString).isBefore today
+                            isAbsent = false
+
+                result.absentees.push icalEvent.summary if isAbsent
 
         result
