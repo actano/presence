@@ -1,4 +1,4 @@
-request = require "request"
+request = require 'request'
 express = require 'express'
 path = require 'path'
 stylus = require 'stylus'
@@ -20,7 +20,7 @@ absence = []
 
 app = express()
 
-app.set 'views', path.join(__dirname, 'views')
+app.set 'views', path.join __dirname, 'views'
 app.set 'view engine', 'jade'
 
 # assets
@@ -39,7 +39,7 @@ app.get '/', (req, res) ->
 app.get '/json', (req, res) ->
     res.json absence
 
-app.use express.static(__dirname + '/public')
+app.use express.static __dirname + '/public'
 
 updateAbsence = Promise.coroutine (cb) ->
     results = []
@@ -56,14 +56,13 @@ updateAbsence = Promise.coroutine (cb) ->
         [response] = yield request.getAsync team.calender
 
         jCalData = ICAL.parse response.body
-        comp = new (ICAL.Component) jCalData[1]
+        comp = new ICAL.Component jCalData[1]
 
         # each logical item in the confluence calendar
         # is a 'vevent'; lookup all events of that type
         for event in comp.getAllSubcomponents 'vevent'
-
             # parse iCal event
-            icalEvent = new (ICAL.Event)(event)
+            icalEvent = new ICAL.Event event
 
             # map iCal dates to native dates
             start = moment icalEvent.startDate?.toJSDate()
@@ -75,12 +74,12 @@ updateAbsence = Promise.coroutine (cb) ->
                 result.absentees.push icalEvent.summary
 
             # handle recurring absence for part-time employees
-            else if icalEvent.isRecurring() and icalEvent.getRecurrenceTypes()?.WEEKLY and start.day() is today.day()
+            else if icalEvent.isRecurring() and
+                    icalEvent.getRecurrenceTypes()?.WEEKLY and
+                    start.day() is today.day()
                 # TODO RX-2895 handle exceptions
-
-#                if icalEvent.summary is "Andreas Lubbe"
-#                    console.log icalEvent.iterator()
-
+                # if icalEvent.summary is "Andreas Lubbe"
+                #   console.log icalEvent.iterator()
                 result.absentees.push icalEvent.summary
 
         # push team onto absence stack
