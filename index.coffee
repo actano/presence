@@ -41,7 +41,7 @@ app.get '/json', (req, res) ->
 
 app.use express.static __dirname + '/public'
 
-updateAbsence = Promise.coroutine (cb) ->
+updateAbsence = Promise.coroutine (cb = ->) ->
     results = []
 
     today = new moment hour: 0, minute: 1
@@ -87,7 +87,7 @@ updateAbsence = Promise.coroutine (cb) ->
 
     absence = results
 
-    do cb if cb?
+    cb()
 
 console.log 'Loading data..'
 
