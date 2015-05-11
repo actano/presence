@@ -5,7 +5,14 @@ html
         link(rel='stylesheet', href='/styles.css')
     body
         h1 Actano - Absentees
-        p List of teams and its members, <span class="absent">grayed out</span> members are <a href="#hint">not available</a> today.
+        div List of teams and its members, <span class="absent">grayed out</span> members are <a href="#hint">not available</a> on
+            form(action='/')
+                span &nbsp;
+                input(type='date', name='date', value=results[0].date)
+                span &nbsp;
+                input(type='submit', value='submit')
+
+
         ul.teams
             for result in results
                 li(id=result.name)

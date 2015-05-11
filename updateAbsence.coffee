@@ -8,8 +8,11 @@ Promise.promisifyAll request
 # load team meta data
 teams = require './teams'
 
-module.exports = Promise.coroutine ->
-    today = new moment hour: 0, minute: 1
+module.exports = Promise.coroutine (date) ->
+    if date? and new moment(date).isValid()
+        today = new moment(date).hours(0).minutes(1)
+    else
+        today = new moment hour: 0, minute: 1
     tomorrow = today.add(1, 'days').subtract 2, 'minutes'
 
     for team in teams
@@ -17,6 +20,7 @@ module.exports = Promise.coroutine ->
             members: team.members
             name: team.name
             absentees: []
+            date: today.format('YYYY-MM-DD')
 
         [response] = yield request.getAsync team.calender
 
