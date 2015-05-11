@@ -29,6 +29,9 @@ module.exports = Promise.coroutine ->
             # parse iCal event
             icalEvent = new ICAL.Event event
 
+            # normalize title ('Who and Description are separated by :')
+            icalEvent.summary = icalEvent.summary.split(':')[0]
+
             # map iCal dates to native dates
             start = moment icalEvent.startDate?.toJSDate()
             end = moment icalEvent.endDate?.toJSDate()
