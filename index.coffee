@@ -25,7 +25,7 @@ app.get '/', Promise.coroutine (req, res) ->
 
 # respond with raw absence data
 app.get '/json', Promise.coroutine (req, res) ->
-    res.json yield getAbsence()
+    res.json yield getAbsence(req.query?.date)
 
 app.use express.static publicDir
 
