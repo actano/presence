@@ -20,8 +20,8 @@ app.use stylus.middleware src: stylesDir, dest: publicDir
 
 # respond with rendered html
 app.get '/', Promise.coroutine (req, res) ->
-    res.render "index",
-        results: yield getAbsence(req.query?.date)
+    res.render 'index',
+        results: yield getAbsence req.query?.date
 
 # respond with raw absence data
 app.get '/json', Promise.coroutine (req, res) ->
