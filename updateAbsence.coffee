@@ -1,6 +1,13 @@
 request = require 'request'
 ICAL = require 'ical.js'
 moment = require 'moment'
+md5 = require 'MD5'
+urlify = require('urlify').create
+    addEToUmlauts: true
+    szToSs: true
+    spaces: "."
+    nonPrintable: "_"
+    trim: true
 
 Promise = require 'bluebird'
 Promise.promisifyAll request
@@ -8,21 +15,35 @@ Promise.promisifyAll request
 # load team meta data
 teams = require './teams'
 
+EMAIL_SUFFIX = '@company.com'
+GRAVATAR_PREFIX = 'http://www.gravatar.com/avatar/'
+GRAVATAR_SUFFIX = '?s=32'
+
 module.exports = Promise.coroutine (date) ->
     date = moment() if not moment(date).isValid()
     today = moment(date).hours(0).minutes 1
     tomorrow = today.add(1, 'days').subtract 2, 'minutes'
 
     for team in teams
+
         result =
-            members: team.members
             name: team.name
             absentees: []
+            members: []
             date: today.format 'YYYY-MM-DD'
+
+        # calculate and add gravatar-url to team members
+        for member in team.members
+            member_md5 = md5 urlify(member.toLowerCase()) + EMAIL_SUFFIX
+            gravatar_url = "#{GRAVATAR_PREFIX}#{member_md5}#{GRAVATAR_SUFFIX}"
+            result.members.push
+                name: member
+                image_url: gravatar_url
 
         # quick exit on weekends
         if today.day() is 0 or today.day() is 6
-            result.absentees =  result.members
+            for member in result.members
+                result.absentees.push member.name
 
         else
             [response] = yield request.getAsync team.calender

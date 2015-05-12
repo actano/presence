@@ -1,16 +1,35 @@
 html
     font 80%/125% Arial, Verdana, sans-serif normal
 
-.absent
-    color gray
-    text-decoration line-through
+li
+    li
+        font-size 125%
+        vertical-align baseline
+        border 1px solid
+        margin 0.5em 0
+        line-height 1.6
+        padding-left 3rem
+        position relative
+        border-radius 0.3rem
+        width 15rem
+        background-color rgba(0,125,0,0.2)
+        &.absent
+            color gray
+            text-decoration line-through
+            background-color rgba(125,0,0,0.2)
+
+
+        img
+            height 100%
+            left 0
+            position absolute
 
 h1
     font-size 125%
 
 h2
     font-size 100%
-    border-top 1px solid lightgrey
+    border-top 1px solid #d3d3d3
     padding-top 0.83em
 
 ul
@@ -19,3 +38,4 @@ ul
 
 form
     display inline-block
+

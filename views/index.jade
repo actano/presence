@@ -20,7 +20,9 @@ html
                     ul
                         for member in result.members
                             - styleClass = ''
-                            - if (result.absentees.indexOf(member) != -1) {styleClass='absent'}
-                            li(class=styleClass)=member
+                            - if (result.absentees.indexOf(member.name) != -1) {styleClass='absent'}
+                            li(class=styleClass)
+                                img(src=member.image_url)
+                                =member.name
         P(id='hint')
             small (not available) can be with clients, on paid or sick leave, university, you name it.
