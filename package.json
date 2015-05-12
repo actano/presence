@@ -12,7 +12,6 @@
   "author": "Actano GmbH",
   "license": "MIT",
   "dependencies": {
-    "MD5": "^1.2.1",
     "autoprefixer-stylus": "^0.6.0",
     "bluebird": "^2.9.25",
     "coffee-script": "^1.9.2",
