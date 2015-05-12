@@ -1,8 +1,16 @@
 html
     font 80%/125% Arial, Verdana, sans-serif normal
 
-li
-    li
+html, *
+    box-sizing border-box
+
+ul.teams
+    display flex
+    justify-content space-between
+    max-width 56rem
+    flex-wrap wrap
+
+    li li
         font-size 125%
         vertical-align baseline
         border 1px solid
@@ -11,7 +19,7 @@ li
         padding-left 3rem
         position relative
         border-radius 0.3rem
-        width 15rem
+        width 18rem
         background-color rgba(0,125,0,0.2)
         &.absent
             color gray
@@ -29,8 +37,6 @@ h1
 
 h2
     font-size 100%
-    border-top 1px solid #d3d3d3
-    padding-top 0.83em
 
 ul
     list-style none
@@ -38,4 +44,13 @@ ul
 
 form
     display inline-block
+    input
+        border 1px solid
+        font 100%/125% Arial, Verdana, sans-serif bold
+        background rgba(0,125,0,0.1)
+        border-rAdius 0.3rem
+        height 2.1rem
+
+
+
 
