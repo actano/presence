@@ -9,10 +9,8 @@ Promise.promisifyAll request
 teams = require './teams'
 
 module.exports = Promise.coroutine (date) ->
-    if date? and new moment(date).isValid()
-        today = new moment(date).hours(0).minutes(1)
-    else
-        today = new moment hour: 0, minute: 1
+    date = moment() if not moment(date).isValid()
+    today = moment(date).hours(0).minutes 1
     tomorrow = today.add(1, 'days').subtract 2, 'minutes'
 
     for team in teams
@@ -20,7 +18,7 @@ module.exports = Promise.coroutine (date) ->
             members: team.members
             name: team.name
             absentees: []
-            date: today.format('YYYY-MM-DD')
+            date: today.format 'YYYY-MM-DD'
 
         # quick exit on weekends
         if today.day() is 0 or today.day() is 6
