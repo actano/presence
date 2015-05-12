@@ -1,15 +1,16 @@
+moment = require 'moment'
 Promise = require 'bluebird'
 updateAbsence = require './updateAbsence'
 
-absence = null
-lastGet = null
+inMemCache = {} # {'YYYY-MM-DD': {absences: {}, lastGet: `timestamp`}}
 updateInterval = 10 * 1000 # 10 seconds
-lastDate = null
 
-module.exports = Promise.coroutine (date) ->
-    if date? isnt lastDate or new Date() - lastGet > updateInterval
-        # update cached absence object if is older than the updateInterval
-        absence = yield updateAbsence(date)
-        lastGet = new Date()
+module.exports = Promise.coroutine (date = moment().format 'YYYY-MM-DD') ->
+    # update cached absence object for `date` if it is outdated
+    lastGet = inMemCache[date]?.lastGet ? 0
+    if new Date() - lastGet > updateInterval
+        inMemCache[date] =
+            absence: yield updateAbsence date
+            lastGet: new Date()
 
-    absence
+    inMemCache[date].absence
