@@ -37,9 +37,6 @@ module.exports = Promise.coroutine (date) ->
         result =
             name: team.name
             members: []
-            absentees: []
-            aways: []
-            awaysPartial: []
             date: today.format 'YYYY-MM-DD'
             sprint: null
 
