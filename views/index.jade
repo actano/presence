@@ -16,6 +16,7 @@ html
                         for member in result.members
                             - styleClass = ''
                             - if (result.absentees.indexOf(member.name) != -1) {styleClass='absent'}
+                            - if (result.aways.indexOf(member.name) != -1) {styleClass='away'}
                             li(class=styleClass)
                                 img(src=member.image_url)
                                 =member.name

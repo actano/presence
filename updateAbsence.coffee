@@ -34,6 +34,7 @@ module.exports = Promise.coroutine (date) ->
             name: team.name
             absentees: []
             members: []
+            aways: []
             date: today.format 'YYYY-MM-DD'
 
         for member in team.members
@@ -58,6 +59,12 @@ module.exports = Promise.coroutine (date) ->
                 # parse iCal event
                 icalEvent = new ICAL.Event event
 
+                resultList = result.absentees
+                icalEvent.component.jCal[1].map ([name, meta, type, value]) ->
+                    if name is 'x-confluence-subcalendar-type' and value is 'travel'
+                        resultList = result.aways
+                        return false
+
                 # normalize title ('Who and Description are separated by :')
                 icalEvent.summary = icalEvent.summary.split(':')[0]
 
@@ -68,7 +75,7 @@ module.exports = Promise.coroutine (date) ->
                 # if both start and end are between yesterday
                 # and tomorrow, add the person to absence list
                 if start.isBefore(tomorrow) and end.isAfter(today)
-                    result.absentees.push icalEvent.summary
+                    resultList.push icalEvent.summary
 
                 # handle recurring absence for part-time employees
                 else if icalEvent.isRecurring() and
@@ -88,6 +95,6 @@ module.exports = Promise.coroutine (date) ->
                             if untilDateString and moment(untilDateString).isBefore today
                                 isAbsent = false
 
-                    result.absentees.push icalEvent.summary if isAbsent
+                    resultList.push icalEvent.summary if isAbsent
 
         result
