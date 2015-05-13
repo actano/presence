@@ -35,6 +35,7 @@ module.exports = Promise.coroutine (date) ->
             absentees: []
             members: []
             aways: []
+            awaysPartial: []
             date: today.format 'YYYY-MM-DD'
             sprint: null
 
@@ -115,6 +116,9 @@ module.exports = Promise.coroutine (date) ->
                 else if start.isBefore(tomorrow) and end.isAfter(today)
                     resultList.push icalEvent.summary
 
+                # if both start and end are today, add the person to partial-absence list
+                else if start.isSame(today, 'day') and end.isSame(today, 'day')
+                    result.awaysPartial.push icalEvent.summary
 
 
         result

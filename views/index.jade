@@ -25,6 +25,7 @@ html
                             - styleClass = ''
                             - if (result.absentees.indexOf(member.name) != -1) {styleClass='absent'}
                             - if (result.aways.indexOf(member.name) != -1) {styleClass='away'}
+                            - if (result.awaysPartial.indexOf(member.name) != -1) {styleClass='awayPartial'}
                             li(class=styleClass)
                                 img(src=member.image_url)
                                 =member.name
