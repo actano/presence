@@ -26,7 +26,6 @@ getGravatarUrlFromName = (name) ->
 module.exports = Promise.coroutine (date) ->
     date = moment() if not moment(date).isValid()
     today = moment(date).hours(0).minutes 1
-    tomorrow = today.add(1, 'days').subtract 2, 'minutes'
 
     for team in teams
 
@@ -36,7 +35,22 @@ module.exports = Promise.coroutine (date) ->
             members: []
             aways: []
             date: today.format 'YYYY-MM-DD'
+            sprint: null
 
+        # initalize sprint information
+        if team.sprint
+            sprintStartDate = moment team.sprint.startDate
+            millisecondsPerWeek = 7 * 24 * 60 * 60 * 1000
+            weeksSinceSprintStart = today.diff(sprintStartDate) / millisecondsPerWeek
+            if weeksSinceSprintStart > 0
+                sprintsSinceFirstStart = Math.floor weeksSinceSprintStart / team.sprint.durationWeeks
+                currentSprintStartDate =  sprintStartDate.add sprintsSinceFirstStart * team.sprint.durationWeeks, 'weeks'
+                result.sprint =
+                    count: sprintsSinceFirstStart
+                    start: currentSprintStartDate
+                    end: currentSprintStartDate.add(team.sprint.durationWeeks, 'weeks').subtract(1, 'days')
+
+        # add team-members with gravatar urls
         for member in team.members
             result.members.push
                 name: member
@@ -48,7 +62,7 @@ module.exports = Promise.coroutine (date) ->
                 result.absentees.push member.name
 
         else
-            [response] = yield request.getAsync team.calender
+            [response] = yield request.getAsync team.calendar
 
             jCalData = ICAL.parse response.body
             comp = new ICAL.Component jCalData[1]
@@ -56,14 +70,17 @@ module.exports = Promise.coroutine (date) ->
             # each logical item in the confluence calendar
             # is a 'vevent'; lookup all events of that type
             for event in comp.getAllSubcomponents 'vevent'
+
                 # parse iCal event
                 icalEvent = new ICAL.Event event
 
+                # default to absence (aka. paid-leave or sick-leave)
                 resultList = result.absentees
+
+                # switch to away (aka. home-office or business travel)
                 icalEvent.component.jCal[1].map ([name, meta, type, value]) ->
                     if name is 'x-confluence-subcalendar-type' and value is 'travel'
                         resultList = result.aways
-                        return false
 
                 # normalize title ('Who and Description are separated by :')
                 icalEvent.summary = icalEvent.summary.split(':')[0]
@@ -72,13 +89,8 @@ module.exports = Promise.coroutine (date) ->
                 start = moment icalEvent.startDate?.toJSDate()
                 end = moment icalEvent.endDate?.toJSDate()
 
-                # if both start and end are between yesterday
-                # and tomorrow, add the person to absence list
-                if start.isBefore(tomorrow) and end.isAfter(today)
-                    resultList.push icalEvent.summary
-
-                # handle recurring absence for part-time employees
-                else if icalEvent.isRecurring() and
+                # handle recurring absences
+                if icalEvent.isRecurring() and
                         icalEvent.getRecurrenceTypes()?.WEEKLY and
                         start.day() is today.day()
 
@@ -96,5 +108,11 @@ module.exports = Promise.coroutine (date) ->
                                 isAbsent = false
 
                     resultList.push icalEvent.summary if isAbsent
+
+                # if both start and end are between yesterday and tomorrow, add the person to absence list
+                else if start.isBefore(today.add(1, 'days').subtract 2, 'minutes') and end.isAfter(today)
+                    resultList.push icalEvent.summary
+
+
 
         result
