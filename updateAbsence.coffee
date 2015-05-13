@@ -45,11 +45,12 @@ module.exports = Promise.coroutine (date) ->
             weeksSinceSprintStart = today.diff(sprintStartDate) / millisecondsPerWeek
             if weeksSinceSprintStart > 0
                 sprintsSinceFirstStart = Math.floor weeksSinceSprintStart / team.sprint.durationWeeks
-                currentSprintStartDate =  sprintStartDate.add sprintsSinceFirstStart * team.sprint.durationWeeks, 'weeks'
+                currentSprintStartDate = sprintStartDate.add sprintsSinceFirstStart * team.sprint.durationWeeks, 'weeks'
+                currentSprintEndDate = moment(currentSprintStartDate).add(team.sprint.durationWeeks, 'weeks').subtract(1, 'days')
                 result.sprint =
                     count: sprintsSinceFirstStart
                     start: currentSprintStartDate
-                    end: currentSprintStartDate.add(team.sprint.durationWeeks, 'weeks').subtract(1, 'days')
+                    end: currentSprintEndDate
 
         # add team-members with gravatar urls
         for member in team.members
