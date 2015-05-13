@@ -15,10 +15,10 @@
   "license": "MIT",
   "dependencies": {
     "MD5": "^1.2.1",
-    "autoprefixer-stylus": "^0.6.0",
     "bluebird": "^2.9.25",
     "coffee-script": "^1.9.2",
     "express": "^4.12.3",
+    "express-autoprefixer": "^3.0.0",
     "ical.js": "0.0.6",
     "jade": "^1.9.2",
     "moment": "^2.10.2",

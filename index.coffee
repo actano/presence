@@ -1,7 +1,7 @@
 express = require 'express'
 path = require 'path'
 stylus = require 'stylus'
-autoprefixer = require 'autoprefixer-stylus'
+autoprefixer = require 'express-autoprefixer'
 Promise = require 'bluebird'
 Promise.longStackTraces()
 
@@ -17,6 +17,8 @@ app.set 'views', viewsDir
 app.set 'view engine', 'jade'
 
 app.use stylus.middleware src: stylesDir, dest: publicDir
+app.use autoprefixer browsers: 'last 2 versions', cascade: false
+
 
 # respond with rendered html
 app.get '/', Promise.coroutine (req, res) ->
