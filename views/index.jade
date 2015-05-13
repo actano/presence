@@ -22,10 +22,6 @@ html
                                 | )
                     ul
                         for member in result.members
-                            - styleClass = ''
-                            - if (result.absentees.indexOf(member.name) != -1) {styleClass='absent'}
-                            - if (result.aways.indexOf(member.name) != -1) {styleClass='away'}
-                            - if (result.awaysPartial.indexOf(member.name) != -1) {styleClass='awayPartial'}
-                            li(class=styleClass)
+                            li(class=member.status, title=member.description)
                                 img(src=member.image_url)
-                                =member.name
+                                span=member.name

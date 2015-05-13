@@ -23,6 +23,10 @@ getGravatarUrlFromName = (name) ->
     name_md5 = md5 urlify(name.toLowerCase()) + EMAIL_SUFFIX
     "#{GRAVATAR_PREFIX}#{name_md5}#{GRAVATAR_SUFFIX}"
 
+getMember = (event, members) ->
+    for member in members
+        return member if member.name is event.summary
+
 module.exports = Promise.coroutine (date) ->
     date = moment() if not moment(date).isValid()
     today = moment(date).hours(0).minutes 1
@@ -32,8 +36,8 @@ module.exports = Promise.coroutine (date) ->
 
         result =
             name: team.name
-            absentees: []
             members: []
+            absentees: []
             aways: []
             awaysPartial: []
             date: today.format 'YYYY-MM-DD'
@@ -42,8 +46,8 @@ module.exports = Promise.coroutine (date) ->
         # initalize sprint information
         if team.sprint
             sprintStartDate = moment team.sprint.startDate
-            millisecondsPerWeek = 7 * 24 * 60 * 60 * 1000
-            weeksSinceSprintStart = today.diff(sprintStartDate) / millisecondsPerWeek
+            milliSecondsPerWeek = 7 * 24 * 60 * 60 * 1000
+            weeksSinceSprintStart = today.diff(sprintStartDate) / milliSecondsPerWeek
             if weeksSinceSprintStart > 0
                 sprintsSinceFirstStart = Math.floor weeksSinceSprintStart / team.sprint.durationWeeks
                 currentSprintStartDate = sprintStartDate.add sprintsSinceFirstStart * team.sprint.durationWeeks, 'weeks'
@@ -58,11 +62,13 @@ module.exports = Promise.coroutine (date) ->
             result.members.push
                 name: member
                 image_url: getGravatarUrlFromName member
+                status: null
+                description: null
 
         # quick exit on weekends
         if today.day() is 0 or today.day() is 6
             for member in result.members
-                result.absentees.push member.name
+                member.status = 'absent'
 
         else
             [response] = yield request.getAsync team.calendar
@@ -78,12 +84,12 @@ module.exports = Promise.coroutine (date) ->
                 icalEvent = new ICAL.Event event
 
                 # default to absence (aka. paid-leave or sick-leave)
-                resultList = result.absentees
+                status = 'absent'
 
                 # switch to away (aka. home-office or business travel)
                 icalEvent.component.jCal[1].map ([name, meta, type, value]) ->
                     if name is 'x-confluence-subcalendar-type' and value is 'travel'
-                        resultList = result.aways
+                        status = 'away'
 
                 # normalize title ('Who and Description are separated by :')
                 icalEvent.summary = icalEvent.summary.split(':')[0]
@@ -91,6 +97,8 @@ module.exports = Promise.coroutine (date) ->
                 # map iCal dates to native dates
                 start = moment icalEvent.startDate?.toJSDate()
                 end = moment icalEvent.endDate?.toJSDate()
+
+                isAbsent = false
 
                 # handle recurring absences
                 if icalEvent.isRecurring() and
@@ -110,15 +118,18 @@ module.exports = Promise.coroutine (date) ->
                             if untilDateString and moment(untilDateString).isBefore today
                                 isAbsent = false
 
-                    resultList.push icalEvent.summary if isAbsent
-
                 # if both start and end are between yesterday and tomorrow, add the person to absence list
                 else if start.isBefore(tomorrow) and end.isAfter(today)
-                    resultList.push icalEvent.summary
+                    isAbsent = true
 
                 # if both start and end are today, add the person to partial-absence list
                 else if start.isSame(today, 'day') and end.isSame(today, 'day')
-                    result.awaysPartial.push icalEvent.summary
+                    isAbsent = true
+                    status = 'awayPartial'
 
+                if isAbsent
+                    member = getMember  icalEvent, result.members
+                    member.status = status
+                    member.description = icalEvent.description
 
         result
