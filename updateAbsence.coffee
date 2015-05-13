@@ -26,6 +26,7 @@ getGravatarUrlFromName = (name) ->
 module.exports = Promise.coroutine (date) ->
     date = moment() if not moment(date).isValid()
     today = moment(date).hours(0).minutes 1
+    tomorrow = today.add(1, 'days').subtract 2, 'minutes'
 
     for team in teams
 
@@ -110,7 +111,7 @@ module.exports = Promise.coroutine (date) ->
                     resultList.push icalEvent.summary if isAbsent
 
                 # if both start and end are between yesterday and tomorrow, add the person to absence list
-                else if start.isBefore(today.add(1, 'days').subtract 2, 'minutes') and end.isAfter(today)
+                else if start.isBefore(tomorrow) and end.isAfter(today)
                     resultList.push icalEvent.summary
 
 
