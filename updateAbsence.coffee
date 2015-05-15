@@ -76,8 +76,9 @@ module.exports = Promise.coroutine (date) ->
                 # parse iCal event
                 icalEvent = new ICAL.Event event
 
-                # default to absence (aka. paid-leave or sick-leave)
+                # init to defaults
                 status = 'absent'
+                isAbsent = false
 
                 # switch to away (aka. home-office or business travel)
                 icalEvent.component.jCal[1].map ([name, meta, type, value]) ->
@@ -90,8 +91,6 @@ module.exports = Promise.coroutine (date) ->
                 # map iCal dates to native dates
                 start = moment icalEvent.startDate?.toJSDate()
                 end = moment icalEvent.endDate?.toJSDate()
-
-                isAbsent = false
 
                 # handle recurring absences
                 if icalEvent.isRecurring() and
