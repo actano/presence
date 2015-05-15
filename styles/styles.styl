@@ -10,7 +10,7 @@ ul.teams
     max-width 56rem
     flex-wrap wrap
 
-    li li
+    > li > ul > li
         font-size 125%
         vertical-align baseline
         border 1px solid
@@ -21,9 +21,11 @@ ul.teams
         border-radius 0.3rem
         width 18rem
         background-color rgba(0, 125, 0, 0.2)
-        text-overflow ellipsis
-        white-space nowrap
-        overflow hidden
+        span
+            display block
+            text-overflow ellipsis
+            white-space nowrap
+            overflow hidden
         &.absent
             color gray
             text-decoration line-through
@@ -37,13 +39,52 @@ ul.teams
             height 100%
             left 0
             position absolute
+        .filllevel
+            position absolute
+            display flex
+            height 100%
+            bottom 0
+            left 0
+            right 0
+            align-items flex-end
+            li
+                flex 1
+                background-color rgba(0, 125, 0, 0.8)
+                border-left 1px solid
+                height 10%
+                transition all 100ms
+                overflow hidden
+                color white
+                font-size 80%
+                text-align center
+                line-height 200%
+                &.absent
+                    background rgba(125, 0, 0, 0.8)
+                &.today
+                    height 20%
+                &:first-child
+                    border none
+
+        &:hover .filllevel li
+            height 100%!important
 
 h1
     font-size 125%
 
 h2
     font-size 100%
-
+    &.error
+        background-color #7d0000
+        color #fff
+        font-size 100%
+        vertical-align baseline
+        border 1px solid black
+        line-height 1.6
+        padding 0.3rem
+        position relative
+        border-radius 0.4rem
+        width 18rem
+        text-align center
 ul
     list-style none
     padding 0
@@ -56,7 +97,6 @@ form
         background rgba(0, 125, 0, 0.1)
         border-radius 0.3rem
         height 2.1rem
-
 
 
 

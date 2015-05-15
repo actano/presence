@@ -57,11 +57,9 @@ module.exports = Promise.coroutine (date) ->
                 description: null
             }
 
-        # quick exit on weekends
-        if today.day() is 0 or today.day() is 6
-            for member of result.members
-                result.members[member].status = 'absent'
 
+        if response.statusCode isnt 200
+            result.status = response.statusCode
         else
             [response] = yield request.getAsync team.calendar
 
