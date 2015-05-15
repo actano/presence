@@ -110,14 +110,14 @@ module.exports = Promise.coroutine (date) ->
                             if untilDateString and moment(untilDateString).isBefore today
                                 isAbsent = false
 
-                # if both start and end are between yesterday and tomorrow, add the person to absence list
-                else if start.isBefore(moment(today).add(1, 'days').subtract 2, 'minutes') and end.isAfter(today)
-                    isAbsent = true
-
-                # if both start and end are today, add the person to partial-absence list
-                else if start.isSame(today, 'day') and end.isSame(today, 'day')
+                # if start is today and duration less then seven hours, add the person to partial-absence list
+                else if start.isSame(today, 'day') and end.diff(start) < (7 * 60 * 60 * 1000)
                     isAbsent = true
                     status = 'awayPartial'
+
+                # if both start and end are between yesterday and tomorrow, add the person to absence list
+                else if start.isBefore(moment(today).add(1, 'days').subtract(2, 'minutes')) and end.isAfter(today)
+                    isAbsent = true
 
                 if isAbsent
                     member = result.members[icalEvent.summary]
