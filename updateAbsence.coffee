@@ -66,10 +66,11 @@ module.exports = Promise.coroutine (date) ->
                     count: 0
             }
 
+        [response] = yield request.getAsync team.calendar
+
         if response.statusCode isnt 200
             result.status = response.statusCode
         else
-            [response] = yield request.getAsync team.calendar
 
             jCalData = ICAL.parse response.body
             comp = new ICAL.Component jCalData[1]
