@@ -17,15 +17,11 @@ teams = require './teams'
 
 EMAIL_SUFFIX = '@company.com'
 GRAVATAR_PREFIX = 'http://www.gravatar.com/avatar/'
-GRAVATAR_SUFFIX = '?s=32'
+GRAVATAR_SUFFIX = '?s=50'
 
 getGravatarUrlFromName = (name) ->
     name_md5 = md5 urlify(name.toLowerCase()) + EMAIL_SUFFIX
     "#{GRAVATAR_PREFIX}#{name_md5}#{GRAVATAR_SUFFIX}"
-
-getMember = (event, members) ->
-    for member in members
-        return member if member.name is event.summary
 
 module.exports = Promise.coroutine (date) ->
     date = moment() if not moment(date).isValid()
@@ -36,7 +32,7 @@ module.exports = Promise.coroutine (date) ->
 
         result =
             name: team.name
-            members: []
+            members: {}
             date: today.format 'YYYY-MM-DD'
             sprint: null
 
@@ -54,13 +50,14 @@ module.exports = Promise.coroutine (date) ->
                     start: currentSprintStartDate
                     end: currentSprintEndDate
 
-        # add team-members with gravatar urls
+        # init team-members with gravatar urls
         for member in team.members
-            result.members.push
+            result.members[member] = {
                 name: member
                 image_url: getGravatarUrlFromName member
                 status: null
                 description: null
+            }
 
         # quick exit on weekends
         if today.day() is 0 or today.day() is 6
@@ -125,8 +122,9 @@ module.exports = Promise.coroutine (date) ->
                     status = 'awayPartial'
 
                 if isAbsent
-                    member = getMember  icalEvent, result.members
+                    member = result.members[icalEvent.summary]
                     member.status = status
                     member.description = icalEvent.description
+
 
         result
