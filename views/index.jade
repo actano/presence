@@ -22,6 +22,13 @@ html
                                 | )
                     ul
                         for member in result.members
-                            li(class=member.status, title=member.description)
+                            - status = null
+                            - description = null
+                            if member.absences[result.date]
+                                - status = member.absences[result.date].status
+                                - description = member.absences[result.date].description
+                            li(class=status, title=description)
                                 img(src=member.image_url)
                                 span=member.name
+                                    if result.sprint
+                                        small=" (" + member.absences.length + "/10)"
