@@ -49,5 +49,7 @@ html
                                                 - var description = member.absences[date.format('YYYY-MM-DD')].description
                                             li(class=status, title=date.format('LL') + (description ? ': ' + description : '') )=date.format('dd')
                         if result.sprint
-                            li.summary='Team is ' + sprintMemberAvailabilities + ' of ' + sprintMemberDays + ' sprint days available'
+                            - var percentage = (sprintMemberAvailabilities / (sprintMemberDays / 100))
+                            - var backgroundGradient = 'linear-gradient(90deg, rgba(0, 125, 0, 0.3) 0, rgba(0, 125, 0, 0.3) ' + percentage + '%, rgba(125, 0, 0, 0.3) ' + percentage + '%, rgba(125, 0, 0, 0.3) 100%)'
+                            li.summary(style='background-image:'+backgroundGradient)=result.name + ' is ' + sprintMemberAvailabilities + ' of ' + sprintMemberDays + ' sprint days available'
 
