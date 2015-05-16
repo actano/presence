@@ -88,7 +88,6 @@ module.exports = Promise.coroutine (date) ->
                     throw err
                 console.info 'It\'s saved!'
 
-        console.log responseBody
         jCalData = ICAL.parse responseBody
         comp = new ICAL.Component jCalData[1]
 
