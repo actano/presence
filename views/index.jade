@@ -11,9 +11,6 @@ html
         ul.teams
             for result in results
                 li(id=result.name)
-                    if result.status
-                        h2.error Loading calendar data failed with 
-                            =result.status
                     h2=result.name
                         if result.sprint
                             ='-' + (result.sprint.count + 1) + ' '
@@ -23,7 +20,10 @@ html
                                 |  - 
                                 =result.sprint.end.format('DD. MMM')
                                 | )
-                    ul
+                    if result.status
+                        h2.error Loading calendar data failed with 
+                            =result.status
+                    ul.members.online
                         for member in result.members
                             - status = null
                             - description = null

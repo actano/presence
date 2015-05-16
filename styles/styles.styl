@@ -10,63 +10,70 @@ ul.teams
     max-width 56rem
     flex-wrap wrap
 
-    > li > ul > li
-        font-size 125%
-        vertical-align baseline
-        border 1px solid
-        margin 0.5em 0
-        line-height 1.6
-        padding-left 2.2rem
-        position relative
-        border-radius 0.3rem
-        width 18rem
-        background-color rgba(0, 125, 0, 0.2)
-        span
-            display block
-            text-overflow ellipsis
-            white-space nowrap
-            overflow hidden
-        &.absent
-            color gray
-            text-decoration line-through
-            background-color rgba(125, 0, 0, 0.2)
-        &.away
-            background-color rgba(255, 255, 125, 0.2)
-        &.awayPartial
-            background-image repeating-linear-gradient(-45deg, rgba(255,255,125,0.8) 0, rgba(255,255,125,0.8) 4px, transparent 4px, transparent 8px)
-
-        img
-            height 100%
-            left 0
-            position absolute
-        .filllevel
-            position absolute
-            display flex
-            height 100%
-            bottom 0
-            left 0
-            right 0
-            align-items flex-end
-            li
-                flex 1
-                background-color rgba(0, 125, 0, 0.8)
-                border-left 1px solid
-                height 10%
-                transition all 100ms
+    ul.members
+        > li
+            font-size 125%
+            vertical-align baseline
+            border 1px solid
+            margin 0.5em 0
+            line-height 1.6
+            padding-left 2.2rem
+            position relative
+            border-radius 0.3rem
+            width 18rem
+            span
+                display block
+                text-overflow ellipsis
+                white-space nowrap
                 overflow hidden
-                color white
-                font-size 80%
-                text-align center
-                line-height 200%
-                &.absent
-                    background rgba(125, 0, 0, 0.8)
-                &.today
-                    height 20%
-                &:first-child
-                    border none
+            img
+                height 100%
+                left 0
+                position absolute
 
-        &:hover .filllevel li
-            height 100%!important
+        &.offline
+            .filllevel
+                display none
+
+        &.online > li
+            background-color rgba(0, 125, 0, 0.2)
+            &.absent
+                color gray
+                text-decoration line-through
+                background-color rgba(125, 0, 0, 0.2)
+            &.away
+                background-color rgba(255, 255, 125, 0.2)
+            &.awayPartial
+                background-image repeating-linear-gradient(-45deg, rgba(255,255,125,0.8) 0, rgba(255,255,125,0.8) 4px, transparent 4px, transparent 8px)
+
+            .filllevel
+                position absolute
+                display flex
+                height 100%
+                bottom 0
+                left 0
+                right 0
+                align-items flex-end
+                li
+                    flex 1
+                    background-color rgba(0, 125, 0, 0.8)
+                    border-left 1px solid
+                    height 10%
+                    transition all 100ms
+                    overflow hidden
+                    color white
+                    font-size 80%
+                    text-align center
+                    line-height 200%
+                    &.absent
+                        background rgba(125, 0, 0, 0.8)
+                    &.today
+                        height 20%
+                    &:first-child
+                        border none
+
+            &:hover .filllevel li
+                height 100%!important
 
 h1
     font-size 125%
