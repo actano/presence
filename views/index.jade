@@ -24,9 +24,14 @@ html
                         h2.error Loading calendar data failed with 
                             =result.status
                     ul.members.online
+                        if result.sprint
+                            - var sprintDays = Object.keys(result.queryDates).length
+                            - var sprintMembers = Object.keys(result.members).length
+                            - var sprintMemberDays = sprintDays * sprintMembers
+                            - var sprintMemberAvailabilities = Number(sprintMemberDays)
                         for member in result.members
-                            - status = null
-                            - description = null
+                            - var status = null
+                            - var description = null
                             if member.absences[result.date]
                                 - status = member.absences[result.date].status
                                 - description = member.absences[result.date].description
@@ -39,6 +44,10 @@ html
                                             - status = null
                                             - description = null
                                             if member.absences[date.format('YYYY-MM-DD')]
-                                                - status = member.absences[date.format('YYYY-MM-DD')].status
-                                                - description = member.absences[date.format('YYYY-MM-DD')].description
+                                                - var status = member.absences[date.format('YYYY-MM-DD')].status
+                                                - if (status == 'absent') {sprintMemberAvailabilities--}
+                                                - var description = member.absences[date.format('YYYY-MM-DD')].description
                                             li(class=status, title=date.format('LL') + (description ? ': ' + description : '') )=date.format('dd')
+                        if result.sprint
+                            li.summary='Team is ' + sprintMemberAvailabilities + ' of ' + sprintMemberDays + ' sprint days available'
+
