@@ -11,6 +11,9 @@ ul.teams
     flex-wrap wrap
 
     ul.members
+        position relative
+        &.hasSprint
+            padding-top 2.1rem
         > li
             font-size 125%
             vertical-align baseline
@@ -49,6 +52,9 @@ ul.teams
                 font-size 100%
                 background-color transparent
                 padding-left 0.3rem
+                position absolute
+                top -0.5rem
+                line-height 1.95
 
             .filllevel
                 position absolute

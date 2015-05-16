@@ -23,7 +23,7 @@ html
                     if result.status
                         h2.error Loading calendar data failed with 
                             =result.status
-                    ul.members.online
+                    ul.members.online(class=result.sprint? 'hasSprint' : '')
                         if result.sprint
                             - var sprintDays = Object.keys(result.queryDates).length
                             - var sprintMembers = Object.keys(result.members).length
