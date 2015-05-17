@@ -1,3 +1,5 @@
+- var isoDate = 'YYYY-MM-DD'
+
 doctype
 html
     head
@@ -14,18 +16,14 @@ html
             for result in results
                 li(id=result.name)
                     h2=result.name
-                        if result.sprint
-                            ='-' + (result.sprint.count + 1) + ' '
-                            small
-                                | (
-                                =result.sprint.start.format('DD. MMM')
-                                |  - 
-                                =result.sprint.end.format('DD. MMM')
-                                | )
-                    if result.status
-                        h2.error Loading calendar data failed with 
-                            =result.status
-                    ul.members.online(class=result.sprint? 'hasSprint' : '')
+                    if result.sprint
+                        h3
+                            ='Sprint ' + (result.sprint.count + 1) + ' '
+                            div
+                                span=result.sprint.start.format(isoDate)
+                                span –
+                                span=result.sprint.end.format(isoDate)
+                    ul.members(class=result.sprint? 'hasSprint' : '')
                         if result.sprint
                             - var sprintDays = Object.keys(result.queryDates).length
                             - var sprintMembers = Object.keys(result.members).length
@@ -38,12 +36,12 @@ html
                                         for date in result.queryDates
                                             - status = null
                                             - description = null
-                                            - var absence = member.absences[date.format('YYYY-MM-DD')]
+                                            - var absence = member.absences[date.format(isoDate)]
                                             if absence
                                                 - var status = absence.status
                                                 - if (status == 'absent') {sprintMemberAvailabilities--}
                                                 - var description = absence.description
-                                            if (date.format('YYYY-MM-DD') == result.date)
+                                            if (date.format(isoDate) == result.date)
                                                 li.today(class=status, title=date.format('LL') + (description ? ': ' + description : '') )
                                                     img(src=member.image_url)
                                                     span=member.name
@@ -59,8 +57,14 @@ html
                                 li.member(class=status, title=description)
                                     img(src=member.image_url)
                                     span=member.name
-                        if result.sprint
-                            - var percentage = (sprintMemberAvailabilities / (sprintMemberDays / 100))
-                            - var backgroundGradient = 'linear-gradient(90deg, rgba(0, 125, 0, 0.3) 0, rgba(0, 125, 0, 0.3) ' + percentage + '%, rgba(125, 0, 0, 0.3) ' + percentage + '%, rgba(125, 0, 0, 0.3) 100%)'
-                            li.summary(style='background-image:'+backgroundGradient)=result.name + ' is ' + sprintMemberAvailabilities + ' of ' + sprintMemberDays + ' sprint days available'
+                    if result.sprint
+                        - var percentage = (sprintMemberAvailabilities / (sprintMemberDays / 100))
+                        - var backgroundGradient = 'linear-gradient(90deg, rgba(0, 125, 0, 0.3) 0, rgba(0, 125, 0, 0.3) ' + percentage + '%, rgba(125, 0, 0, 0.3) ' + percentage + '%, rgba(125, 0, 0, 0.3) 100%)'
+                        h3.summary Fill level
+                            div(style='background-image:'+backgroundGradient)='Team '+ result.name + ' is ' + sprintMemberAvailabilities + ' of ' + sprintMemberDays + ' sprint days available'
+                    if result.status
+                        h2.error Fetching calendar data failed with "
+                            =result.status
+                            | ", loading data from cache.
+
 

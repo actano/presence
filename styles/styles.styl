@@ -1,3 +1,11 @@
+$avaiable = rgb(0, 125, 0)
+$absent = rgb(125, 0, 0)
+$away = rgb(255, 255, 125)
+
+$memberwidth = 27rem
+$border = 1px solid black
+$borderradius = 0.3rem
+
 html
     font 80% / 125% Arial, Verdana, sans-serif normal
 
@@ -11,18 +19,16 @@ ul.teams
 
     ul.members
         position relative
-        &.hasSprint
-            padding-top 2.1rem
         li.member
             font-size 125%
             vertical-align baseline
-            border 1px solid
+            border $border
             margin 0.5em 0
             line-height 1.6
             padding-left 2.2rem
             position relative
-            border-radius 0.3rem
-            width 27rem
+            border-radius $borderradius
+            width $memberwidth
             height 2rem
             span
                 display block
@@ -33,37 +39,23 @@ ul.teams
                 height 100%
                 left 0
                 position absolute
-
-        &.offline
-            .filllevel
-                display none
-
-        .summary
-            font-size 100%
-            background-color transparent
-            padding-left 0.3rem
-            position absolute
-            top -0.5rem
-            line-height 1.95
-            border-radius 0.3rem
-            border 1px solid
-            width 27rem
-            height 2rem
+                border-right $border
 
         &.hasSprint li Li
-        &.online:not(.hasSprint) li.member
-            background-color rgba(0, 125, 0, 0.2)
-        &.online li.member
+        &:not(.hasSprint) li.member
+            background-color alpha($avaiable, 0.3)
+        li.member
             &.absent
             .absent
-                color gray
-                background-color rgba(125, 0, 0, 0.2)
+                color darkslategray
+                text-decoration line-through
+                background-color alpha($absent, 0.3)
             &.away
             .away
-                background-color rgba(255, 255, 125, 0.2)
+                background-color alpha($away, 0.3)
             &.awayPartial
             .awayPartial
-                background-image repeating-linear-gradient(-45deg, rgba(255,255,125,0.8) 0, rgba(255,255,125,0.8) 4px, transparent 4px, transparent 8px)
+                background-image repeating-linear-gradient(-45deg, alpha($away, 0.8) 0, alpha($away, 0.8) 4px, transparent 4px, transparent 8px)
             .filllevel
                 position absolute
                 display flex
@@ -72,10 +64,10 @@ ul.teams
                 left 0
                 right 0
                 align-items flex-end
-                padding-left 1.9rem
+                padding-left 1.85rem
                 li
                     flex 1 0 auto
-                    border-left 1px solid
+                    border-left $border
                     height 100%
                     transition all 100ms
                     overflow hidden
@@ -83,34 +75,59 @@ ul.teams
                     line-height 200%
                     padding 0 0.3rem
                     &.today
+                        font-size 100%
+                        line-height 1.6
                         height 100%
-                        min-width 50%
+                        width 50%
                     .date
                         display none
                     &:hover .date
                         display block
                         flex 0
 
-            &:hover .filllevel li
-                height 100%!important
-
-h1
+h1, h2
     font-size 125%
+    margin-left 2.0rem
+    padding-left 0.3rem
 
-h2
+h3, h4
     font-size 100%
-    &.error
-        background-color #7d0000
-        color #fff
-        font-size 100%
-        vertical-align baseline
-        border 1px solid black
-        line-height 1.6
-        padding 0.3rem
-        position relative
-        border-radius 0.4rem
-        width 18rem
-        text-align center
+    margin 0
+
+h3
+    margin-left 2.0rem
+    border $border
+    border-bottom-width 0
+    border-radius $borderradius $borderradius 0 0
+    padding 0.3rem
+    margin-bottom -0.7rem
+    &.summary
+        margin-top -0.7rem
+        margin-bottom inherit
+        border-top-width 0
+        border-bottom-width 1px
+        border-radius 0 0 $borderradius $borderradius
+        div
+            font-weight normal
+            padding 0.3rem
+    div
+        display flex
+        justify-content space-between
+
+
+h2.error
+    background-color #7d0000
+    color #fff
+    font-size 100%
+    vertical-align baseline
+    border $border
+    line-height 1.6
+    padding 0.3rem
+    position relative
+    border-radius $borderradius
+    width $memberwidth
+    text-align center
+    margin-left 0
 ul
     list-style none
     padding 0
@@ -121,7 +138,7 @@ form
         border 1px solid
         font 100% / 125% Arial, Verdana, sans-serif bold
         background rgba(0, 125, 0, 0.1)
-        border-radius 0.3rem
+        border-radius $borderradius
         height 2.1rem
 
 
