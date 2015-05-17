@@ -28,6 +28,8 @@ getGravatarUrlFromName = (name) ->
 module.exports = Promise.coroutine (date) ->
     date = moment() if not moment(date).isValid()
     userDate = moment(date)
+    while userDate.day() is 0 or userDate.day() is 6
+        userDate.add(1, 'days')
 
     for team in teams
 

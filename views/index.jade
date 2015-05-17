@@ -32,24 +32,33 @@ html
                             - var sprintMemberDays = sprintDays * sprintMembers
                             - var sprintMemberAvailabilities = Number(sprintMemberDays)
                         for member in result.members
-                            - var status = null
-                            - var description = null
-                            if member.absences[result.date]
-                                - status = member.absences[result.date].status
-                                - description = member.absences[result.date].description
-                            li(class=status, title=description)
-                                img(src=member.image_url)
-                                span=member.name
-                                if result.sprint
+                            if result.sprint
+                                li.member
                                     ul.filllevel
                                         for date in result.queryDates
                                             - status = null
                                             - description = null
-                                            if member.absences[date.format('YYYY-MM-DD')]
-                                                - var status = member.absences[date.format('YYYY-MM-DD')].status
+                                            - var absence = member.absences[date.format('YYYY-MM-DD')]
+                                            if absence
+                                                - var status = absence.status
                                                 - if (status == 'absent') {sprintMemberAvailabilities--}
-                                                - var description = member.absences[date.format('YYYY-MM-DD')].description
-                                            li(class=status, title=date.format('LL') + (description ? ': ' + description : '') )=date.format('dd')
+                                                - var description = absence.description
+                                            if (date.format('YYYY-MM-DD') == result.date)
+                                                li.today(class=status, title=date.format('LL') + (description ? ': ' + description : '') )
+                                                    img(src=member.image_url)
+                                                    span=member.name
+                                            else
+                                                li(class=status, title=date.format('LL') + (description ? ': ' + description : '') )
+                                                    span.date=date.format('dd., DD.M.')
+                            else
+                                - var status = null
+                                - var description = null
+                                if member.absences[result.date]
+                                    - status = member.absences[result.date].status
+                                    - description = member.absences[result.date].description
+                                li.member(class=status, title=description)
+                                    img(src=member.image_url)
+                                    span=member.name
                         if result.sprint
                             - var percentage = (sprintMemberAvailabilities / (sprintMemberDays / 100))
                             - var backgroundGradient = 'linear-gradient(90deg, rgba(0, 125, 0, 0.3) 0, rgba(0, 125, 0, 0.3) ' + percentage + '%, rgba(125, 0, 0, 0.3) ' + percentage + '%, rgba(125, 0, 0, 0.3) 100%)'

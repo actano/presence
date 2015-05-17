@@ -6,15 +6,14 @@ html, *
 
 ul.teams
     display flex
-    justify-content space-between
-    max-width 56rem
     flex-wrap wrap
+    justify-content space-around
 
     ul.members
         position relative
         &.hasSprint
             padding-top 2.1rem
-        > li
+        li.member
             font-size 125%
             vertical-align baseline
             border 1px solid
@@ -23,7 +22,8 @@ ul.teams
             padding-left 2.2rem
             position relative
             border-radius 0.3rem
-            width 18rem
+            width 27rem
+            height 2rem
             span
                 display block
                 text-overflow ellipsis
@@ -38,24 +38,32 @@ ul.teams
             .filllevel
                 display none
 
-        &.online > li
+        .summary
+            font-size 100%
+            background-color transparent
+            padding-left 0.3rem
+            position absolute
+            top -0.5rem
+            line-height 1.95
+            border-radius 0.3rem
+            border 1px solid
+            width 27rem
+            height 2rem
+
+
+        &.online:not(.hasSprint) li.member
             background-color rgba(0, 125, 0, 0.2)
+        &.online li.member
             &.absent
+            .absent
                 color gray
-                text-decoration line-through
                 background-color rgba(125, 0, 0, 0.2)
             &.away
+            .away
                 background-color rgba(255, 255, 125, 0.2)
             &.awayPartial
+            .awayPartial
                 background-image repeating-linear-gradient(-45deg, rgba(255,255,125,0.8) 0, rgba(255,255,125,0.8) 4px, transparent 4px, transparent 8px)
-            &.summary
-                font-size 100%
-                background-color transparent
-                padding-left 0.3rem
-                position absolute
-                top -0.5rem
-                line-height 1.95
-
             .filllevel
                 position absolute
                 display flex
@@ -64,23 +72,28 @@ ul.teams
                 left 0
                 right 0
                 align-items flex-end
+                padding-left 1.9rem
                 li
-                    flex 1
+                    flex 1 0 auto
                     background-color rgba(0, 125, 0, 0.8)
                     border-left 1px solid
-                    height 10%
+                    height 100%
                     transition all 100ms
                     overflow hidden
                     color white
                     font-size 80%
-                    text-align center
                     line-height 200%
+                    padding 0 0.3rem
                     &.absent
                         background rgba(125, 0, 0, 0.8)
                     &.today
-                        height 20%
-                    &:first-child
-                        border none
+                        height 100%
+                        min-width 50%
+                    .date
+                        display none
+                    &:hover .date
+                        display block
+                        flex 0
 
             &:hover .filllevel li
                 height 100%!important
