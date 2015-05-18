@@ -48,9 +48,14 @@ ul.teams
         li.member
             &.absent
             .absent
+            &.public-holiday
+            .public-holiday
                 color darkslategray
                 text-decoration line-through
                 background-color alpha($absent, 0.3)
+            &.public-holiday
+            .public-holiday
+                background-image repeating-linear-gradient(-45deg, alpha(gray, 0.2) 0, alpha(gray, 0.2) 4px, transparent 4px, transparent 8px)
             &.away
             .away
                 background-color alpha($away, 0.3)

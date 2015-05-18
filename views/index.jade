@@ -39,7 +39,7 @@ html
                                             - var absence = member.absences[date.format(isoDate)]
                                             if absence
                                                 - var status = absence.status
-                                                - if (status == 'absent') {sprintMemberAvailabilities--}
+                                                - if (status == 'absent' || status == 'public-holiday') {sprintMemberAvailabilities--}
                                                 - var description = absence.description
                                             if (date.format(isoDate) == result.date)
                                                 li.today(class=status, title=date.format('LL') + (description ? ': ' + description : '') )
@@ -47,7 +47,10 @@ html
                                                     span=member.name
                                             else
                                                 li(class=status, title=date.format('LL') + (description ? ': ' + description : '') )
-                                                    span.date=date.format('dd., DD.M.')
+                                                    - var content = date.format('dd., DD.M.')
+                                                    if (status == 'public-holiday')
+                                                        - content = description
+                                                    span.date=content
                             else
                                 - var status = null
                                 - var description = null
