@@ -13,6 +13,7 @@ urlify = require('urlify').create
 
 Promise = require 'bluebird'
 Promise.promisifyAll request
+Promise.promisifyAll fs
 
 # load team meta data
 teams = require './teams'
@@ -87,10 +88,8 @@ module.exports = Promise.coroutine (date) ->
             responseBody = response.body
 
             # write ics to file for recovery
-            fs.writeFile icsFileName, responseBody, (err) ->
-                if err
-                    throw err
-                console.info 'It\'s saved!'
+            yield fs.writeFileAsync icsFileName, responseBody
+            console.info "#{result.name}.ics is saved!"
 
         jCalData = ICAL.parse responseBody
         comp = new ICAL.Component jCalData[1]
