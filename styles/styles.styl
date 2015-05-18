@@ -25,23 +25,24 @@ ul.teams
             border $border
             margin 0.5em 0
             line-height 1.6
-            padding-left 2.2rem
+            padding-left 2rem
             position relative
             border-radius $borderradius
             width $memberwidth
-            height 2rem
+            height 2.1rem
             span
                 display block
                 text-overflow ellipsis
                 white-space nowrap
                 overflow hidden
+                padding 0 0.3rem
             img
-                height 100%
+                width 2rem
                 left 0
                 position absolute
                 border-right $border
 
-        &.hasSprint li Li
+        &.hasSprint li li
         &:not(.hasSprint) li.member
             background-color alpha($avaiable, 0.3)
         li.member
@@ -57,14 +58,9 @@ ul.teams
             .awayPartial
                 background-image repeating-linear-gradient(-45deg, alpha($away, 0.8) 0, alpha($away, 0.8) 4px, transparent 4px, transparent 8px)
             .filllevel
-                position absolute
                 display flex
                 height 100%
-                bottom 0
-                left 0
-                right 0
                 align-items flex-end
-                padding-left 1.85rem
                 li
                     flex 1 0 auto
                     border-left $border
@@ -74,6 +70,8 @@ ul.teams
                     font-size 80%
                     line-height 200%
                     padding 0 0.3rem
+                    &:first-child
+                        border-left none
                     &.today
                         font-size 100%
                         line-height 1.6
@@ -84,17 +82,17 @@ ul.teams
                     &:hover .date
                         display block
                         flex 0
+                    span
+                        padding 0
 
 h1, h2
     font-size 125%
     margin-left 2.0rem
     padding-left 0.3rem
 
-h3, h4
+h3
     font-size 100%
     margin 0
-
-h3
     margin-left 2.0rem
     border $border
     border-bottom-width 0
