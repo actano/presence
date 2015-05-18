@@ -125,7 +125,8 @@ module.exports = Promise.coroutine (date) ->
                 # handle recurring absences
                 if icalEvent.isRecurring() and
                         icalEvent.getRecurrenceTypes()?.WEEKLY and
-                        start.day() is queryDate.day()
+                        start.day() is queryDate.day() and
+                        (start.isBefore(queryDate, 'day') or start.isSame(queryDate, 'day'))
 
                     isAbsent = true
 
