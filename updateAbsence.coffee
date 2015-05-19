@@ -59,6 +59,7 @@ module.exports = Promise.coroutine (date) ->
                     count: sprintsSinceFirstStart
                     start: currentSprintStartDate
                     end: currentSprintEndDate
+                    scrum: team.sprint.scrum
 
 
                 result.queryDates = []

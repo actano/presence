@@ -18,7 +18,11 @@ html
                     h2=result.name
                     if result.sprint
                         h3
-                            ='Sprint ' + (result.sprint.count + 1) + ' '
+                            if result.sprint.scrum
+                                |Sprint 
+                            else
+                                |Week 
+                            =(result.sprint.count + 1) + ' '
                             div
                                 span=result.sprint.start.format(isoDate)
                                 span –
@@ -37,16 +41,18 @@ html
                                             - status = null
                                             - description = null
                                             - var absence = member.absences[date.format(isoDate)]
+                                            - preWeekend = date.day() == 5 ? 'preWeekend' : null
+                                            - postWeekend = date.day() == 1 ? 'postWeekend' : null
                                             if absence
                                                 - var status = absence.status
                                                 - if (status == 'absent' || status == 'public-holiday') {sprintMemberAvailabilities--}
                                                 - var description = absence.description
                                             if (date.format(isoDate) == result.date)
-                                                li.today(class=status, title=date.format('LL') + (description ? ': ' + description : '') )
+                                                li.today(class=status, class=preWeekend, class=postWeekend, title=date.format('LL') + (description ? ': ' + description : '') )
                                                     img(src=member.image_url)
                                                     span=member.name
                                             else
-                                                li(class=status, title=date.format('LL') + (description ? ': ' + description : '') )
+                                                li(class=status, class=preWeekend, class=postWeekend, title=date.format('LL') + (description ? ': ' + description : '') )
                                                     - var content = date.format('dd., DD.M.')
                                                     if (status == 'public-holiday')
                                                         - content = description
@@ -60,7 +66,7 @@ html
                                 li.member(class=status, title=description)
                                     img(src=member.image_url)
                                     span=member.name
-                    if result.sprint
+                    if result.sprint && result.sprint.scrum
                         - var percentage = (sprintMemberAvailabilities / (sprintMemberDays / 100))
                         - var backgroundGradient = 'linear-gradient(90deg, rgba(0, 125, 0, 0.3) 0, rgba(0, 125, 0, 0.3) ' + percentage + '%, rgba(125, 0, 0, 0.3) ' + percentage + '%, rgba(125, 0, 0, 0.3) 100%)'
                         h3.summary Fill level

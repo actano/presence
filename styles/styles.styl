@@ -62,6 +62,11 @@ ul.teams
             &.awayPartial
             .awayPartial
                 background-image repeating-linear-gradient(-45deg, alpha($away, 0.8) 0, alpha($away, 0.8) 4px, transparent 4px, transparent 8px)
+            &.preWeekend:not(:last-child)
+            .preWeekend:not(:last-child)
+                margin-right 0.3rem
+                border-right 1px solid black
+
             .filllevel
                 display flex
                 height 100%
