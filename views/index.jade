@@ -1,4 +1,5 @@
 - var isoDate = 'YYYY-MM-DD'
+- var deDate = 'DD.MM.YYYY'
 
 doctype
 html
@@ -8,26 +9,26 @@ html
         meta(name='viewport', content='width = device-width')
 
     body
-        h1 Presence for&nbsp;
+        h1 Presence for  
             form(action='/')
                 input(type='date' name='date' value=results[0].date, onchange='document.forms[0].submit()')
 
         ul.teams
             for result in results
                 li(id=result.name)
-                    h2=result.name
-                    if result.sprint
-                        h3
-                            if result.sprint.scrum
-                                |Sprint 
-                            else
-                                |Week 
-                            =(result.sprint.count + 1) + ' '
-                            div
-                                span=result.sprint.start.format(isoDate)
-                                span –
-                                span=result.sprint.end.format(isoDate)
                     ul.members(class=result.sprint? 'hasSprint' : '')
+                        li.member.headline(id=result.name)
+                            h2
+                                name=result.name
+                                    if result.sprint
+                                        small  | 
+                                            if result.sprint.scrum
+                                                | Sprint 
+                                            else
+                                                | Week 
+                                            =(result.sprint.count + 1) + ' '
+                                time=result.sprint.start.format(deDate) + ' – ' + result.sprint.end.format(deDate)
+
                         if result.sprint
                             - var sprintDays = Object.keys(result.queryDates).length
                             - var sprintMembers = Object.keys(result.members).length
@@ -66,11 +67,11 @@ html
                                 li.member(class=status, title=description)
                                     img(src=member.image_url)
                                     span=member.name
-                    if result.sprint && result.sprint.scrum
-                        - var percentage = (sprintMemberAvailabilities / (sprintMemberDays / 100))
-                        - var backgroundGradient = 'linear-gradient(90deg, rgba(0, 125, 0, 0.3) 0, rgba(0, 125, 0, 0.3) ' + percentage + '%, rgba(125, 0, 0, 0.3) ' + percentage + '%, rgba(125, 0, 0, 0.3) 100%)'
-                        h3.summary Fill level
-                            div(style='background-image:'+backgroundGradient)='Team '+ result.name + ' is ' + sprintMemberAvailabilities + ' of ' + sprintMemberDays + ' sprint days available'
+                        if result.sprint && result.sprint.scrum
+                            - var percentage = (sprintMemberAvailabilities / (sprintMemberDays / 100))
+                            - var backgroundGradient = 'linear-gradient(90deg, #a5c1d4 0, #a5c1d4 ' + percentage + '%, #da777b ' + percentage + '%, #da777b 100%)'
+                            li.member.summary
+                                div(style='background-image:'+backgroundGradient)='Team '+ result.name + ' is ' + sprintMemberAvailabilities + ' of ' + sprintMemberDays + ' sprint days available'
                     if result.status
                         h2.error Fetching calendar data failed with "
                             =result.status
