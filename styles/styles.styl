@@ -1,50 +1,64 @@
-$avaiable = rgb(0, 125, 0)
-$absent = rgb(125, 0, 0)
-$away = rgb(255, 255, 125)
+$color = #333333
+$avaiable = #a5c1d4
+$absent = #da777b
+$away = #faf0a6
+$widgetbackground = #e6e6e6
+$font-family = 'Proxima Nova', Arial, Verdana, sans-serif
 
 $memberwidth = 27rem
-$border = 1px solid black
-$borderradius = 0.3rem
+$border = 1px solid white
 
 html
-    font 80% / 125% Arial, Verdana, sans-serif normal
+    font 80% / 125% $font-family normal
+    color $color
 
 html, *
     box-sizing border-box
-
+body
+    background-color $widgetbackground
 ul.teams
     display flex
     flex-wrap wrap
     justify-content space-around
-
+    & > li
+        background-color white
+        margin-bottom 3rem
     ul.members
         position relative
+        background-color $widgetbackground
+
         li.member
             font-size 125%
             vertical-align baseline
             border $border
-            margin 0.5em 0
-            line-height 1.6
-            padding-left 2rem
+            margin 0.2rem 0 0 0
+            padding 0.4rem
+            padding-left 4.1rem
             position relative
-            border-radius $borderradius
             width $memberwidth
-            height 2.1rem
+            height 4rem
+            background-color white
+            &:last-child
+                margin-bottom 0.2rem
             span
                 display block
                 text-overflow ellipsis
                 white-space nowrap
                 overflow hidden
                 padding 0 0.3rem
+                line-height 2.6
             img
-                width 2rem
-                left 0
+                width 3rem
+                left 0.5rem
+                top 0.5rem
                 position absolute
-                border-right $border
+                border-radius 50%
+                display block
+                
 
         &.hasSprint li li
         &:not(.hasSprint) li.member
-            background-color alpha($avaiable, 0.3)
+            background-color $avaiable
         li.member
             &.absent
             .absent
@@ -52,20 +66,19 @@ ul.teams
             .public-holiday
                 color darkslategray
                 text-decoration line-through
-                background-color alpha($absent, 0.3)
+                background-color $absent
             &.public-holiday
             .public-holiday
                 background-image repeating-linear-gradient(-45deg, alpha(gray, 0.2) 0, alpha(gray, 0.2) 4px, transparent 4px, transparent 8px)
             &.away
             .away
-                background-color alpha($away, 0.3)
+                background-color $away
             &.awayPartial
             .awayPartial
-                background-image repeating-linear-gradient(-45deg, alpha($away, 0.8) 0, alpha($away, 0.8) 4px, transparent 4px, transparent 8px)
+                background-image repeating-linear-gradient(-45deg, $away 0, $away 4px, transparent 4px, transparent 8px)
             &.preWeekend:not(:last-child)
             .preWeekend:not(:last-child)
                 margin-right 0.3rem
-                border-right 1px solid black
 
             .filllevel
                 display flex
@@ -94,49 +107,51 @@ ul.teams
                         flex 0
                     span
                         padding 0
-
-h1, h2
-    font-size 125%
-    margin-left 2.0rem
-    padding-left 0.3rem
-
-h3
+h1
+    color #1a76d6
+                        
+.headline
     font-size 100%
-    margin 0
-    margin-left 2.0rem
-    border $border
-    border-bottom-width 0
-    border-radius $borderradius $borderradius 0 0
-    padding 0.3rem
-    margin-bottom -0.7rem
-    &.summary
-        margin-top -0.7rem
-        margin-bottom inherit
-        border-top-width 0
-        border-bottom-width 1px
-        border-radius 0 0 $borderradius $borderradius
-        div
-            font-weight normal
-            padding 0.3rem
-            border-radius $borderradius
+    padding 0 0.4rem !important
+    & > h2
+        display flex
+        vertical-align middle
+        justify-content space-between
+        align-items baseline
+    small
+        font-weight normal
+    time
+        font-weight normal
+        font-size 1rem
+        float right
+        color #999
+
+.summary
+    font-size 100% !important
+    height auto!important
+    div
+        font-weight normal
+        padding 0.3rem
+            
     div
         display flex
         justify-content space-between
 
 
-h2.error
-    background-color #7d0000
-    color #fff
-    font-size 100%
-    vertical-align baseline
-    border $border
-    line-height 1.6
-    padding 0.3rem
-    position relative
-    border-radius $borderradius
-    width $memberwidth
-    text-align center
-    margin-left 0
+h2 
+    margin 1.3rem 0 
+    &.error
+        background-color #7d0000
+        color #fff
+        font-size 100%
+        vertical-align baseline
+        border $border
+        line-height 1.6
+        padding 0.3rem
+        position relative
+        width $memberwidth
+        text-align center
+        margin-left 0
 ul
     list-style none
     padding 0
@@ -144,10 +159,11 @@ ul
 form
     display inline-block
     input
-        border 1px solid
-        font 100% / 125% Arial, Verdana, sans-serif bold
-        background rgba(0, 125, 0, 0.1)
-        border-radius $borderradius
+        border none
+        font 60% / 125% $font-family normal
         height 2.1rem
+        padding 0.4rem
+        color $color
+        vertical-align text-bottom
 
 
