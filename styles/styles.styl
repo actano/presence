@@ -2,7 +2,7 @@ $color = #333333
 $avaiable = #a5c1d4
 $absent = #da777b
 $away = #faf0a6
-$widgetbackground = #e6e6e6
+$widgetbackground = #f3f3f3
 $font-family = 'Proxima Nova', Arial, Verdana, sans-serif
 
 $memberwidth = 27rem
@@ -16,13 +16,18 @@ html, *
     box-sizing border-box
 body
     background-color $widgetbackground
+    &.framed
+        margin 0
+        h1
+            display none
 ul.teams
     display flex
     flex-wrap wrap
     justify-content space-around
+    margin 0
     & > li
         background-color white
-        margin-top 2rem
+        margin-bottom 2rem
     ul.members
         position relative
         background-color $widgetbackground
@@ -109,9 +114,6 @@ ul.teams
                         padding 0
 h1
     color #1a76d6
-
-.framed h1 
-  display none
 
 .headline
     font-size 100%
