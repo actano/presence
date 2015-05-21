@@ -7,6 +7,12 @@ html
         title Actano - Absentees
         link(rel='stylesheet' href='/styles.css')
         meta(name='viewport', content='width = device-width')
+        script.
+            window.onload = function()  {
+                if (parent.frames.length > 0) {
+                    document.querySelector('body').classList.add('framed');
+                }
+            }
 
     body
         h1 Presence for  
