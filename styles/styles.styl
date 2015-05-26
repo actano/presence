@@ -106,17 +106,17 @@ ul.teams
                         line-height 1.6
                         height 100%
                         width 50%
+                        span
+                            padding 0 0.2rem
                     .date
                         display none
-                        overflow visible
-                        line-height inherit
-                        padding 0 0.3rem
-                    &:hover .date
-                        display block
-                        background white
                         position absolute
                         bottom 100%
                         left -1rem
+                        overflow visible
+                        line-height inherit
+                        padding 0 0.3rem
+                        background white
                         &:after
                             content ''
                             position absolute
@@ -126,6 +126,8 @@ ul.teams
                             height 0
                             border 0.5rem solid transparent
                             border-top-color white
+                    &:hover .date
+                        display block
                     span
                         padding 0
 h1
