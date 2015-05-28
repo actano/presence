@@ -3,10 +3,11 @@ $avaiable = #a5c1d4
 $absent = #da777b
 $away = #faf0a6
 $widgetbackground = #f3f3f3
+$teambackground = white
 $font-family = 'Proxima Nova', Arial, Verdana, sans-serif
 
 $memberwidth = 27rem
-$border = 1px solid white
+$border = 1px solid $teambackground
 
 html
     font 73% / 125% $font-family normal
@@ -26,7 +27,7 @@ ul.teams
     justify-content space-around
     margin 0
     & > li
-        background-color white
+        background-color $teambackground
         margin-bottom 2rem
     ul.members
         position relative
@@ -42,7 +43,7 @@ ul.teams
             position relative
             width $memberwidth
             height 4rem
-            background-color white
+            background-color $teambackground
             &:last-child
                 margin-bottom 0.2rem
             span
@@ -116,7 +117,7 @@ ul.teams
                         overflow visible
                         line-height inherit
                         padding 0 0.3rem
-                        background white
+                        background $teambackground
                         &:after
                             content ''
                             position absolute
@@ -125,7 +126,7 @@ ul.teams
                             width 0
                             height 0
                             border 0.5rem solid transparent
-                            border-top-color white
+                            border-top-color $teambackground
                     &:hover .date
                         display block
                     span
