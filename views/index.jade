@@ -7,18 +7,44 @@ html
         title Actano - Absentees
         link(rel='stylesheet' href='/styles.css')
         meta(name='viewport', content='width = device-width')
+        script(src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/2.4.0/seedrandom.min.js")
     body
         script.
             if (parent.frames.length > 0) {
                 document.querySelector('body').classList.add('framed');
             }
+
+            // Array Remove - By John Resig (MIT Licensed)
+            Array.prototype.remove = function (from, to) {
+                var rest = this.slice((to || from) + 1 || this.length);
+                this.length = from < 0 ? this.length + from : from;
+                return this.push.apply(this, rest);
+            };
+
+
+            window.onload = function() {
+                scrumTeams = document.querySelectorAll('li.scrum > ul');
+                Math.seedrandom(document.querySelector('input').value.split('-')[2])
+                for (var i = 0; i < scrumTeams.length; i++) {
+                    var members = getPresentMembers(scrumTeams[i]);
+                    todaysRandom = Math.floor(Math.random() * members.length)
+                    members[todaysRandom].classList.add('selected')
+                }
+
+            }
+            function getPresentMembers(team) {
+                return team.querySelectorAll('ul.members > li:not(.headline):not(.summary):not(.todayAbsence)');
+            }
+
+
         h1 Presence for  
             form(action='/')
                 input(type='date' name='date' value=results[0].date, onchange='document.forms[0].submit()')
 
         ul.teams
             for result in results
-                li(id=result.name)
+                - var scrumClass = result.sprint && result.sprint.scrum ? 'scrum' : null
+                li(id=result.name, class=scrumClass)
                     ul.members(class=result.sprint? 'hasSprint' : '')
                         li.member.headline(id=result.name)
                             h2
@@ -39,7 +65,8 @@ html
                             - var sprintMemberAvailabilities = Number(sprintMemberDays)
                         for member in result.members
                             if result.sprint
-                                li.member
+                                - todayAbsence = member.absences[result.date] ? 'todayAbsence' : null
+                                li.member(class=todayAbsence)
                                     ul.filllevel
                                         for date in result.queryDates
                                             - status = null
