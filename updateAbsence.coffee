@@ -19,7 +19,7 @@ Promise.promisifyAll fs
 teams = require './teams'
 
 EMAIL_SUFFIX = '@company.com'
-GRAVATAR_PREFIX = 'http://www.gravatar.com/avatar/'
+GRAVATAR_PREFIX = 'https://www.gravatar.com/avatar/'
 GRAVATAR_SUFFIX = '?s=50'
 
 getGravatarUrlFromName = (name) ->
