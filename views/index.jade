@@ -105,6 +105,8 @@ html
                     if result.status
                         h2.error Fetching calendar data failed with "
                             =result.status
-                            | ", loading data from cache.
+                            | ", loading data from cache (
+                            = result.cacheTimestamp
+                            | ).
 
 
