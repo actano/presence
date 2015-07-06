@@ -92,14 +92,6 @@ module.exports = Promise.coroutine (date) ->
             teamCalendarData = fs.readFileSync getIcsFilePath(result.name), {encoding: 'utf-8'}
 
         else
-
-            result.status = "#{response.statusCode} - #{response.statusMessage}"
-
-            fs.stat getIcsFilePath(result.name), (err, stats) ->
-                if(!err)
-                    result.cacheTimestamp = stats.mtime
-
-
             teamCalendarData = response.body
 
             # write ics to file for recovery
