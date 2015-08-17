@@ -24,7 +24,7 @@ html
 
             window.onload = function() {
                 scrumTeams = document.querySelectorAll('li.scrum > ul');
-                Math.seedrandom(document.querySelector('input').value.split('-')[2])
+                Math.seedrandom(document.querySelector('input').value)
                 for (var i = 0; i < scrumTeams.length; i++) {
                     var members = getPresentMembers(scrumTeams[i]);
                     todaysRandom = Math.floor(Math.random() * members.length)
