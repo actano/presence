@@ -43,19 +43,13 @@ html
 
         ul.teams
             for team in teams
-                - var scrumClass = team.sprint && team.sprint.scrum ? 'scrum' : null
-                li(id=team.name, class=scrumClass)
-                    ul.members(class=team.sprint? 'hasSprint' : '')
+                li(id=team.name, class=team.cssClass)
+                    ul
                         li.member.headline(id=team.name)
                             h2
                                 name=team.name
-                                    if team.sprint
-                                        small  | 
-                                            if team.sprint.scrum
-                                                | Sprint 
-                                            else
-                                                | Week 
-                                            =(team.sprint.count + 1) + ' '
+                                    if team.head
+                                        small=' ' + team.head
                                 time=team.sprint.start.format(deDate) + ' – ' + team.sprint.end.format(deDate)
 
                         if team.sprint

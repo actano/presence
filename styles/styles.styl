@@ -26,114 +26,116 @@ ul.teams
     flex-wrap wrap
     justify-content space-around
     margin 0
-    & > li
+
+    li.team
         background-color $teambackground
         margin-bottom 2rem
-    ul.members
-        position relative
-        background-color $widgetbackground
 
-        li.member
-            font-size 125%
-            vertical-align baseline
-            border $border
-            margin 0.2rem 0 0 0
-            padding 0.4rem
-            padding-left 4.1rem
-            position relative
-            width $memberwidth
-            height 4rem
-            background-color $teambackground
-            &:last-child
-                margin-bottom 0.2rem
-            span
-                display block
-                text-overflow ellipsis
-                white-space nowrap
-                overflow hidden
-                padding 0 0.3rem
-                line-height 2.6
-            img
-                width 3rem
-                left 0.5rem
-                top 0.5rem
-                position absolute
-                border-radius 50%
-                display block
-                
-
-        &.hasSprint li li
-        &:not(.hasSprint) li.member
+        &.hasSprint > ul li li
+        &:not(.hasSprint) > ul li.member
             background-color $avaiable
-        li.member
-            &.selected
-            .selected
-                background-color: #78aad6
-            &.absent
-            .absent
-            &.public-holiday
-            .public-holiday
-                color darkslategray
-                text-decoration line-through
-                background-color $absent
-            &.public-holiday
-            .public-holiday
-                background-image repeating-linear-gradient(-45deg, alpha(gray, 0.2) 0, alpha(gray, 0.2) 4px, transparent 4px, transparent 8px)
-            &.away
-            .away
-                background-color $away
-            &.awayPartial
-            .awayPartial
-                background-image repeating-linear-gradient(-45deg, $away 0, $away 4px, transparent 4px, transparent 8px)
-            &.preWeekend:not(:last-child)
-            .preWeekend:not(:last-child)
-                margin-right 0.3rem
 
-            .filllevel
-                display flex
-                height 100%
-                align-items flex-end
-                li
-                    flex 1 0 auto
-                    border-left $border
-                    height 50%
-                    transition all 100ms
-                    font-size 80%
-                    line-height 200%
+        > ul
+            position relative
+            background-color $widgetbackground
+
+            li.member
+                font-size 125%
+                vertical-align baseline
+                border $border
+                margin 0.2rem 0 0 0
+                padding 0.4rem
+                padding-left 4.1rem
+                position relative
+                width $memberwidth
+                height 4rem
+                background-color $teambackground
+                &:last-child
+                    margin-bottom 0.2rem
+                span
+                    display block
+                    text-overflow ellipsis
+                    white-space nowrap
+                    overflow hidden
                     padding 0 0.3rem
-                    &:not(.today)
-                        position relative
-                    &:first-child
-                        border-left none
-                    &.today
-                        font-size 100%
-                        line-height 1.6
-                        height 100%
-                        width 50%
-                        span
-                            padding 0 0.2rem
-                    .date
-                        display none
-                        position absolute
-                        bottom 100%
-                        left -1rem
-                        overflow visible
-                        line-height inherit
+                    line-height 2.6
+                img
+                    width 3rem
+                    left 0.5rem
+                    top 0.5rem
+                    position absolute
+                    border-radius 50%
+                    display block
+
+            li.member
+                &.selected
+                .selected
+                    background-color: #78aad6
+                &.absent
+                .absent
+                &.public-holiday
+                .public-holiday
+                    color darkslategray
+                    text-decoration line-through
+                    background-color $absent
+                &.public-holiday
+                .public-holiday
+                    background-image repeating-linear-gradient(-45deg, alpha(gray, 0.2) 0, alpha(gray, 0.2) 4px, transparent 4px, transparent 8px)
+                &.away
+                .away
+                    background-color $away
+                &.awayPartial
+                .awayPartial
+                    background-image repeating-linear-gradient(-45deg, $away 0, $away 4px, transparent 4px, transparent 8px)
+                &.preWeekend:not(:last-child)
+                .preWeekend:not(:last-child)
+                    margin-right 0.3rem
+
+                .filllevel
+                    display flex
+                    height 100%
+                    align-items flex-end
+                    li
+                        flex 1 0 auto
+                        border-left $border
+                        height 50%
+                        transition all 100ms
+                        font-size 80%
+                        line-height 200%
                         padding 0 0.3rem
-                        background $teambackground
-                        &:after
-                            content ''
+                        &:not(.today)
+                            position relative
+                        &:first-child
+                            border-left none
+                        &.today
+                            font-size 100%
+                            line-height 1.6
+                            height 100%
+                            width 50%
+                            span
+                                padding 0 0.2rem
+                        .date
+                            display none
                             position absolute
-                            top 100%
-                            left 1.1rem
-                            width 0
-                            height 0
-                            border 0.5rem solid transparent
-                            border-top-color $teambackground
-                    &:hover .date
-                        display block
-                    span
-                        padding 0
+                            bottom 100%
+                            left -1rem
+                            overflow visible
+                            line-height inherit
+                            padding 0 0.3rem
+                            background $teambackground
+                            &:after
+                                content ''
+                                position absolute
+                                top 100%
+                                left 1.1rem
+                                width 0
+                                height 0
+                                border 0.5rem solid transparent
+                                border-top-color $teambackground
+                        &:hover .date
+                            display block
+                        span
+                            padding 0
 h1
     color #1a76d6
 

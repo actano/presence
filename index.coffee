@@ -27,6 +27,7 @@ app.use autoprefixer browsers: 'last 2 versions', cascade: false
 # respond with rendered html
 app.get '/', Promise.coroutine (req, res) ->
     teams = yield getAbsence req.query?.date
+    teams = viewLogic teams
 
     res.render 'index',
         results: teams
@@ -42,3 +43,14 @@ port = process.env.PORT or 3000
 
 app.listen port, ->
     console.log "Listening on port #{port}..."
+
+viewLogic = (teams) ->
+    for team in teams
+        team.cssClass = ['team']
+        team.cssClass.push 'hasSprint' if team.sprint?
+        team.cssClass.push 'scrum' if team.sprint?.scrum
+
+        if team.sprint
+            team.head = if team.sprint.scrum then 'Sprint' else 'Week'
+            team.head += " #{team.sprint.count + 1}"
+    teams
