@@ -76,7 +76,12 @@ module.exports = Promise.coroutine (date) ->
                 absences: {}
             }
 
-        [response] = yield request.getAsync team.calendar
+        response = null
+
+        try
+            [response] = yield request.getAsync team.calendar
+        catch e
+            response = statusCode: 600
 
         teamCalendarData = null
 

@@ -7,8 +7,7 @@
     "npm": "2.7.6"
   },
   "scripts": {
-    "start": "coffee --nodejs --harmony index.coffee",
-    "shrinkwrap": "npm-shrinkwrap --dev"
+    "start": "coffee --nodejs --harmony-generators index.coffee"
   },
   "author": "Actano GmbH",
   "license": "MIT",
@@ -25,8 +24,5 @@
     "seedrandom": "^2.4.2",
     "stylus": "^0.51.1",
     "urlify": "^0.3.6"
-  },
-  "devDependencies": {
-    "npm-shrinkwrap": "^5.4.0"
   }
 }
