@@ -103,7 +103,7 @@ viewLogic = (teams) ->
                         memberDate.content = date.format('dd., DD.M.')
                     member.dates.push memberDate
 
-            if avail.length
+            if avail.length and team.sprint.scrum
                 unless rng?
                     rng = seedrandom team.date
                 selectedMember = avail[Math.floor(rng() * avail.length)]
