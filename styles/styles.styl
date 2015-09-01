@@ -1,7 +1,9 @@
-$color = #333333
-$avaiable = #a5c1d4
-$absent = #da777b
-$away = #faf0a6
+$colorText = #333333
+
+$colorAvailable = #a5c1d4
+$colorAbsent = #da777b
+$colorAway = #faf0a6
+
 $widgetbackground = #f3f3f3
 $teambackground = white
 $font-family = 'Proxima Nova', Arial, Verdana, sans-serif
@@ -11,7 +13,7 @@ $border = 1px solid $teambackground
 
 html
     font 73% / 125% $font-family normal
-    color $color
+    color $colorText
 
 html, *
     box-sizing border-box
@@ -31,13 +33,8 @@ ul.teams
         background-color $teambackground
         margin-bottom 2rem
 
-        &.hasSprint > ul li li
-        &:not(.hasSprint) > ul li.member
-            background-color $avaiable
-
         > ul
             position relative
-            background-color $widgetbackground
 
             li.member
                 font-size 125%
@@ -67,26 +64,8 @@ ul.teams
                     border-radius 50%
                     display block
 
-            li.member
                 &.selected
-                .selected
                     background-color: #78aad6
-                &.absent
-                .absent
-                &.public-holiday
-                .public-holiday
-                    color darkslategray
-                    text-decoration line-through
-                    background-color $absent
-                &.public-holiday
-                .public-holiday
-                    background-image repeating-linear-gradient(-45deg, alpha(gray, 0.2) 0, alpha(gray, 0.2) 4px, transparent 4px, transparent 8px)
-                &.away
-                .away
-                    background-color $away
-                &.awayPartial
-                .awayPartial
-                    background-image repeating-linear-gradient(-45deg, $away 0, $away 4px, transparent 4px, transparent 8px)
                 &.preWeekend:not(:last-child)
                 .preWeekend:not(:last-child)
                     margin-right 0.3rem
@@ -136,6 +115,22 @@ ul.teams
                             display block
                         span
                             padding 0
+
+.status
+    background-color $colorAvailable
+    &.absent
+    &.public-holiday
+        color darkslategray
+        text-decoration line-through
+        background-color $colorAbsent
+    &.public-holiday
+        background-image repeating-linear-gradient(-45deg, alpha(gray, 0.2) 0, alpha(gray, 0.2) 4px, transparent 4px, transparent 8px)
+    &.away
+        background-color $colorAway
+    &.awayPartial
+        background-image repeating-linear-gradient(-45deg, $colorAway 0, $colorAway 4px, transparent 4px, transparent 8px)
+
+
 h1
     color #1a76d6
 
@@ -192,7 +187,7 @@ form
         font 60% / 125% $font-family normal
         height 2.1rem
         padding 0.4rem
-        color $color
+        color $colorText
         vertical-align text-bottom
 
 

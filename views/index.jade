@@ -16,15 +16,14 @@ html
 
         ul.teams
             for team in teams
-                li(id=team.name, class=team.cssClass)
+                li.team(id=team.name)
                     ul
                         li.member.headline(id=team.name)
                             h2
                                 name=team.name
                                     if team.head
                                         small=' ' + team.head
-                                if team.sprint
-                                    time=team.sprint.start.format(deDate) + ' – ' + team.sprint.end.format(deDate)
+                                time=team.sprint.start.format(deDate) + ' – ' + team.sprint.end.format(deDate)
 
                         if team.sprint
                             for member in team.members
@@ -33,22 +32,25 @@ html
                                         for memberDate in member.dates
                                             - var title = memberDate.date.format('LL') + (memberDate.description ? ': ' + memberDate.description : '')
                                             if (memberDate.date.format(isoDate) == team.date)
-                                                li.today(class=memberDate.cssClass, title=title )
+                                                li.status.today(class=memberDate.cssClass, title=title )
                                                     img(src=member.image_url)
                                                     span=memberDate.content
                                             else
-                                                li(class=memberDate.cssClass, title=title )
+                                                li.status(class=memberDate.cssClass, title=title )
                                                     span.date=memberDate.content
+
+                            if team.sprint.scrum
+                                - var percentage = team.summary.percentage
+                                - var backgroundGradient = 'linear-gradient(90deg, #a5c1d4 0, #a5c1d4 ' + percentage + '%, #da777b ' + percentage + '%, #da777b 100%)'
+                                li.summary
+                                    div(style='background-image:' + backgroundGradient)='Team ' + team.name + ' is ' + team.summary.memberAvailabilities + ' of ' + team.summary.memberDays + ' sprint days available'
+
                         else
+
                             for member in team.members
-                                li.member(class=member.cssClass, title=member.title)
-                                    img(src=member.image_url)
-                                    span=member.name
-                        if team.sprint && team.sprint.scrum
-                            - var percentage = team.summary.percentage
-                            - var backgroundGradient = 'linear-gradient(90deg, #a5c1d4 0, #a5c1d4 ' + percentage + '%, #da777b ' + percentage + '%, #da777b 100%)'
-                            li.member.summary
-                                div(style='background-image:'+backgroundGradient)='Team '+ team.name + ' is ' + team.summary.memberAvailabilities + ' of ' + team.summary.memberDays + ' sprint days available'
+                                li.status(class=member.cssClass, title=member.title)
+                                img(src=member.image_url)
+                                span=member.name
                     if team.status
                         h2.error Fetching calendar data failed with "
                             =team.status

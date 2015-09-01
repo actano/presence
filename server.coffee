@@ -10,10 +10,6 @@ module.exports = Promise.coroutine (date) ->
     teams = yield getAbsence date
 
     for team in teams
-        team.cssClass = ['team']
-        team.cssClass.push 'hasSprint' if team.sprint?
-        team.cssClass.push 'scrum' if team.sprint?.scrum
-
         if team.sprint
             team.head = if team.sprint.scrum then 'Sprint' else 'Week'
             team.head += " #{team.sprint.count + 1}"
@@ -26,23 +22,16 @@ module.exports = Promise.coroutine (date) ->
             avail = []
 
             for name, member of team.members
-                todayAbsence = member.absences[team.date] ? 'todayAbsence' : null
-                member.cssClass = [todayAbsence]
+                member.cssClass = []
                 member.dates = []
                 for date in team.queryDates
-                    status = null
-                    description = null
+                    memberDate = cssClass: [], date: date
                     absence = member.absences[date.format(isoDate)]
-                    preWeekend = date.day() == 5 ? 'preWeekend' : null
-                    postWeekend = date.day() == 1 ? 'postWeekend' : null
+                    memberDate.cssClass.push 'preWeekend' if date.day() == 5
+                    memberDate.cssClass.push 'postWeekend' if date.day() == 1
 
-                    memberDate =
-                        cssClass: [preWeekend, postWeekend]
-                        date: date
-                        description: description
-
-                    if absence?
-                        status = absence.status
+                    status = absence?.status
+                    if status?
                         if (status == 'absent' || status == 'public-holiday')
                             sprintMemberAvailabilities--
                         memberDate.description = absence.description
@@ -52,7 +41,7 @@ module.exports = Promise.coroutine (date) ->
                         memberDate.content = member.name
                         avail.push member unless absence?
                     else if status == 'public-holiday'
-                        memberDate.content = description
+                        memberDate.content = absence.description
                     else
                         memberDate.content = date.format('dd., DD.M.')
                     member.dates.push memberDate
@@ -69,13 +58,11 @@ module.exports = Promise.coroutine (date) ->
 
         else
             for member in team.members
-                status = null
-                description = null
-                if member.absences[team.date]
-                    status = member.absences[team.date].status
-                    description = member.absences[team.date].description
-                member.cssClass = [status]
-                member.title = description
+                member.cssClass = []
+                absence = member.absences[team.date]
+                if absence?
+                    member.cssClass.push absence.status
+                    member.title = absence.description
 
     data =
         teams: teams
