@@ -51,7 +51,7 @@ module.exports = Promise.coroutine (date) ->
         if team.sprint
             sprintStartDate = moment team.sprint.startDate
             weeksSinceSprintStart = userDate.diff(sprintStartDate, 'weeks')
-            if weeksSinceSprintStart > 0
+            if weeksSinceSprintStart >= 0 and (userDate.isAfter(sprintStartDate, 'day') or userDate.isSame(sprintStartDate, 'day'))
                 sprintsSinceFirstStart = Math.floor weeksSinceSprintStart / team.sprint.durationWeeks
                 currentSprintStartDate = sprintStartDate.add(sprintsSinceFirstStart * team.sprint.durationWeeks, 'weeks')
                 currentSprintEndDate = moment(currentSprintStartDate).add(team.sprint.durationWeeks, 'weeks').subtract(1, 'days')
