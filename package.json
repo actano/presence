@@ -8,8 +8,7 @@
   },
   "scripts": {
     "start": "coffee --nodejs --harmony index.coffee",
-    "shrinkwrap": "npm-shrinkwrap --dev",
-    "sw": "npm-shrinkwrap --dev"
+    "shrinkwrap": "npm-shrinkwrap --dev"
   },
   "author": "Actano GmbH",
   "license": "MIT",

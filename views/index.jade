@@ -1,6 +1,3 @@
-- var isoDate = 'YYYY-MM-DD'
-- var deDate = 'DD.MM.YYYY'
-
 doctype
 html
     head
@@ -53,49 +50,28 @@ html
                                 time=team.sprint.start.format(deDate) + ' – ' + team.sprint.end.format(deDate)
 
                         if team.sprint
-                            - var sprintDays = Object.keys(team.queryDates).length
-                            - var sprintMembers = Object.keys(team.members).length
-                            - var sprintMemberDays = sprintDays * sprintMembers
-                            - var sprintMemberAvailabilities = Number(sprintMemberDays)
-                        for member in team.members
-                            if team.sprint
-                                - todayAbsence = member.absences[team.date] ? 'todayAbsence' : null
-                                li.member(class=todayAbsence)
+                            for member in team.members
+                                li.member(class=member.cssClass)
                                     ul.filllevel
-                                        for date in team.queryDates
-                                            - status = null
-                                            - description = null
-                                            - var absence = member.absences[date.format(isoDate)]
-                                            - preWeekend = date.day() == 5 ? 'preWeekend' : null
-                                            - postWeekend = date.day() == 1 ? 'postWeekend' : null
-                                            if absence
-                                                - var status = absence.status
-                                                - if (status == 'absent' || status == 'public-holiday') {sprintMemberAvailabilities--}
-                                                - var description = absence.description
-                                            if (date.format(isoDate) == team.date)
-                                                li.today(class=status, class=preWeekend, class=postWeekend, title=date.format('LL') + (description ? ': ' + description : '') )
+                                        for memberDate in member.dates
+                                            - var title = memberDate.date.format('LL') + (memberDate.description ? ': ' + memberDate.description : '')
+                                            if (memberDate.date.format(isoDate) == team.date)
+                                                li.today(class=memberDate.cssClass, title=title )
                                                     img(src=member.image_url)
-                                                    span=member.name
+                                                    span=memberDate.content
                                             else
-                                                li(class=status, class=preWeekend, class=postWeekend, title=date.format('LL') + (description ? ': ' + description : '') )
-                                                    - var content = date.format('dd., DD.M.')
-                                                    if (status == 'public-holiday')
-                                                        - content = description
-                                                    span.date=content
-                            else
-                                - var status = null
-                                - var description = null
-                                if member.absences[team.date]
-                                    - status = member.absences[team.date].status
-                                    - description = member.absences[team.date].description
-                                li.member(class=status, title=description)
-                                    img(src=member.image_url)
-                                    span=member.name
+                                                li(class=memberDate.cssClass, title=title )
+                                                    span.date=memberDate.content
+                        else
+                            for member in team.members
+                                li.member(class=member.cssClass, title=member.title)
+                                img(src=member.image_url)
+                                span=member.name
                         if team.sprint && team.sprint.scrum
-                            - var percentage = (sprintMemberAvailabilities / (sprintMemberDays / 100))
+                            - var percentage = team.summary.percentage
                             - var backgroundGradient = 'linear-gradient(90deg, #a5c1d4 0, #a5c1d4 ' + percentage + '%, #da777b ' + percentage + '%, #da777b 100%)'
                             li.member.summary
-                                div(style='background-image:'+backgroundGradient)='Team '+ team.name + ' is ' + sprintMemberAvailabilities + ' of ' + sprintMemberDays + ' sprint days available'
+                                div(style='background-image:'+backgroundGradient)='Team '+ team.name + ' is ' + team.summary.memberAvailabilities + ' of ' + team.summary.memberDays + ' sprint days available'
                     if team.status
                         h2.error Fetching calendar data failed with "
                             =team.status

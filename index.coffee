@@ -5,6 +5,9 @@ autoprefixer = require 'express-autoprefixer'
 Promise = require 'bluebird'
 Promise.longStackTraces()
 
+isoDate = 'YYYY-MM-DD'
+deDate = 'DD.MM.YYYY'
+
 getAbsence = require './getAbsence'
 
 app = express()
@@ -32,6 +35,8 @@ app.get '/', Promise.coroutine (req, res) ->
     res.render 'index',
         results: teams
         teams: teams
+        isoDate: isoDate
+        deDate: deDate
 
 # respond with raw absence data
 app.get '/json', Promise.coroutine (req, res) ->
@@ -51,6 +56,60 @@ viewLogic = (teams) ->
         team.cssClass.push 'scrum' if team.sprint?.scrum
 
         if team.sprint
+            console.dir team
             team.head = if team.sprint.scrum then 'Sprint' else 'Week'
             team.head += " #{team.sprint.count + 1}"
+
+            sprintDays = Object.keys(team.queryDates).length
+            sprintMembers = Object.keys(team.members).length
+            sprintMemberDays = sprintDays * sprintMembers
+            sprintMemberAvailabilities = Number(sprintMemberDays)
+
+            for name, member of team.members
+                todayAbsence = member.absences[team.date] ? 'todayAbsence' : null
+                member.cssClass = [todayAbsence]
+                member.dates = []
+                for date in team.queryDates
+                    status = null
+                    description = null
+                    absence = member.absences[date.format(isoDate)]
+                    preWeekend = date.day() == 5 ? 'preWeekend' : null
+                    postWeekend = date.day() == 1 ? 'postWeekend' : null
+
+                    if absence
+                        status = absence.status
+                        if (status == 'absent' || status == 'public-holiday')
+                            sprintMemberAvailabilities--
+                        description = absence.description
+
+                    memberDate =
+                        cssClass: [status, preWeekend, postWeekend]
+                        date: date
+                        description: description
+
+                    if date.format(isoDate) == team.date
+                        memberDate.content = member.name
+                    else if status == 'public-holiday'
+                        memberDate.content = description
+                    else
+                        memberDate.content = date.format('dd., DD.M.')
+                    member.dates.push memberDate
+
+            team.summary =
+                percentage: (sprintMemberAvailabilities / (sprintMemberDays / 100))
+                memberAvailabilities: sprintMemberAvailabilities
+                memberDays: sprintMemberDays
+
+
+        else
+            for member in team.members
+                status = null
+                description = null
+                if member.absences[team.date]
+                    status = member.absences[team.date].status
+                    description = member.absences[team.date].description
+                member.cssClass = [status]
+                member.title = description
+
+
     teams
