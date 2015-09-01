@@ -1,9 +1,13 @@
-express = require 'express'
 path = require 'path'
-stylus = require 'stylus'
-autoprefixer = require 'express-autoprefixer'
+
 Promise = require 'bluebird'
 Promise.longStackTraces()
+
+moment = require 'moment'
+express = require 'express'
+stylus = require 'stylus'
+autoprefixer = require 'express-autoprefixer'
+seedrandom = require 'seedrandom'
 
 isoDate = 'YYYY-MM-DD'
 deDate = 'DD.MM.YYYY'
@@ -50,13 +54,13 @@ app.listen port, ->
     console.log "Listening on port #{port}..."
 
 viewLogic = (teams) ->
+    rng = null
     for team in teams
         team.cssClass = ['team']
         team.cssClass.push 'hasSprint' if team.sprint?
         team.cssClass.push 'scrum' if team.sprint?.scrum
 
         if team.sprint
-            console.dir team
             team.head = if team.sprint.scrum then 'Sprint' else 'Week'
             team.head += " #{team.sprint.count + 1}"
 
@@ -64,6 +68,8 @@ viewLogic = (teams) ->
             sprintMembers = Object.keys(team.members).length
             sprintMemberDays = sprintDays * sprintMembers
             sprintMemberAvailabilities = Number(sprintMemberDays)
+
+            avail = []
 
             for name, member of team.members
                 todayAbsence = member.absences[team.date] ? 'todayAbsence' : null
@@ -76,30 +82,36 @@ viewLogic = (teams) ->
                     preWeekend = date.day() == 5 ? 'preWeekend' : null
                     postWeekend = date.day() == 1 ? 'postWeekend' : null
 
-                    if absence
-                        status = absence.status
-                        if (status == 'absent' || status == 'public-holiday')
-                            sprintMemberAvailabilities--
-                        description = absence.description
-
                     memberDate =
-                        cssClass: [status, preWeekend, postWeekend]
+                        cssClass: [preWeekend, postWeekend]
                         date: date
                         description: description
 
+                    if absence?
+                        status = absence.status
+                        if (status == 'absent' || status == 'public-holiday')
+                            sprintMemberAvailabilities--
+                        memberDate.description = absence.description
+                        memberDate.cssClass.push status
+
                     if date.format(isoDate) == team.date
                         memberDate.content = member.name
+                        avail.push member unless absence?
                     else if status == 'public-holiday'
                         memberDate.content = description
                     else
                         memberDate.content = date.format('dd., DD.M.')
                     member.dates.push memberDate
 
+            if avail.length
+                unless rng?
+                    rng = seedrandom team.date
+                selectedMember = avail[Math.floor(rng() * avail.length)]
+                selectedMember.cssClass.push 'selected'
             team.summary =
                 percentage: (sprintMemberAvailabilities / (sprintMemberDays / 100))
                 memberAvailabilities: sprintMemberAvailabilities
                 memberDays: sprintMemberDays
-
 
         else
             for member in team.members

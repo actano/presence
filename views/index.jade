@@ -8,31 +8,8 @@ html
     body
         script.
             if (parent.frames.length > 0) {
-                document.querySelector('body').classList.add('framed');
+                document.body.classList.add('framed');
             }
-
-            // Array Remove - By John Resig (MIT Licensed)
-            Array.prototype.remove = function (from, to) {
-                var rest = this.slice((to || from) + 1 || this.length);
-                this.length = from < 0 ? this.length + from : from;
-                return this.push.apply(this, rest);
-            };
-
-
-            window.onload = function() {
-                scrumTeams = document.querySelectorAll('li.scrum > ul');
-                Math.seedrandom(document.querySelector('input').value)
-                for (var i = 0; i < scrumTeams.length; i++) {
-                    var members = getPresentMembers(scrumTeams[i]);
-                    todaysRandom = Math.floor(Math.random() * members.length)
-                    members[todaysRandom].classList.add('selected')
-                }
-
-            }
-            function getPresentMembers(team) {
-                return team.querySelectorAll('ul.members > li:not(.headline):not(.summary):not(.todayAbsence)');
-            }
-
 
         h1 Presence for  
             form(action='/')
@@ -78,5 +55,3 @@ html
                             | ", loading data from cache (
                             = team.cacheTimestamp
                             | ).
-
-
