@@ -1,13 +1,7 @@
-.*
+/public
+/cache
 node_modules
 npm-debug.log
-build
-/log
-/public
-*.iml
+.*
 *.map
 *.log
-cookbooks
-tmp
-tags
-test_reports
