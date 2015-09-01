@@ -39,36 +39,36 @@ html
 
         h1 Presence for  
             form(action='/')
-                input(type='date' name='date' value=results[0].date, onchange='document.forms[0].submit()')
+                input(type='date' name='date' value=teams[0].date, onchange='document.forms[0].submit()')
 
         ul.teams
-            for result in results
-                - var scrumClass = result.sprint && result.sprint.scrum ? 'scrum' : null
-                li(id=result.name, class=scrumClass)
-                    ul.members(class=result.sprint? 'hasSprint' : '')
-                        li.member.headline(id=result.name)
+            for team in teams
+                - var scrumClass = team.sprint && team.sprint.scrum ? 'scrum' : null
+                li(id=team.name, class=scrumClass)
+                    ul.members(class=team.sprint? 'hasSprint' : '')
+                        li.member.headline(id=team.name)
                             h2
-                                name=result.name
-                                    if result.sprint
+                                name=team.name
+                                    if team.sprint
                                         small  | 
-                                            if result.sprint.scrum
+                                            if team.sprint.scrum
                                                 | Sprint 
                                             else
                                                 | Week 
-                                            =(result.sprint.count + 1) + ' '
-                                time=result.sprint.start.format(deDate) + ' – ' + result.sprint.end.format(deDate)
+                                            =(team.sprint.count + 1) + ' '
+                                time=team.sprint.start.format(deDate) + ' – ' + team.sprint.end.format(deDate)
 
-                        if result.sprint
-                            - var sprintDays = Object.keys(result.queryDates).length
-                            - var sprintMembers = Object.keys(result.members).length
+                        if team.sprint
+                            - var sprintDays = Object.keys(team.queryDates).length
+                            - var sprintMembers = Object.keys(team.members).length
                             - var sprintMemberDays = sprintDays * sprintMembers
                             - var sprintMemberAvailabilities = Number(sprintMemberDays)
-                        for member in result.members
-                            if result.sprint
-                                - todayAbsence = member.absences[result.date] ? 'todayAbsence' : null
+                        for member in team.members
+                            if team.sprint
+                                - todayAbsence = member.absences[team.date] ? 'todayAbsence' : null
                                 li.member(class=todayAbsence)
                                     ul.filllevel
-                                        for date in result.queryDates
+                                        for date in team.queryDates
                                             - status = null
                                             - description = null
                                             - var absence = member.absences[date.format(isoDate)]
@@ -78,7 +78,7 @@ html
                                                 - var status = absence.status
                                                 - if (status == 'absent' || status == 'public-holiday') {sprintMemberAvailabilities--}
                                                 - var description = absence.description
-                                            if (date.format(isoDate) == result.date)
+                                            if (date.format(isoDate) == team.date)
                                                 li.today(class=status, class=preWeekend, class=postWeekend, title=date.format('LL') + (description ? ': ' + description : '') )
                                                     img(src=member.image_url)
                                                     span=member.name
@@ -91,22 +91,22 @@ html
                             else
                                 - var status = null
                                 - var description = null
-                                if member.absences[result.date]
-                                    - status = member.absences[result.date].status
-                                    - description = member.absences[result.date].description
+                                if member.absences[team.date]
+                                    - status = member.absences[team.date].status
+                                    - description = member.absences[team.date].description
                                 li.member(class=status, title=description)
                                     img(src=member.image_url)
                                     span=member.name
-                        if result.sprint && result.sprint.scrum
+                        if team.sprint && team.sprint.scrum
                             - var percentage = (sprintMemberAvailabilities / (sprintMemberDays / 100))
                             - var backgroundGradient = 'linear-gradient(90deg, #a5c1d4 0, #a5c1d4 ' + percentage + '%, #da777b ' + percentage + '%, #da777b 100%)'
                             li.member.summary
-                                div(style='background-image:'+backgroundGradient)='Team '+ result.name + ' is ' + sprintMemberAvailabilities + ' of ' + sprintMemberDays + ' sprint days available'
-                    if result.status
+                                div(style='background-image:'+backgroundGradient)='Team '+ team.name + ' is ' + sprintMemberAvailabilities + ' of ' + sprintMemberDays + ' sprint days available'
+                    if team.status
                         h2.error Fetching calendar data failed with "
-                            =result.status
+                            =team.status
                             | ", loading data from cache (
-                            = result.cacheTimestamp
+                            = team.cacheTimestamp
                             | ).
 
 

@@ -26,8 +26,11 @@ app.use autoprefixer browsers: 'last 2 versions', cascade: false
 
 # respond with rendered html
 app.get '/', Promise.coroutine (req, res) ->
+    teams = yield getAbsence req.query?.date
+
     res.render 'index',
-        results: yield getAbsence req.query?.date
+        results: teams
+        teams: teams
 
 # respond with raw absence data
 app.get '/json', Promise.coroutine (req, res) ->
