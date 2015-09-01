@@ -23,7 +23,8 @@ html
                                 name=team.name
                                     if team.head
                                         small=' ' + team.head
-                                time=team.sprint.start.format(deDate) + ' – ' + team.sprint.end.format(deDate)
+                                if team.sprint
+                                    time=team.sprint.start.format(deDate) + ' – ' + team.sprint.end.format(deDate)
 
                         if team.sprint
                             for member in team.members
@@ -41,8 +42,8 @@ html
                         else
                             for member in team.members
                                 li.member(class=member.cssClass, title=member.title)
-                                img(src=member.image_url)
-                                span=member.name
+                                    img(src=member.image_url)
+                                    span=member.name
                         if team.sprint && team.sprint.scrum
                             - var percentage = team.summary.percentage
                             - var backgroundGradient = 'linear-gradient(90deg, #a5c1d4 0, #a5c1d4 ' + percentage + '%, #da777b ' + percentage + '%, #da777b 100%)'
