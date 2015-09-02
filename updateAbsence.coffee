@@ -16,15 +16,26 @@ Promise.promisifyAll request
 Promise.promisifyAll fs
 
 # load team meta data
-teams = require './teams'
+fs = require 'fs'
+yaml = require 'js-yaml'
+url = require 'url'
 
-EMAIL_SUFFIX = '@company.com'
-GRAVATAR_PREFIX = 'https://www.gravatar.com/avatar/'
-GRAVATAR_SUFFIX = '?s=50'
+applyDefaults = (defaults, target) ->
+    for k, v of defaults
+        if typeof target[k] is 'object'
+            applyDefaults v, target[k] if typeof v is 'object'
+        else
+            target[k] = v unless target[k]?
+
+config = yaml.safeLoad fs.readFileSync 'teams.yml'
+teams = config.teams
+for team in teams
+    applyDefaults config.teamDefaults, team
+    team.calendar = url.resolve config.calendarPrefix, team.calendar
 
 getGravatarUrlFromName = (name) ->
-    name_md5 = md5 urlify(name.toLowerCase()) + EMAIL_SUFFIX
-    "#{GRAVATAR_PREFIX}#{name_md5}"
+    name_md5 = md5 urlify(name.toLowerCase()) + config.emailSuffix
+    "#{config.gravatarPrefix}#{name_md5}"
 
 getIcsFilePath = (name, folder = 'cache') ->
     path.join(__dirname, folder, "#{name}.ics")
