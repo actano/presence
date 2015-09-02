@@ -3,6 +3,11 @@ $colorText = #333333
 $colorAvailable = #a5c1d4
 $colorAbsent = #da777b
 $colorAway = #faf0a6
+$colorSelected = #78aad6
+
+$colorWeekEven = lightgray
+$colorWeekOdd = white
+$colorToday = gray
 
 $widgetbackground = #f3f3f3
 $teambackground = white
@@ -10,6 +15,9 @@ $font-family = 'Proxima Nova', Arial, Verdana, sans-serif
 
 $memberwidth = 27rem
 $border = 1px solid $teambackground
+
+striped(color, direction = -45deg)
+    repeating-linear-gradient(direction, color 0, color 4px, transparent 4px, transparent 8px)
 
 html
     font 73% / 125% $font-family normal
@@ -33,88 +41,50 @@ ul.teams
         background-color $teambackground
         margin-bottom 2rem
 
-        > ul
+table
+    border-collapse collapse
+    col.weekEven
+        background alpha(#000, 0.1)
+    col.weekOdd
+        background alpha(#000, 0.2)
+    col.today
+        background alpha(#000, 0.3)
+
+    tbody
+        tr.selected
+            background-color $colorSelected
+        tr.absent
+            opacity 0.5
+            background-color $colorAbsent
+        tr.away
+            background-color $colorAway
+
+        th
+            text-align left
+            padding 0
             position relative
 
-            li.member
-                font-size 125%
-                vertical-align baseline
-                border $border
-                margin 0.2rem 0 0 0
-                padding 0.4rem
-                padding-left 4.1rem
-                position relative
-                width $memberwidth
-                height 4rem
-                background-color $teambackground
-                &:last-child
-                    margin-bottom 0.2rem
-                span
-                    display block
-                    text-overflow ellipsis
-                    white-space nowrap
-                    overflow hidden
-                    padding 0 0.3rem
-                    line-height 2.6
-                img
-                    width 3rem
-                    left 0.5rem
-                    top 0.5rem
-                    position absolute
-                    border-radius 50%
-                    display block
+            img
+                display block
+                width 40px
+                height 40px
+            span
+                position absolute
+                left 42px
+                top 2px
+                width 200px
+        td
+            vertical-align bottom
+            padding 0 1px
 
-                &.selected
-                    background-color: #78aad6
-                &.preWeekend:not(:last-child)
-                .preWeekend:not(:last-child)
-                    margin-right 0.3rem
-
-                .filllevel
-                    display flex
-                    height 100%
-                    align-items flex-end
-                    li
-                        flex 1 0 auto
-                        border-left $border
-                        height 50%
-                        transition all 100ms
-                        font-size 80%
-                        line-height 200%
-                        padding 0 0.3rem
-                        &:not(.today)
-                            position relative
-                        &:first-child
-                            border-left none
-                        &.today
-                            font-size 100%
-                            line-height 1.6
-                            height 100%
-                            width 50%
-                            span
-                                padding 0 0.2rem
-                        .date
-                            display none
-                            position absolute
-                            bottom 100%
-                            left -1rem
-                            overflow visible
-                            line-height inherit
-                            padding 0 0.3rem
-                            background $teambackground
-                            &:after
-                                content ''
-                                position absolute
-                                top 100%
-                                left 1.1rem
-                                width 0
-                                height 0
-                                border 0.5rem solid transparent
-                                border-top-color $teambackground
-                        &:hover .date
-                            display block
-                        span
-                            padding 0
+            span
+                display block
+                height 20px
+                width 20px
+                margin-bottom 3px
+                opacity 0.5
+            &.today span
+                    opacity 1
 
 .status
     background-color $colorAvailable
@@ -124,30 +94,28 @@ ul.teams
         text-decoration line-through
         background-color $colorAbsent
     &.public-holiday
-        background-image repeating-linear-gradient(-45deg, alpha(gray, 0.2) 0, alpha(gray, 0.2) 4px, transparent 4px, transparent 8px)
+        background-image striped(alpha(gray, 0.2))
     &.away
         background-color $colorAway
     &.awayPartial
-        background-image repeating-linear-gradient(-45deg, $colorAway 0, $colorAway 4px, transparent 4px, transparent 8px)
-
+        background-image striped($colorAway)
 
 h1
     color #1a76d6
 
 .headline
-    font-size 100%
-    padding 0 0.4rem !important
-    & > h2
-        display flex
-        vertical-align middle
-        justify-content space-between
-        align-items baseline
+    margin 0
+    font-size 150%
+    padding 0.6rem
+    display flex
+    vertical-align middle
+    justify-content space-between
+    align-items baseline
     small
         font-weight normal
     time
         font-weight normal
         font-size 1rem
-        float right
         color #999
 
 .summary
@@ -163,7 +131,7 @@ h1
 
 
 h2 
-    margin 1.3rem 0 
+    margin 0.3rem 0
     &.error
         background-color #7d0000
         color #fff

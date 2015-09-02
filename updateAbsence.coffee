@@ -24,7 +24,7 @@ GRAVATAR_SUFFIX = '?s=50'
 
 getGravatarUrlFromName = (name) ->
     name_md5 = md5 urlify(name.toLowerCase()) + EMAIL_SUFFIX
-    "#{GRAVATAR_PREFIX}#{name_md5}#{GRAVATAR_SUFFIX}"
+    "#{GRAVATAR_PREFIX}#{name_md5}"
 
 getIcsFilePath = (name, folder = 'cache') ->
     path.join(__dirname, folder, "#{name}.ics")

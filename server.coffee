@@ -4,15 +4,18 @@ getAbsence = require './getAbsence'
 
 module.exports = Promise.coroutine (date) ->
     isoDate = 'YYYY-MM-DD'
-    deDate = 'DD.MM.YYYY'
+    deDate = 'DD.MM.'
     rng = null
 
     teams = yield getAbsence date
 
     for team in teams
+        if team.status
+            team.statusDescription = "Fetching calendar data failed with \"#{team.status}\", loading data from cache (#{team.cacheTimestamp})."
+
         if team.sprint
-            team.head = if team.sprint.scrum then 'Sprint' else 'Week'
-            team.head += " #{team.sprint.count + 1}"
+            team.head = if team.sprint.scrum then 'S' else 'W'
+            team.head += team.sprint.count + 1
 
             sprintDays = Object.keys(team.queryDates).length
             sprintMembers = Object.keys(team.members).length
@@ -39,6 +42,7 @@ module.exports = Promise.coroutine (date) ->
 
                     if date.format(isoDate) == team.date
                         memberDate.content = member.name
+                        member.cssClass.push status if status?
                         avail.push member unless absence?
                     else if status == 'public-holiday'
                         memberDate.content = absence.description
@@ -51,10 +55,13 @@ module.exports = Promise.coroutine (date) ->
                     rng = seedrandom team.date
                 selectedMember = avail[Math.floor(rng() * avail.length)]
                 selectedMember.cssClass.push 'selected'
+            percentage = 100 * sprintMemberAvailabilities / sprintMemberDays
             team.summary =
-                percentage: (sprintMemberAvailabilities / (sprintMemberDays / 100))
+                percentage: percentage
                 memberAvailabilities: sprintMemberAvailabilities
                 memberDays: sprintMemberDays
+                backgroundGradient: "linear-gradient(90deg, #a5c1d4 0, #a5c1d4 #{percentage}%, #da777b #{percentage}%, #da777b 100%)"
+                description: "#{sprintMemberAvailabilities}/#{sprintMemberDays}d available"
 
         else
             for member in team.members
