@@ -38,7 +38,7 @@ html
                             tr
                                 th
                                 for date in team.queryDates
-                                    th(scope=col)=date.format('DD')
+                                    th(scope=col)=date.format('D')
 
                         tbody
                             for member in team.members

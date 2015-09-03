@@ -40,27 +40,37 @@ ul.teams
     li.team
         background-color $teambackground
         margin-bottom 2rem
+        overflow hidden
 
 table
     border-collapse collapse
     col.weekEven
-        background alpha(#000, 0.1)
+        background alpha(#000, 0.01)
     col.weekOdd
-        background alpha(#000, 0.2)
+        background alpha(#000, 0.05)
     col.today
-        background alpha(#000, 0.3)
+        background alpha(#080, 0.3)
+
+    thead
+        th
+            text-align center
 
     tbody
-        tr.selected
-            background-color $colorSelected
+        tr
+            border-bottom 2px solid transparent
+
+        tr.selected th span
+            font-weight bold
+            text-decoration underline
+
         tr.absent
-            opacity 0.5
-            background-color $colorAbsent
+            opacity 0.3
         tr.away
             background-color $colorAway
 
         th
             text-align left
+            font-weight normal
             padding 0
             position relative
 
@@ -79,9 +89,9 @@ table
 
             span
                 display block
-                height 20px
-                width 20px
-                margin-bottom 3px
+                height 17px
+                width 17px
+                margin-bottom 4px
                 opacity 0.5
             &.today span
                     opacity 1
