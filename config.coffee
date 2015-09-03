@@ -13,6 +13,9 @@ module.exports = (date) ->
             unless current?
                 target[k] = defaultValue
             else if Array.isArray(current) and Array.isArray(defaultValue)
+                unless current.length
+                    target[k] = current
+                    continue
                 removes = {}
                 for i in [current.length-1..0]
                     item = current[i]
