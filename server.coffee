@@ -1,5 +1,6 @@
 Promise = require 'bluebird'
 seedrandom = require 'seedrandom'
+moment = require 'moment'
 getAbsence = require './getAbsence'
 
 module.exports = Promise.coroutine (date) ->
@@ -11,7 +12,7 @@ module.exports = Promise.coroutine (date) ->
 
     for team in teams
         if team.status
-            team.statusDescription = "Fetching calendar data failed with \"#{team.status}\", loading data from cache (#{team.cacheTimestamp})."
+            team.statusDescription = "Calendar failed: \"#{team.status}\", loading data from cache (#{moment(team.cacheTimestamp).format('L LT')})."
 
         if team.sprint
             team.head = if team.sprint.scrum then 'S' else 'W'

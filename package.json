@@ -7,7 +7,8 @@
     "npm": "2.7.6"
   },
   "scripts": {
-    "start": "coffee --nodejs --harmony-generators index.coffee"
+    "start": "coffee --nodejs --harmony-generators index.coffee",
+    "convert": "coffee --nodejs --harmony-generators convert.coffee"
   },
   "author": "Actano GmbH",
   "license": "MIT",

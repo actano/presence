@@ -16,33 +16,19 @@ Promise.promisifyAll request
 Promise.promisifyAll fs
 
 # load team meta data
-fs = require 'fs'
-yaml = require 'js-yaml'
-url = require 'url'
-
-applyDefaults = (defaults, target) ->
-    for k, v of defaults
-        if typeof target[k] is 'object'
-            applyDefaults v, target[k] if typeof v is 'object'
-        else
-            target[k] = v unless target[k]?
-
-config = yaml.safeLoad fs.readFileSync 'teams.yml'
-teams = config.teams
-for team in teams
-    applyDefaults config.teamDefaults, team
-    team.calendar = url.resolve config.calendarPrefix, team.calendar
-
-getGravatarUrlFromName = (name) ->
-    name_md5 = md5 urlify(name.toLowerCase()) + config.emailSuffix
-    "#{config.gravatarPrefix}#{name_md5}"
-
-getIcsFilePath = (name, folder = 'cache') ->
-    path.join(__dirname, folder, "#{name}.ics")
-
 module.exports = Promise.coroutine (date) ->
     date = moment() if not moment(date).isValid()
     userDate = moment(date)
+
+    config = require('./config') userDate
+    teams = config.teams
+
+    getGravatarUrlFromName = (name) ->
+        name_md5 = md5 urlify(name.toLowerCase()) + config.emailSuffix
+        "#{config.gravatarPrefix}#{name_md5}"
+
+    getIcsFilePath = (name, folder = 'cache') ->
+        path.join(__dirname, folder, "#{name}.ics")
 
     # skip weekends
     while userDate.day() is 0 or userDate.day() is 6
