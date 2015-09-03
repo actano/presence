@@ -16,7 +16,6 @@ module.exports = (date) ->
                 removes = {}
                 for i in [current.length-1..0]
                     item = current[i]
-                    console.log item
                     if removePrefix is item.substring 0, removePrefix.length
                         item = item.substring removePrefix.length
                         removes[item] = true
