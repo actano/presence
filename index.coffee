@@ -6,6 +6,7 @@ Promise.longStackTraces()
 express = require 'express'
 stylus = require 'stylus'
 autoprefixer = require 'express-autoprefixer'
+moment = require 'moment'
 
 app = express()
 
@@ -27,7 +28,13 @@ app.use autoprefixer browsers: 'last 2 versions', cascade: false
 
 # respond with rendered html
 app.get '/', Promise.coroutine (req, res) ->
-    data = yield server req.query?.date
+    if req.query?.date?
+        date = moment req.query.date
+        date = null unless date.isValid()
+    date = moment() unless date?
+    date.startOf 'day'
+
+    data = yield server date
     res.render 'index', data
 
 app.use express.static publicDir

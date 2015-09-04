@@ -16,10 +16,7 @@ Promise.promisifyAll request
 Promise.promisifyAll fs
 
 # load team meta data
-module.exports = Promise.coroutine (date) ->
-    date = moment() if not moment(date).isValid()
-    userDate = moment(date)
-
+module.exports = Promise.coroutine (userDate) ->
     config = require('./config') userDate
     teams = config.teams
 
