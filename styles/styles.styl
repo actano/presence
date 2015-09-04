@@ -4,6 +4,7 @@ $colorAvailable = #a5c1d4
 $colorAbsent = #da777b
 $colorAway = #faf0a6
 $colorSelected = #78aad6
+$colorHoliday = alpha(gray, 0.2)
 
 $colorWeekEven = lightgray
 $colorWeekOdd = white
@@ -15,6 +16,9 @@ $font-family = 'Proxima Nova', Arial, Verdana, sans-serif
 
 $memberwidth = 27rem
 $border = 1px solid $teambackground
+
+$daySize = 17px
+$avatarSize = 40px
 
 striped(color, direction = -45deg)
     repeating-linear-gradient(direction, color 0, color 4px, transparent 4px, transparent 8px)
@@ -49,7 +53,7 @@ table
     col.weekOdd
         background alpha(#000, 0.05)
     col.today
-        background alpha(#080, 0.3)
+        background alpha(#080, 0.2)
 
     thead
         th
@@ -64,9 +68,10 @@ table
             text-decoration underline
 
         tr.absent
+            background-color alpha($colorAbsent, 0.5)
             opacity 0.3
         tr.away
-            background-color $colorAway
+            background-color alpha($colorAway, 0.5)
 
         th
             text-align left
@@ -76,25 +81,36 @@ table
 
             img
                 display block
-                width 40px
-                height 40px
+                width $avatarSize
+                height @height
+
+            // span for member name at head
             span
                 position absolute
-                left 42px
+                left (2px + $avatarSize)
                 top 2px
                 width 200px
+                text-shadow 1px 1px 2px white
         td
             vertical-align bottom
             padding 0 1px
 
             span
                 display block
-                height 17px
-                width 17px
+                height $daySize
+                width @height
                 margin-bottom 4px
                 opacity 0.5
+
+                // Span for the member name INSIDE of today box
+                span
+                  display none
+
             &.today span
-                    opacity 1
+                opacity 1
+                //width 17*4px
+                //height 40px
+                //text-overflow ellipsis
 
 .status
     background-color $colorAvailable
@@ -104,7 +120,7 @@ table
         text-decoration line-through
         background-color $colorAbsent
     &.public-holiday
-        background-image striped(alpha(gray, 0.2))
+        background-image striped($colorHoliday)
     &.away
         background-color $colorAway
     &.awayPartial
@@ -129,8 +145,8 @@ h1
         color #999
 
 .summary
-    font-size 100% !important
-    height auto!important
+    font-size 100%
+    height auto
     div
         font-weight normal
         padding 0.3rem

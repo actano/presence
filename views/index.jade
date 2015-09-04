@@ -47,8 +47,11 @@ html
                                         img(src=member.image_url + '?s=40')
                                         span=member.name
                                     for memberDate in member.dates
-                                        td(class=memberDate.date.format(isoDate) == team.date ? 'today' : null)
+                                        - var today = memberDate.date.format(isoDate) == team.date
+                                        td(class=today ? 'today' : null)
                                             span.status(class=memberDate.cssClass, title=memberDate.description)
+                                                if today
+                                                    span=member.name
 
                         if team.sprint.scrum
                             tfoot
