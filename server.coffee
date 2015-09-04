@@ -3,11 +3,11 @@ seedrandom = require 'seedrandom'
 moment = require 'moment'
 getAbsence = require './getAbsence'
 
-module.exports = Promise.coroutine (date) ->
+module.exports = Promise.coroutine (queryDate) ->
     isoDate = 'YYYY-MM-DD'
     rng = null
 
-    teams = yield getAbsence date
+    teams = yield getAbsence queryDate
 
     for team in teams
         if team.status
@@ -75,4 +75,4 @@ module.exports = Promise.coroutine (date) ->
         teams: teams
         isoDate: isoDate
         isToday: (moment) ->
-            moment.isSame(date, 'day')
+            moment.isSame(queryDate, 'day')
