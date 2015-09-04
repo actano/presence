@@ -57,8 +57,8 @@ html
                             tfoot
                                 tr
                                     - var percentage = team.summary.percentage
-                                    - var backgroundGradient = 'linear-gradient(90deg, #a5c1d4 0, #a5c1d4 ' + percentage + '%, #da777b ' + percentage + '%, #da777b 100%)'
-                                    td(colspan=cells, style='background-image:' + team.summary.backgroundGradient)=team.summary.description
+                                    td(colspan=cells)
+                                        .percentage(style='width: ' + percentage + '%')=team.summary.description
 
                     if team.statusDescription
                         h2.error=team.statusDescription

@@ -5,7 +5,6 @@ $colorText = #333333
 $colorAvailable = $actanoBlue
 $colorAbsent = #da777b
 $colorAway = #faf0a6
-$colorSelected = #78aad6
 $colorHoliday = alpha(gray, 0.2)
 
 $colorWeekEven = lightgray
@@ -57,14 +56,25 @@ table
     col.today
         background alpha(#080, 0.2)
 
+    th, td
+        padding 0
+        margin 0
+
     thead
         th
             text-align center
 
-    tbody
-        tr
-            border-bottom 2px solid transparent
+    tfoot
+        td
+            background-color $colorAbsent
 
+            div
+                background-color lighten($colorAvailable, 80%)
+                text-wrap none
+                overflow visible
+                padding 2px
+
+    tbody
         tr.selected th span
             font-weight bold
             text-decoration underline
@@ -81,7 +91,6 @@ table
         th
             text-align left
             font-weight normal
-            padding 0
             position relative
 
             img
@@ -163,14 +172,10 @@ h2
         background-color #7d0000
         color #fff
         font-size 100%
-        vertical-align baseline
-        border $border
         line-height 1.6
         padding 0.3rem
-        position relative
-        width $memberwidth
         text-align center
-        margin-left 0
+
 ul
     list-style none
     padding 0
