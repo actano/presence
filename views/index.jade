@@ -1,3 +1,59 @@
+- var deDate = 'DD.MM.'
+
+mixin teamHeadline(team)
+    h2.headline
+        name=team.name
+        if team.head
+            small=' ' + team.head
+        if team.sprint.scrum
+            time=team.sprint.start.format(deDate) + ' – ' + team.sprint.end.format(deDate)
+
+mixin teamMemberRow(team, member)
+    tr(class=member.cssClass)
+        th(scope=row)
+            img(src=member.image_url + '?s=40')
+            span=member.name
+        for memberDate in member.dates
+            - var today = isToday(memberDate.date)
+            td(class=today ? 'today' : null)
+                span.status(class=memberDate.cssClass, title=memberDate.description)
+                    if today
+                        span=member.name
+
+mixin teamScrumFooter(team, cells)
+    tfoot
+        tr
+            td(colspan=cells)
+                - var percentage = team.summary.percentage
+                .percentage(style='width: ' + percentage + '%')=team.summary.description
+
+mixin calendarHead(queryDates)
+    col.head
+    for date in queryDates
+        - var today = isToday(date) ? 'today' : null
+        - var week = date.week() % 2 ? 'weekOdd' : 'weekEven'
+        col(class=[today, week])
+    thead
+        tr
+            th
+            for date in queryDates
+                th(scope=col)=date.format('D')
+
+mixin renderTeam(team)
+    - var cells = team.queryDates.length + 1
+    table
+        caption
+            +teamHeadline(team)
+        +calendarHead(team.queryDates)
+        tbody
+            for member in team.members
+                +teamMemberRow(team, member)
+        if team.sprint.scrum
+            +teamScrumFooter(team, cells)
+
+    if team.statusDescription
+        h2.error=team.statusDescription
+
 doctype
 html
     head
@@ -17,49 +73,4 @@ html
         ul.teams
             for team in teams
                 li.team(id=team.name)
-                    - var cells = team.queryDates.length + 1
-                    table
-                        caption
-                            h2.headline
-                                name=team.name
-                                if team.head
-                                    small=' ' + team.head
-                                if team.sprint.scrum
-                                    time=team.sprint.start.format(deDate) + ' – ' + team.sprint.end.format(deDate)
-
-                        col.head
-                        for date in team.queryDates
-                            - var today = date.format(isoDate) == team.date ? 'today' : null
-                            - var friday = date.isoWeekday() == 5 ? 'friday' : null
-                            - var week = date.week() % 2 ? 'weekOdd' : 'weekEven'
-                            col(class=[today, friday, week])
-
-                        thead
-                            tr
-                                th
-                                for date in team.queryDates
-                                    th(scope=col)=date.format('D')
-
-                        tbody
-                            for member in team.members
-                                tr(class=member.cssClass)
-                                    th(scope=row)
-                                        img(src=member.image_url + '?s=40')
-                                        span=member.name
-                                    for memberDate in member.dates
-                                        - var today = memberDate.date.format(isoDate) == team.date
-                                        td(class=today ? 'today' : null)
-                                            span.status(class=memberDate.cssClass, title=memberDate.description)
-                                                if today
-                                                    span=member.name
-
-                        if team.sprint.scrum
-                            tfoot
-                                tr
-                                    - var percentage = team.summary.percentage
-                                    td(colspan=cells)
-                                        .percentage(style='width: ' + percentage + '%')=team.summary.description
-
-                    if team.statusDescription
-                        h2.error=team.statusDescription
-
+                    +renderTeam(team)

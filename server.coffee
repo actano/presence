@@ -5,7 +5,6 @@ getAbsence = require './getAbsence'
 
 module.exports = Promise.coroutine (date) ->
     isoDate = 'YYYY-MM-DD'
-    deDate = 'DD.MM.'
     rng = null
 
     teams = yield getAbsence date
@@ -75,4 +74,5 @@ module.exports = Promise.coroutine (date) ->
     data =
         teams: teams
         isoDate: isoDate
-        deDate: deDate
+        isToday: (moment) ->
+            moment.isSame(date, 'day')
