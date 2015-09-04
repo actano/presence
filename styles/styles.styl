@@ -1,6 +1,8 @@
+$actanoBlue = #1a76d6
+
 $colorText = #333333
 
-$colorAvailable = #a5c1d4
+$colorAvailable = $actanoBlue
 $colorAbsent = #da777b
 $colorAway = #faf0a6
 $colorSelected = #78aad6
@@ -68,10 +70,12 @@ table
             text-decoration underline
 
         tr.absent
-            background-color alpha($colorAbsent, 0.5)
-            opacity 0.3
+            background-color alpha($colorAbsent, 0.2)
+            th
+              opacity 0.5
+
         tr.away
-            background-color alpha($colorAway, 0.5)
+            background-color alpha($colorAway, 0.2)
 
         th
             text-align left
@@ -100,17 +104,13 @@ table
                 height $daySize
                 width @height
                 margin-bottom 4px
-                opacity 0.5
 
                 // Span for the member name INSIDE of today box
                 span
                   display none
 
-            &.today span
-                opacity 1
-                //width 17*4px
-                //height 40px
-                //text-overflow ellipsis
+            &:not(.today) span
+                opacity 0.2
 
 .status
     background-color $colorAvailable
@@ -127,7 +127,7 @@ table
         background-image striped($colorAway)
 
 h1
-    color #1a76d6
+    color $actanoBlue
 
 .headline
     margin 0
