@@ -94,7 +94,11 @@ module.exports = Promise.coroutine (userDate) ->
             teamCalendarData = response.body
 
             # write ics to file for recovery
-            yield fs.writeFileAsync getIcsFilePath(result.name), teamCalendarData
+            icsFileName = getIcsFilePath(result.name)
+            folderName = path.dirname icsFileName
+            exists = yield new Promise (resolver) -> fs.exists folderName, resolver
+            yield fs.mkdirAsync folderName unless exists
+            yield fs.writeFileAsync icsFileName, teamCalendarData
             console.info "#{result.name}.ics is saved!"
 
         teamCalendar = new ICAL.Component ICAL.parse(teamCalendarData)[1]
