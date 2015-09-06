@@ -115,62 +115,62 @@ module.exports = Promise.coroutine (userDate) ->
                 updateEvent icalEvent, calendarType, queryDate
 
         updateEvent = (icalEvent, calendarType, queryDate) ->
-                # init to defaults
-                status = 'absent'
-                isAbsent = false
+            # init to defaults
+            status = 'absent'
+            isAbsent = false
 
-                # switch to away (aka. home-office or business travel)
+            # switch to away (aka. home-office or business travel)
+            icalEvent.component.jCal[1].map ([name, meta, type, value]) ->
+                if name is 'x-confluence-subcalendar-type' and value is 'travel'
+                    status = 'away'
+
+            # normalize name ('Who and Description are separated by :')
+            name = icalEvent.summary.split(':')[0]
+
+            # map iCal dates to native dates
+            start = moment icalEvent.startDate?.toJSDate()
+            end = moment icalEvent.endDate?.toJSDate()
+
+            # handle recurring absences
+            if icalEvent.isRecurring() and
+                    (start.isBefore(queryDate, 'day') or start.isSame(queryDate, 'day')) and
+                    ((icalEvent.getRecurrenceTypes()?.WEEKLY and start.day() is queryDate.day()) or
+                    (icalEvent.getRecurrenceTypes()?.YEARLY and start.format('MM-DD') is queryDate.format('MM-DD'))
+                    )
+
+
+                isAbsent = true
+
+                # hand parse the exceptions and recurrence end date (until)
+                # see https://tools.ietf.org/html/rfc5545#section-3.8.5
                 icalEvent.component.jCal[1].map ([name, meta, type, value]) ->
-                    if name is 'x-confluence-subcalendar-type' and value is 'travel'
-                        status = 'away'
+                    if name is 'exdate' and moment(value).isSame queryDate, 'day'
+                        isAbsent = false
 
-                # normalize name ('Who and Description are separated by :')
-                name = icalEvent.summary.split(':')[0]
-
-                # map iCal dates to native dates
-                start = moment icalEvent.startDate?.toJSDate()
-                end = moment icalEvent.endDate?.toJSDate()
-
-                # handle recurring absences
-                if icalEvent.isRecurring() and
-                        (start.isBefore(queryDate, 'day') or start.isSame(queryDate, 'day')) and
-                        ((icalEvent.getRecurrenceTypes()?.WEEKLY and start.day() is queryDate.day()) or
-                        (icalEvent.getRecurrenceTypes()?.YEARLY and start.format('MM-DD') is queryDate.format('MM-DD'))
-                        )
-
-
-                    isAbsent = true
-
-                    # hand parse the exceptions and recurrence end date (until)
-                    # see https://tools.ietf.org/html/rfc5545#section-3.8.5
-                    icalEvent.component.jCal[1].map ([name, meta, type, value]) ->
-                        if name is 'exdate' and moment(value).isSame queryDate, 'day'
+                    if name is 'rrule'
+                        untilDateString = /UNTIL=(.*);/.exec(value)?[1]
+                        if untilDateString and moment(untilDateString).isBefore queryDate
                             isAbsent = false
 
-                        if name is 'rrule'
-                            untilDateString = /UNTIL=(.*);/.exec(value)?[1]
-                            if untilDateString and moment(untilDateString).isBefore queryDate
-                                isAbsent = false
+            # if start is queryDate and duration less then seven hours, add the person to partial-absence list
+            else if start.isSame(queryDate, 'day') and end.diff(start) < (7 * 60 * 60 * 1000)
+                isAbsent = true
+                status = 'awayPartial'
 
-                # if start is queryDate and duration less then seven hours, add the person to partial-absence list
-                else if start.isSame(queryDate, 'day') and end.diff(start) < (7 * 60 * 60 * 1000)
-                    isAbsent = true
-                    status = 'awayPartial'
+            # if both start and end are between yesterday and tomorrow, add the person to absence list
+            else if start.isBefore(moment(queryDate).add(1, 'days').subtract(1, 'minutes')) and end.isAfter(queryDate)
+                isAbsent = true
 
-                # if both start and end are between yesterday and tomorrow, add the person to absence list
-                else if start.isBefore(moment(queryDate).add(1, 'days').subtract(1, 'minutes')) and end.isAfter(queryDate)
-                    isAbsent = true
-
-                if isAbsent
-                    if calendarType is 'personal'
-                        result.members[name]?.absences[queryDate.format 'YYYY-MM-DD'] =
-                            status: status
-                            description: icalEvent.description
-                    else
-                        for key, value of result.members
-                            value.absences[queryDate.format 'YYYY-MM-DD'] =
-                                status: calendarType
-                                description: name
+            if isAbsent
+                if calendarType is 'personal'
+                    result.members[name]?.absences[queryDate.format 'YYYY-MM-DD'] =
+                        status: status
+                        description: icalEvent.description
+                else
+                    for key, value of result.members
+                        value.absences[queryDate.format 'YYYY-MM-DD'] =
+                            status: calendarType
+                            description: name
 
         #iterate over the dates (in the sprint or today)
         for queryDate in result.queryDates
