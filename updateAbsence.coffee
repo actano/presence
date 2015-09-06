@@ -106,20 +106,7 @@ module.exports = Promise.coroutine (userDate) ->
         holidayCalendarData = fs.readFileSync getIcsFilePath('public-holidays_de', 'calendars'), {encoding: 'utf-8'}
         holidayCalendar = new ICAL.Component ICAL.parse(holidayCalendarData)[1]
 
-        calendars = [
-            {
-                calendar: teamCalendar,
-                type: 'personal'
-            }
-            {
-                calendar: holidayCalendar,
-                type: 'public-holiday'
-            }
-        ]
-
-        #iterate over the calendars
-        for calendar in calendars
-
+        updateCalendar = (calendar) ->
             #iterate over the dates (in the sprint or today)
             for queryDate in result.queryDates
 
@@ -186,6 +173,20 @@ module.exports = Promise.coroutine (userDate) ->
                                     status: calendar.type
                                     description: name
 
+        calendars = [
+            {
+                calendar: teamCalendar,
+                type: 'personal'
+            }
+            {
+                calendar: holidayCalendar,
+                type: 'public-holiday'
+            }
+        ]
+
+        #iterate over the calendars
+        for calendar in calendars
+            updateCalendar calendar
 
         #console.log Object.keys(result.members).length
         result
