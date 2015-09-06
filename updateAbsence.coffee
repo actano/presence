@@ -112,7 +112,9 @@ module.exports = Promise.coroutine (userDate) ->
             for event in calendar.getAllSubcomponents 'vevent'
                 # parse iCal event
                 icalEvent = new ICAL.Event event
+                updateEvent icalEvent, calendarType, queryDate
 
+        updateEvent = (icalEvent, calendarType, queryDate) ->
                 # init to defaults
                 status = 'absent'
                 isAbsent = false
