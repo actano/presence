@@ -173,21 +173,8 @@ module.exports = Promise.coroutine (userDate) ->
                                     status: calendarType
                                     description: name
 
-        calendars = [
-            {
-                calendar: teamCalendar,
-                type: 'personal'
-            }
-            {
-                calendar: holidayCalendar,
-                type: 'public-holiday'
-            }
-        ]
+        updateCalendar teamCalendar, 'personal'
+        updateCalendar holidayCalendar, 'public-holiday'
 
-        #iterate over the calendars
-        for calendar in calendars
-            updateCalendar calendar.calendar, calendar.type
-
-        #console.log Object.keys(result.members).length
         result
 
