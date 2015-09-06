@@ -106,13 +106,13 @@ module.exports = Promise.coroutine (userDate) ->
         holidayCalendarData = fs.readFileSync getIcsFilePath('public-holidays_de', 'calendars'), {encoding: 'utf-8'}
         holidayCalendar = new ICAL.Component ICAL.parse(holidayCalendarData)[1]
 
-        updateCalendar = (calendar) ->
+        updateCalendar = (calendar, calendarType) ->
             #iterate over the dates (in the sprint or today)
             for queryDate in result.queryDates
 
                 # each logical item in the confluence calendar
                 # is a 'vevent'; lookup all events of that type
-                for event in calendar.calendar.getAllSubcomponents 'vevent'
+                for event in calendar.getAllSubcomponents 'vevent'
                     # parse iCal event
                     icalEvent = new ICAL.Event event
 
@@ -163,14 +163,14 @@ module.exports = Promise.coroutine (userDate) ->
                         isAbsent = true
 
                     if isAbsent
-                        if calendar.type is 'personal'
+                        if calendarType is 'personal'
                             result.members[name]?.absences[queryDate.format 'YYYY-MM-DD'] =
                                 status: status
                                 description: icalEvent.description
                         else
                             for key, value of result.members
                                 value.absences[queryDate.format 'YYYY-MM-DD'] =
-                                    status: calendar.type
+                                    status: calendarType
                                     description: name
 
         calendars = [
@@ -186,7 +186,7 @@ module.exports = Promise.coroutine (userDate) ->
 
         #iterate over the calendars
         for calendar in calendars
-            updateCalendar calendar
+            updateCalendar calendar.calendar, calendar.type
 
         #console.log Object.keys(result.members).length
         result
