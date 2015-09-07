@@ -102,10 +102,10 @@ module.exports = Promise.coroutine (userDate) ->
         teamCalendarData = yield icsFromURL team.calendar
         result.cacheTimestamp = teamCalendarData.mtime
 
-        teamCalendar = new ICAL.Component ICAL.parse(teamCalendarData.content)[1]
+        teamCalendar = new ICAL.Component ICAL.parse teamCalendarData.content
 
         holidayCalendarData = yield fs.readFileAsync path.join(__dirname, 'calendars', 'public-holidays_de.ics'), 'utf-8'
-        holidayCalendar = new ICAL.Component ICAL.parse(holidayCalendarData)[1]
+        holidayCalendar = new ICAL.Component ICAL.parse holidayCalendarData
 
         updateCalendar = (calendar, calendarType, queryDate) ->
             # each logical item in the confluence calendar
@@ -153,7 +153,7 @@ module.exports = Promise.coroutine (userDate) ->
                     return false if name is 'exdate' and moment(value).isSame queryDate, 'day'
 
                     if name is 'rrule'
-                        untilDateString = /UNTIL=(.*);/.exec(value)?[1]
+                        untilDateString = value.until
                         return false if untilDateString and moment(untilDateString).isBefore queryDate
 
                     return true
