@@ -14,16 +14,16 @@
   "dependencies": {
     "MD5": "^1.2.1",
     "bluebird": "^2.9.25",
-    "coffee-script": "^1.9.2",
+    "coffee-script": "^1.10.0",
     "express": "^4.12.3",
     "express-autoprefixer": "^3.0.0",
     "ical.js": "0.0.6",
     "jade": "^1.9.2",
-    "js-yaml": "^3.4.0",
+    "js-yaml": "^3.4.1",
     "moment": "^2.10.2",
     "request": "^2.55.0",
     "seedrandom": "^2.4.2",
-    "stylus": "^0.51.1",
+    "stylus": "^0.52.4",
     "urlify": "^0.3.6"
   }
 }
