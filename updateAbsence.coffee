@@ -119,6 +119,9 @@ module.exports = Promise.coroutine (userDate) ->
             status = 'absent'
 
             processAbsence = ->
+                # normalize name ('Who and Description are separated by :')
+                name = icalEvent.summary.split(':')[0]
+
                 if calendarType is 'personal'
                     result.members[name]?.absences[queryDate.format 'YYYY-MM-DD'] =
                         status: status
@@ -130,12 +133,8 @@ module.exports = Promise.coroutine (userDate) ->
                             description: name
 
             # switch to away (aka. home-office or business travel)
-            icalEvent.component.jCal[1].map ([name, meta, type, value]) ->
-                if name is 'x-confluence-subcalendar-type' and value is 'travel'
-                    status = 'away'
-
-            # normalize name ('Who and Description are separated by :')
-            name = icalEvent.summary.split(':')[0]
+            status = 'away' if icalEvent.component.jCal[1].some ([name, meta, type, value]) ->
+                name is 'x-confluence-subcalendar-type' and value is 'travel'
 
             # map iCal dates to native dates
             start = moment icalEvent.startDate?.toJSDate()
@@ -151,7 +150,7 @@ module.exports = Promise.coroutine (userDate) ->
 
                 # hand parse the exceptions and recurrence end date (until)
                 # see https://tools.ietf.org/html/rfc5545#section-3.8.5
-                isAbsent = icalEvent.component.jCal[1].every ([name, meta, type, value]) ->
+                return processAbsence() if icalEvent.component.jCal[1].every ([name, meta, type, value]) ->
                     return false if name is 'exdate' and moment(value).isSame queryDate, 'day'
 
                     if name is 'rrule'
@@ -159,9 +158,6 @@ module.exports = Promise.coroutine (userDate) ->
                         return false if untilDateString and moment(untilDateString).isBefore queryDate
 
                     return true
-
-                return processAbsence() if isAbsent
-
 
             # if start is queryDate and duration less then seven hours, add the person to partial-absence list
             else if start.isSame(queryDate, 'day') and end.diff(start) < (7 * 60 * 60 * 1000)
