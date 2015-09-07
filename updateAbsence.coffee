@@ -115,14 +115,15 @@ module.exports = Promise.coroutine (userDate) ->
                 updateEvent icalEvent, calendarType, queryDate
 
         updateEvent = (icalEvent, calendarType, queryDate) ->
-            # init to defaults
-            status = 'absent'
-
-            processAbsence = ->
+            processAbsence = (status = 'absent') ->
                 # normalize name ('Who and Description are separated by :')
                 name = icalEvent.summary.split(':')[0]
 
                 if calendarType is 'personal'
+                    # switch to away (aka. home-office or business travel)
+                    status = 'away' if status is 'absent' and icalEvent.component.jCal[1].some ([name, meta, type, value]) ->
+                        name is 'x-confluence-subcalendar-type' and value is 'travel'
+
                     result.members[name]?.absences[queryDate.format 'YYYY-MM-DD'] =
                         status: status
                         description: icalEvent.description
@@ -132,9 +133,6 @@ module.exports = Promise.coroutine (userDate) ->
                             status: calendarType
                             description: name
 
-            # switch to away (aka. home-office or business travel)
-            status = 'away' if icalEvent.component.jCal[1].some ([name, meta, type, value]) ->
-                name is 'x-confluence-subcalendar-type' and value is 'travel'
 
             # map iCal dates to native dates
             start = moment icalEvent.startDate?.toJSDate()
@@ -161,8 +159,7 @@ module.exports = Promise.coroutine (userDate) ->
 
             # if start is queryDate and duration less then seven hours, add the person to partial-absence list
             else if start.isSame(queryDate, 'day') and end.diff(start) < (7 * 60 * 60 * 1000)
-                status = 'awayPartial'
-                return processAbsence()
+                return processAbsence 'awayPartial'
 
             # if both start and end are between yesterday and tomorrow, add the person to absence list
             else if start.isBefore(moment(queryDate).add(1, 'days').subtract(1, 'minutes')) and end.isAfter(queryDate)
