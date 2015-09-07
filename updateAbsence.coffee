@@ -119,6 +119,17 @@ module.exports = Promise.coroutine (userDate) ->
             status = 'absent'
             isAbsent = false
 
+            processAbsence = ->
+                if calendarType is 'personal'
+                    result.members[name]?.absences[queryDate.format 'YYYY-MM-DD'] =
+                        status: status
+                        description: icalEvent.description
+                else
+                    for key, value of result.members
+                        value.absences[queryDate.format 'YYYY-MM-DD'] =
+                            status: calendarType
+                            description: name
+
             # switch to away (aka. home-office or business travel)
             icalEvent.component.jCal[1].map ([name, meta, type, value]) ->
                 if name is 'x-confluence-subcalendar-type' and value is 'travel'
@@ -161,16 +172,7 @@ module.exports = Promise.coroutine (userDate) ->
             else if start.isBefore(moment(queryDate).add(1, 'days').subtract(1, 'minutes')) and end.isAfter(queryDate)
                 isAbsent = true
 
-            if isAbsent
-                if calendarType is 'personal'
-                    result.members[name]?.absences[queryDate.format 'YYYY-MM-DD'] =
-                        status: status
-                        description: icalEvent.description
-                else
-                    for key, value of result.members
-                        value.absences[queryDate.format 'YYYY-MM-DD'] =
-                            status: calendarType
-                            description: name
+            processAbsence() if isAbsent
 
         #iterate over the dates (in the sprint or today)
         for queryDate in result.queryDates
