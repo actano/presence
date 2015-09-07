@@ -1,3 +1,4 @@
+URL = require 'url'
 request = require 'request'
 fs = require 'fs'
 path = require 'path'
@@ -15,6 +16,37 @@ Promise = require 'bluebird'
 Promise.promisifyAll request
 Promise.promisifyAll fs
 
+TTL = 5 * 60
+
+icsFromURL = Promise.coroutine (url) ->
+    {pathname} = URL.parse url
+    basename = path.basename pathname
+    cachePathname = path.join __dirname, 'cache', basename
+    mtime = null
+    try
+        {mtime} = yield fs.statAsync cachePathname
+    catch e
+        mtime = new Date(0)
+    now = Date.now()
+    status = null
+    if mtime.getTime() + TTL * 1000 < now
+        try
+            response = null
+            [response] = yield request.getAsync url
+            if response.statusCode < 300
+                teamCalendarData = response.body
+                folderName = path.dirname cachePathname
+                exists = yield new Promise (resolver) -> fs.exists folderName, resolver
+                yield fs.mkdirAsync folderName unless exists
+                yield fs.writeFileAsync cachePathname, teamCalendarData
+                return {content: teamCalendarData, mtime: now}
+            status = "#{response.statusCode} - #{response.statusMessage}"
+        catch e
+            status = e.toString()
+
+    content = yield fs.readFileAsync cachePathname, 'utf-8'
+    return {status, mtime, content}
+
 # load team meta data
 module.exports = Promise.coroutine (userDate) ->
     config = require('./config') userDate
@@ -23,9 +55,6 @@ module.exports = Promise.coroutine (userDate) ->
     getGravatarUrlFromName = (name) ->
         name_md5 = md5 urlify(name.toLowerCase()) + config.emailSuffix
         "#{config.gravatarPrefix}#{name_md5}"
-
-    getIcsFilePath = (name, folder = 'cache') ->
-        path.join(__dirname, folder, "#{name}.ics")
 
     # skip weekends
     while userDate.day() is 0 or userDate.day() is 6
@@ -70,40 +99,12 @@ module.exports = Promise.coroutine (userDate) ->
                 absences: {}
             }
 
-        response = null
+        teamCalendarData = yield icsFromURL team.calendar
+        result.cacheTimestamp = teamCalendarData.mtime
 
-        try
-            [response] = yield request.getAsync team.calendar
-        catch e
-            response = statusCode: 600
+        teamCalendar = new ICAL.Component ICAL.parse(teamCalendarData.content)[1]
 
-        teamCalendarData = null
-
-        if response.statusCode >= 400
-
-            result.status = "#{response.statusCode} - #{response.statusMessage}"
-
-            fs.stat getIcsFilePath(result.name), (err, stats) ->
-                if(!err)
-                    result.cacheTimestamp = stats.mtime
-
-            # read ics from file for recovery
-            teamCalendarData = fs.readFileSync getIcsFilePath(result.name), {encoding: 'utf-8'}
-
-        else
-            teamCalendarData = response.body
-
-            # write ics to file for recovery
-            icsFileName = getIcsFilePath(result.name)
-            folderName = path.dirname icsFileName
-            exists = yield new Promise (resolver) -> fs.exists folderName, resolver
-            yield fs.mkdirAsync folderName unless exists
-            yield fs.writeFileAsync icsFileName, teamCalendarData
-            console.info "#{result.name}.ics is saved!"
-
-        teamCalendar = new ICAL.Component ICAL.parse(teamCalendarData)[1]
-
-        holidayCalendarData = fs.readFileSync getIcsFilePath('public-holidays_de', 'calendars'), {encoding: 'utf-8'}
+        holidayCalendarData = yield fs.readFileAsync path.join(__dirname, 'calendars', 'public-holidays_de.ics'), 'utf-8'
         holidayCalendar = new ICAL.Component ICAL.parse(holidayCalendarData)[1]
 
         updateCalendar = (calendar, calendarType, queryDate) ->
