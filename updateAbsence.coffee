@@ -117,7 +117,6 @@ module.exports = Promise.coroutine (userDate) ->
         updateEvent = (icalEvent, calendarType, queryDate) ->
             # init to defaults
             status = 'absent'
-            isAbsent = false
 
             processAbsence = ->
                 if calendarType is 'personal'
@@ -150,29 +149,28 @@ module.exports = Promise.coroutine (userDate) ->
                     )
 
 
-                isAbsent = true
-
                 # hand parse the exceptions and recurrence end date (until)
                 # see https://tools.ietf.org/html/rfc5545#section-3.8.5
-                icalEvent.component.jCal[1].map ([name, meta, type, value]) ->
-                    if name is 'exdate' and moment(value).isSame queryDate, 'day'
-                        isAbsent = false
+                isAbsent = icalEvent.component.jCal[1].every ([name, meta, type, value]) ->
+                    return false if name is 'exdate' and moment(value).isSame queryDate, 'day'
 
                     if name is 'rrule'
                         untilDateString = /UNTIL=(.*);/.exec(value)?[1]
-                        if untilDateString and moment(untilDateString).isBefore queryDate
-                            isAbsent = false
+                        return false if untilDateString and moment(untilDateString).isBefore queryDate
+
+                    return true
+
+                return processAbsence() if isAbsent
+
 
             # if start is queryDate and duration less then seven hours, add the person to partial-absence list
             else if start.isSame(queryDate, 'day') and end.diff(start) < (7 * 60 * 60 * 1000)
-                isAbsent = true
                 status = 'awayPartial'
+                return processAbsence()
 
             # if both start and end are between yesterday and tomorrow, add the person to absence list
             else if start.isBefore(moment(queryDate).add(1, 'days').subtract(1, 'minutes')) and end.isAfter(queryDate)
-                isAbsent = true
-
-            processAbsence() if isAbsent
+                return processAbsence()
 
         #iterate over the dates (in the sprint or today)
         for queryDate in result.queryDates
