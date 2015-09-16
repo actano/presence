@@ -33,6 +33,7 @@ icsFromURL = Promise.coroutine (url) ->
         try
             response = null
             [response] = yield request.getAsync url
+
             if response.statusCode < 300
                 teamCalendarData = response.body
                 folderName = path.dirname cachePathname
@@ -43,6 +44,12 @@ icsFromURL = Promise.coroutine (url) ->
             status = "#{response.statusCode} - #{response.statusMessage}"
         catch e
             status = e.toString()
+            console.log "could not update ics: #{status}"
+
+    unless fs.existsSync cachePathname
+        console.log "could not load cache file from #{cachePathname}"
+        console.log "shutting down"
+        process.exit 1
 
     content = yield fs.readFileAsync cachePathname, 'utf-8'
     return {status, mtime, content}
