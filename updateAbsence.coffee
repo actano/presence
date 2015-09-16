@@ -41,14 +41,16 @@ icsFromURL = Promise.coroutine (url) ->
                 yield fs.mkdirAsync folderName unless exists
                 yield fs.writeFileAsync cachePathname, teamCalendarData
                 return {content: teamCalendarData, mtime: now}
-            status = "#{response.statusCode} - #{response.statusMessage}"
+
+            throw new Error "#{response.statusCode} - #{response.statusMessage}"
+
         catch e
             status = e.toString()
-            console.log "could not update ics: #{status}"
+            console.warn "could not update ics: #{status}"
 
     unless fs.existsSync cachePathname
-        console.log "could not load cache file from #{cachePathname}"
-        console.log "shutting down"
+        console.error "could not load cache file from #{cachePathname}"
+        console.error "shutting down"
         process.exit 1
 
     content = yield fs.readFileAsync cachePathname, 'utf-8'
