@@ -15,7 +15,8 @@ mixin teamMemberRow(team, member)
             span=member.name
         for memberDate in member.dates
             - var today = isToday(memberDate.date)
-            td(class=today ? 'today' : null)
+            - var week = memberDate.date.week() % 2 ? 'weekOdd' : 'weekEven'
+            td(class=[today ? 'today' : null, week])
                 span.status(class=memberDate.cssClass, title=memberDate.description)
                     if today
                         span=member.name
@@ -37,7 +38,8 @@ mixin calendarHead(queryDates)
         tr
             th
             for date in queryDates
-                th(scope=col)=date.format('D')
+                - var week = date.week() % 2 ? 'weekOdd' : 'weekEven'
+                th(scope=col, class=week)=date.format('D')
 
 mixin renderTeam(team)
     - var cells = team.queryDates.length + 1
