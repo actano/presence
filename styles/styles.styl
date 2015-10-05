@@ -4,21 +4,23 @@ $colorText = #333333
 
 $colorAvailable = $actanoBlue
 $colorAbsent = #da777b
-$colorAway = #faf0a6
+$colorAway = #fff
 $colorHoliday = alpha(gray, 0.2)
 
-$colorWeekEven = lightgray
-$colorWeekOdd = white
-$colorToday = gray
+$bgcolorWeekEven = #fff
+$colorWeekEven = #999
+$bgcolorWeekOdd = #f8f8f8
+$colorToday = #e3e9ec
 
 $widgetbackground = #f3f3f3
-$teambackground = white
+$teambackground = #fff
 $font-family = 'Proxima Nova', Arial, Verdana, sans-serif
 
 $memberwidth = 27rem
 $border = 1px solid $teambackground
 
-$daySize = 17px
+$dayHeight = 17px
+$dayWidth = 13px
 $avatarSize = 40px
 
 striped(color, direction = -45deg)
@@ -50,23 +52,33 @@ ul.teams
 table
     border-collapse collapse
     col.weekEven
-        background alpha(#000, 0.01)
+        background $bgcolorWeekEven
     col.weekOdd
-        background alpha(#000, 0.05)
+        background $bgcolorWeekOdd
     col.today
-        background alpha(#080, 0.2)
+        background $colorToday
+        width ($dayWidth * 2)
 
     th, td
         padding 0
         margin 0
 
+    th.weekEven + th.weekOdd
+    td.weekEven + td.weekOdd
+    th.weekOdd + th.weekEven
+    td.weekOdd + td.weekEven
+        border-left 3px solid #fff
+        
     thead
         th
             text-align center
+            font-weight 600
+            &.weekEven
+                color $colorWeekEven
 
     tfoot
         td
-            background-color $colorAbsent
+            background-color alpha($colorAbsent, 0.2)
 
             div
                 background-color lighten($colorAvailable, 80%)
@@ -80,13 +92,8 @@ table
             text-decoration underline
 
         tr.absent
-            background-color alpha($colorAbsent, 0.2)
-
             th img
-              opacity 0.3
-
-        tr.away
-            background-color alpha($colorAway, 0.2)
+                opacity 0.3
 
         th
             text-align left
@@ -111,16 +118,20 @@ table
 
             span
                 display block
-                height $daySize
-                width @height
+                height $dayHeight
+                width $dayWidth
                 margin-bottom 4px
 
                 // Span for the member name INSIDE of today box
                 span
                   display none
+                    
+            &.today span
+                width ($dayWidth * 2)
 
             &:not(.today) span
                 opacity 0.2
+                
 
 .status
     background-color $colorAvailable
@@ -133,6 +144,7 @@ table
         background-image striped($colorHoliday)
     &.away
         background-color $colorAway
+        border 4px solid $actanoBlue
     &.awayPartial
         background-image striped($colorAway)
 
