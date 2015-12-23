@@ -31,8 +31,7 @@ icsFromURL = Promise.coroutine (url) ->
     status = null
     if mtime.getTime() + TTL * 1000 < now
         try
-            response = null
-            [response] = yield request.getAsync url
+            response = yield request.getAsync url
 
             if response.statusCode < 300
                 teamCalendarData = response.body
@@ -45,8 +44,7 @@ icsFromURL = Promise.coroutine (url) ->
             throw new Error "#{response.statusCode} - #{response.statusMessage}"
 
         catch e
-            status = e.toString()
-            console.warn "could not update ics: #{status}"
+            console.warn 'could not update ics: %s', e.stack
 
     unless fs.existsSync cachePathname
         console.error "could not load cache file from #{cachePathname}"
