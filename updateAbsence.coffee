@@ -14,6 +14,7 @@ Promise = require 'bluebird'
 Promise.promisifyAll fs
 
 icsFromURL = require './lib/ics-from-url'
+isoDate = 'YYYY-MM-DD'
 
 class Sprint
     constructor: (@count, @start, @end, @scrum) ->
@@ -34,6 +35,9 @@ class Member
         @image_url = getGravatarUrlFromName @name
         @absences = {}
 
+
+    getAbsence: (date) ->
+        @absences[date.format isoDate]
 
 # load team meta data
 module.exports = Promise.coroutine (userDate) ->
@@ -140,5 +144,5 @@ module.exports = Promise.coroutine (userDate) ->
             updateCalendar holidayCalendar, 'public-holiday', queryDate
 
         result
-    teams.date = userDate.format 'YYYY-MM-DD'
+    teams.date = userDate
     teams

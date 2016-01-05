@@ -12,7 +12,7 @@ module.exports = Promise.coroutine (queryDate) ->
 
     teams = yield getAbsence queryDate
     resultDate = teams.date
-    rng = seedrandom resultDate
+    rng = seedrandom resultDate.format isoDate
 
     for team in teams
         if team.sprint
@@ -31,10 +31,10 @@ module.exports = Promise.coroutine (queryDate) ->
                 member.dates = []
                 for date in team.queryDates
                     memberDate = cssClass: [], date: date
-                    absence = member.absences[date.format(isoDate)]
                     memberDate.cssClass.push 'preWeekend' if date.day() == 5
                     memberDate.cssClass.push 'postWeekend' if date.day() == 1
 
+                    absence = member.getAbsence date
                     status = absence?.status
                     if status?
                         if (status == 'absent' || status == 'public-holiday')
@@ -42,7 +42,7 @@ module.exports = Promise.coroutine (queryDate) ->
                         memberDate.description = absence.description
                         memberDate.cssClass.push status
 
-                    if date.format(isoDate) == resultDate
+                    if date.isSame resultDate, 'day'
                         memberDate.content = member.name
                         member.cssClass.push status if status?
                         avail.push member unless absence?
@@ -60,7 +60,7 @@ module.exports = Promise.coroutine (queryDate) ->
         else
             for member in team.members
                 member.cssClass = []
-                absence = member.absences[resultDate]
+                absence = member.getAbsences resultDate
                 if absence?
                     member.cssClass.push absence.status
                     member.title = absence.description
