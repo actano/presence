@@ -59,8 +59,6 @@ module.exports = Promise.coroutine (queryDate) ->
                 percentage: percentage
                 memberAvailabilities: sprintMemberAvailabilities
                 memberDays: sprintMemberDays
-                backgroundGradient: "linear-gradient(90deg, #a5c1d4 0, #a5c1d4 #{percentage}%, #da777b #{percentage}%, #da777b 100%)"
-                description: "#{sprintMemberAvailabilities}/#{sprintMemberDays}d available"
 
         else
             for member in team.members
