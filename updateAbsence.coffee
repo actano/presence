@@ -15,6 +15,15 @@ Promise.promisifyAll fs
 
 icsFromURL = require './lib/ics-from-url'
 
+class Team
+    constructor: (@name, date) ->
+        @members = {}
+        @date = date.format 'YYYY-MM-DD'
+        @sprint = null
+        @queryDates = [date]
+        @status = null
+
+
 # load team meta data
 module.exports = Promise.coroutine (userDate) ->
     config = require('./config') userDate
@@ -30,13 +39,7 @@ module.exports = Promise.coroutine (userDate) ->
 
     for team in teams
 
-        result =
-            name: team.name
-            members: {}
-            date: userDate.format 'YYYY-MM-DD'
-            sprint: null
-            queryDates: [userDate]
-            status: null
+        result = new Team(team.name, userDate)
 
         # initalize sprint information
         if team.sprint
