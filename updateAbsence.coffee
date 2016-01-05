@@ -15,6 +15,9 @@ Promise.promisifyAll fs
 
 icsFromURL = require './lib/ics-from-url'
 
+class Sprint
+    constructor: (@count, @start, @end, @scrum) ->
+
 class Team
     constructor: (@name, date) ->
         @members = {}
@@ -49,12 +52,7 @@ module.exports = Promise.coroutine (userDate) ->
                 sprintsSinceFirstStart = Math.floor weeksSinceSprintStart / team.sprint.durationWeeks
                 currentSprintStartDate = sprintStartDate.add(sprintsSinceFirstStart * team.sprint.durationWeeks, 'weeks')
                 currentSprintEndDate = moment(currentSprintStartDate).add(team.sprint.durationWeeks, 'weeks').subtract(1, 'days')
-                result.sprint =
-                    count: sprintsSinceFirstStart
-                    start: currentSprintStartDate
-                    end: currentSprintEndDate
-                    scrum: team.sprint.scrum
-
+                result.sprint = new Sprint sprintsSinceFirstStart, currentSprintStartDate, currentSprintEndDate, team.sprint.scrum
 
                 result.queryDates = []
                 queryDate = moment(result.sprint.start)
