@@ -3,6 +3,10 @@ seedrandom = require 'seedrandom'
 moment = require 'moment'
 getAbsence = require './getAbsence'
 
+class Summary
+    constructor: (@avail, @total) ->
+        @percentage = 100 * @avail / @total
+
 module.exports = Promise.coroutine (queryDate) ->
     isoDate = 'YYYY-MM-DD'
 
@@ -54,11 +58,7 @@ module.exports = Promise.coroutine (queryDate) ->
             if avail.length and team.sprint.scrum
                 selectedMember = avail[Math.floor(rng() * avail.length)]
                 selectedMember.cssClass.push 'selected'
-            percentage = 100 * sprintMemberAvailabilities / sprintMemberDays
-            team.summary =
-                percentage: percentage
-                memberAvailabilities: sprintMemberAvailabilities
-                memberDays: sprintMemberDays
+            team.summary = new Summary sprintMemberAvailabilities, sprintMemberDays
 
         else
             for member in team.members
