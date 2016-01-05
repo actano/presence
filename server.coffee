@@ -15,9 +15,6 @@ module.exports = Promise.coroutine (queryDate) ->
     rng = seedrandom resultDate
 
     for team in teams
-        if team.status
-            team.statusDescription = "Calendar failed: \"#{team.status}\", loading data from cache (#{moment(team.cacheTimestamp).format('L LT')})."
-
         if team.sprint
             team.head = if team.sprint.scrum then 'S' else 'W'
             team.head += team.sprint.count + 1
@@ -69,6 +66,7 @@ module.exports = Promise.coroutine (queryDate) ->
                     member.title = absence.description
 
     data =
+        moment: moment
         date: resultDate
         teams: teams
         isoDate: isoDate

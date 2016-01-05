@@ -13,20 +13,22 @@ mixin teamMemberRow(team, member)
         th(scope=row)
             img(src=member.image_url + '?s=40')
             span=member.name
-        for memberDate in member.dates
-            - var today = isToday(memberDate.date)
-            - var week = memberDate.date.week() % 2 ? 'weekOdd' : 'weekEven'
-            td(class=[today ? 'today' : null, week])
-                span.status(class=memberDate.cssClass, title=memberDate.description)
-                    if today
-                        span=member.name
+        if member.dates
+            for memberDate in member.dates
+                - var today = isToday(memberDate.date)
+                - var week = memberDate.date.week() % 2 ? 'weekOdd' : 'weekEven'
+                td(class=[today ? 'today' : null, week])
+                    span.status(class=memberDate.cssClass, title=memberDate.description)
+                        if today
+                            span=member.name
 
 mixin teamScrumFooter(team, cells)
-    tfoot
-        tr
-            td(colspan=cells)
-                - var percentage = team.summary.percentage
-                .percentage(style='width: ' + percentage + '%') #{team.summary.avail}/#{team.summary.total}d available
+    if team.summary
+        tfoot
+            tr
+                td(colspan=cells)
+                    - var percentage = team.summary.percentage
+                    .percentage(style='width: ' + percentage + '%') #{team.summary.avail}/#{team.summary.total}d available
 
 mixin calendarHead(queryDates)
     col.head
@@ -47,14 +49,16 @@ mixin renderTeam(team)
         caption
             +teamHeadline(team)
         +calendarHead(team.queryDates)
-        tbody
-            for member in team.members
-                +teamMemberRow(team, member)
+        if team.members
+            tbody
+                for member in team.members
+                    +teamMemberRow(team, member)
         if team.sprint.scrum
             +teamScrumFooter(team, cells)
 
-    if team.statusDescription
-        h2.error=team.statusDescription
+    if team.status
+        - var timestamp = moment(team.cacheTimestamp).format('L LT')
+        h2.error Calendar failed: "#{team.status}", loading data from cache (#{timestamp}).
 
 doctype
 html
