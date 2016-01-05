@@ -5,9 +5,10 @@ getAbsence = require './getAbsence'
 
 module.exports = Promise.coroutine (queryDate) ->
     isoDate = 'YYYY-MM-DD'
-    rng = null
 
     teams = yield getAbsence queryDate
+    resultDate = teams.date
+    rng = seedrandom resultDate
 
     for team in teams
         if team.status
@@ -40,7 +41,7 @@ module.exports = Promise.coroutine (queryDate) ->
                         memberDate.description = absence.description
                         memberDate.cssClass.push status
 
-                    if date.format(isoDate) == team.date
+                    if date.format(isoDate) == resultDate
                         memberDate.content = member.name
                         member.cssClass.push status if status?
                         avail.push member unless absence?
@@ -51,8 +52,6 @@ module.exports = Promise.coroutine (queryDate) ->
                     member.dates.push memberDate
 
             if avail.length and team.sprint.scrum
-                unless rng?
-                    rng = seedrandom team.date
                 selectedMember = avail[Math.floor(rng() * avail.length)]
                 selectedMember.cssClass.push 'selected'
             percentage = 100 * sprintMemberAvailabilities / sprintMemberDays
@@ -66,12 +65,13 @@ module.exports = Promise.coroutine (queryDate) ->
         else
             for member in team.members
                 member.cssClass = []
-                absence = member.absences[team.date]
+                absence = member.absences[resultDate]
                 if absence?
                     member.cssClass.push absence.status
                     member.title = absence.description
 
     data =
+        date: resultDate
         teams: teams
         isoDate: isoDate
         isToday: (moment) ->

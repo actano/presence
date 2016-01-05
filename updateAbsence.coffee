@@ -19,11 +19,10 @@ class Sprint
     constructor: (@count, @start, @end, @scrum) ->
 
 class Team
-    constructor: (@name, date) ->
+    constructor: (@name) ->
         @members = {}
-        @date = date.format 'YYYY-MM-DD'
         @sprint = null
-        @queryDates = [date]
+        @queryDates = []
         @status = null
 
 class Member
@@ -39,19 +38,14 @@ class Member
 # load team meta data
 module.exports = Promise.coroutine (userDate) ->
     config = require('./config') userDate
-    teams = config.teams
-
-    getGravatarUrlFromName = (name) ->
-        name_md5 = md5 urlify(name.toLowerCase()) + config.emailSuffix
-        "#{config.gravatarPrefix}#{name_md5}"
 
     # skip weekends
     while userDate.day() is 0 or userDate.day() is 6
         userDate.add(1, 'days')
 
-    for team in teams
+    teams = for team in config.teams
 
-        result = new Team(team.name, userDate)
+        result = new Team(team.name)
 
         # initalize sprint information
         if team.sprint
@@ -146,4 +140,5 @@ module.exports = Promise.coroutine (userDate) ->
             updateCalendar holidayCalendar, 'public-holiday', queryDate
 
         result
-
+    teams.date = userDate.format 'YYYY-MM-DD'
+    teams
