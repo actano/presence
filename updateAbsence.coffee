@@ -26,6 +26,15 @@ class Team
         @queryDates = [date]
         @status = null
 
+class Member
+    constructor: (config, @name) ->
+        getGravatarUrlFromName = (name) ->
+            name_md5 = md5 urlify(name.toLowerCase()) + config.emailSuffix
+            "#{config.gravatarPrefix}#{name_md5}"
+
+        @image_url = getGravatarUrlFromName @name
+        @absences = {}
+
 
 # load team meta data
 module.exports = Promise.coroutine (userDate) ->
@@ -62,11 +71,7 @@ module.exports = Promise.coroutine (userDate) ->
 
         # init team-members with gravatar urls
         for member in team.members
-            result.members[member] = {
-                name: member
-                image_url: getGravatarUrlFromName member
-                absences: {}
-            }
+            result.members[member] = new Member config, member
 
         teamCalendarData = yield icsFromURL team.calendar
         result.cacheTimestamp = teamCalendarData.mtime
