@@ -8,6 +8,11 @@ mixin teamHeadline(team)
         if team.sprint.scrum
             time=team.sprint.start.format(deDate) + ' – ' + team.sprint.end.format(deDate)
 
+mixin teamMemberHead(member)
+    th(scope=row)
+        img(src=member.image_url + '?s=40')
+        span=member.name
+
 mixin teamMemberCell(member, memberDate)
     - var date = memberDate.date
     - var today = isToday(date) ? 'today' : null
@@ -22,9 +27,7 @@ mixin teamMemberCell(member, memberDate)
 mixin teamMemberRow(team, member)
     - var selected = member.selected ? 'selected' : null
     tr(class=[member.cssClass, selected])
-        th(scope=row)
-            img(src=member.image_url + '?s=40')
-            span=member.name
+        +teamMemberHead(member)
         if member.dates
             for memberDate in member.dates
                 +teamMemberCell(member, memberDate)
