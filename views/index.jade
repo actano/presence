@@ -25,11 +25,11 @@ mixin teamMemberCell(member, date)
             if todayClass
                 span=member.name
 
-mixin teamMemberRow(team, member)
-    - var selected = member.selected ? 'selected' : null
+mixin teamMemberRow(team, member, selected)
+    - var selectedClass = selected ? 'selected' : null
     - var absence = member.getAbsence(today)
     - var status = absence ? absence.status : null
-    tr(class=[status, selected])
+    tr(class=[status, selectedClass])
         +teamMemberHead(member)
         for date in team.queryDates
             +teamMemberCell(member, date)
@@ -57,6 +57,7 @@ mixin calendarHead(queryDates)
 
 mixin renderTeam(team)
     - var cells = team.queryDates.length + 1
+    - var selectedMember = team.selectedMember(date)
     table
         caption
             +teamHeadline(team)
@@ -64,7 +65,8 @@ mixin renderTeam(team)
         if team.members
             tbody
                 for member in team.members
-                    +teamMemberRow(team, member)
+                    - var selected = selectedMember == member
+                    +teamMemberRow(team, member, selected)
         if team.sprint.scrum
             +teamScrumFooter(team, cells)
 

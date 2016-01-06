@@ -26,6 +26,19 @@ class Team
         @queryDates = []
         @status = null
 
+    selectedMember: (date) ->
+        if @sprint.scrum
+            avail = []
+
+            for name, member of @members
+                absence = member.getAbsence date
+                avail.push member unless absence?
+
+            if avail.length
+                seedrandom = require 'seedrandom'
+                rng = seedrandom date.format isoDate
+                return avail[Math.floor(rng() * avail.length)]
+
 class Member
     constructor: (config, @name) ->
         getGravatarUrlFromName = (name) ->

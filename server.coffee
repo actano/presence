@@ -1,5 +1,4 @@
 Promise = require 'bluebird'
-seedrandom = require 'seedrandom'
 moment = require 'moment'
 getAbsence = require './getAbsence'
 
@@ -12,7 +11,6 @@ module.exports = Promise.coroutine (queryDate) ->
 
     teams = yield getAbsence queryDate
     resultDate = teams.date
-    rng = seedrandom resultDate.format isoDate
 
     for team in teams
         team.head = if team.sprint.scrum then 'S' else 'W'
@@ -23,10 +21,7 @@ module.exports = Promise.coroutine (queryDate) ->
         sprintMemberDays = sprintDays * sprintMembers
         sprintMemberAvailabilities = Number(sprintMemberDays)
 
-        avail = []
-
         for name, member of team.members
-            member.dates = []
             for date in team.queryDates
                 absence = member.getAbsence date
                 status = absence?.status
@@ -34,12 +29,6 @@ module.exports = Promise.coroutine (queryDate) ->
                     if (status == 'absent' || status == 'public-holiday')
                         sprintMemberAvailabilities--
 
-                if date.isSame resultDate, 'day'
-                    avail.push member unless absence?
-
-        if avail.length and team.sprint.scrum
-            selectedMember = avail[Math.floor(rng() * avail.length)]
-            selectedMember.selected = true
         team.summary = new Summary sprintMemberAvailabilities, sprintMemberDays
 
     data =
