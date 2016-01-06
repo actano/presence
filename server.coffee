@@ -44,13 +44,8 @@ module.exports = Promise.coroutine (queryDate) ->
                     memberDate.description = absence.description
 
                 if date.isSame resultDate, 'day'
-                    memberDate.content = member.name
                     member.cssClass.push status if status?
                     avail.push member unless absence?
-                else if status == 'public-holiday'
-                    memberDate.content = absence.description
-                else
-                    memberDate.content = date.format('dd., DD.M.')
                 member.dates.push memberDate
 
         if avail.length and team.sprint.scrum
