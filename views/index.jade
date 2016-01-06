@@ -75,7 +75,7 @@ mixin renderTeam(team)
             +teamScrumFooter(team, cells)
 
     if team.status
-        - var timestamp = moment(team.cacheTimestamp).format('L LT')
+        - var timestamp = team.cacheTimestamp.format('L LT')
         h2.error Calendar failed: "#{team.status}", loading data from cache (#{timestamp}).
 
 doctype

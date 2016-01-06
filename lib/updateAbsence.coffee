@@ -97,7 +97,7 @@ module.exports = Promise.coroutine (userDate) ->
             result.members[member] = new Member config, member
 
         teamCalendarData = yield icsFromURL team.calendar
-        result.cacheTimestamp = teamCalendarData.mtime
+        result.cacheTimestamp = moment teamCalendarData.mtime
 
         teamCalendar = new ICAL.Component ICAL.parse teamCalendarData.content
 

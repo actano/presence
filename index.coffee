@@ -38,7 +38,6 @@ app.get '/', (req, res, next) ->
 
         data =
             today: date
-            moment: moment
             teams: teams
             gravatarUrlFromName: config.gravatarUrlFromName
 
