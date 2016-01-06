@@ -1,11 +1,15 @@
 - var deDate = 'DD.MM.'
+- var isoDate = 'YYYY-MM-DD'
 
 mixin teamHeadline(team)
     h2.headline
         name=team.name
-        if team.head
-            small=' ' + team.head
+        - var head = team.head
+
+        unless team.sprint.scrum
+            small W#{date.isoWeek()}
         if team.sprint.scrum
+            small S#{team.sprint.count + 1}
             time=team.sprint.start.format(deDate) + ' – ' + team.sprint.end.format(deDate)
 
 mixin teamMemberHead(member)
