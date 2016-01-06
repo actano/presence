@@ -16,7 +16,7 @@ publicDir = path.join __dirname, 'public'
 
 app.set 'views', viewsDir
 app.set 'view engine', 'jade'
-server = require './server'
+getAbsence = require './getAbsence'
 
 # prevents -> https://github.com/alubbe/memoryleak
 if process.env.NODE_ENV and process.env.NODE_ENV isnt 'development'
@@ -34,7 +34,13 @@ app.get '/', Promise.coroutine (req, res) ->
     date = moment() unless date?
     date.startOf 'day'
 
-    data = yield server date
+    teams = yield getAbsence date
+    data =
+        today: teams.date
+        moment: moment
+        date: teams.date
+        teams: teams
+
     res.render 'index', data
 
 app.use express.static publicDir
