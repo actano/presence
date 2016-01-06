@@ -15,7 +15,7 @@ mixin teamMemberCell(member, memberDate)
     - var preWeekend = date.day() == 5 ? 'preWeekend' : null
     - var postWeekend = date.day() == 1 ? 'postWeekend' : null
     td(class=today)
-        span.status(class=[memberDate.status, preWeekend, postWeekend], title=memberDate.description)
+        span.status(class=[memberDate.status, preWeekend, postWeekend])
             if today
                 span=member.name
 

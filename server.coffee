@@ -41,7 +41,6 @@ module.exports = Promise.coroutine (queryDate) ->
                 if status?
                     if (status == 'absent' || status == 'public-holiday')
                         sprintMemberAvailabilities--
-                    memberDate.description = absence.description
 
                 if date.isSame resultDate, 'day'
                     member.cssClass.push status if status?
