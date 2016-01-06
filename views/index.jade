@@ -15,13 +15,13 @@ mixin teamMemberHead(member)
 
 mixin teamMemberCell(member, memberDate)
     - var date = memberDate.date
-    - var today = isToday(date) ? 'today' : null
+    - var todayClass = date.isSame(today, 'day') ? 'today' : null
     - var week = date.week() % 2 ? 'weekOdd' : 'weekEven'
     - var preWeekend = date.day() == 5 ? 'preWeekend' : null
     - var postWeekend = date.day() == 1 ? 'postWeekend' : null
-    td(class=today)
+    td(class=todayClass)
         span.status(class=[memberDate.status, preWeekend, postWeekend])
-            if today
+            if todayClass
                 span=member.name
 
 mixin teamMemberRow(team, member)
@@ -43,9 +43,9 @@ mixin teamScrumFooter(team, cells)
 mixin calendarHead(queryDates)
     col.head
     for date in queryDates
-        - var today = isToday(date) ? 'today' : null
+        - var todayClass = date.isSame(today, 'day') ? 'today' : null
         - var week = date.week() % 2 ? 'weekOdd' : 'weekEven'
-        col(class=[today, week])
+        col(class=[todayClass, week])
     thead
         tr
             th

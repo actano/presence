@@ -53,9 +53,8 @@ module.exports = Promise.coroutine (queryDate) ->
         team.summary = new Summary sprintMemberAvailabilities, sprintMemberDays
 
     data =
+        today: queryDate
         moment: moment
         date: resultDate
         teams: teams
         isoDate: isoDate
-        isToday: (moment) ->
-            moment.isSame(queryDate, 'day')
