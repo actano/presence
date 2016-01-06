@@ -35,12 +35,12 @@ mixin teamMemberRow(team, member, selected)
             +teamMemberCell(member, date)
 
 mixin teamScrumFooter(team, cells)
-    if team.summary
-        tfoot
-            tr
-                td(colspan=cells)
-                    - var percentage = team.summary.percentage
-                    .percentage(style='width: ' + percentage + '%') #{team.summary.avail}/#{team.summary.total}d available
+    - var summary = team.sprintSummary()
+    tfoot
+        tr
+            td(colspan=cells)
+                - var percentage = summary.percentage
+                .percentage(style='width: ' + percentage + '%') #{summary.avail}/#{summary.total}d available
 
 mixin calendarHead(queryDates)
     col.head

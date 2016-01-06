@@ -16,6 +16,10 @@ Promise.promisifyAll fs
 icsFromURL = require './lib/ics-from-url'
 isoDate = 'YYYY-MM-DD'
 
+class Summary
+    constructor: (@avail, @total) ->
+        @percentage = 100 * @avail / @total
+
 class Sprint
     constructor: (@count, @start, @end, @scrum) ->
 
@@ -38,6 +42,23 @@ class Team
                 seedrandom = require 'seedrandom'
                 rng = seedrandom date.format isoDate
                 return avail[Math.floor(rng() * avail.length)]
+
+    sprintSummary: ->
+        sprintDays = Object.keys(@queryDates).length
+        sprintMembers = Object.keys(@members).length
+        sprintMemberDays = sprintDays * sprintMembers
+        sprintMemberAvailabilities = Number(sprintMemberDays)
+
+        for name, member of @members
+            for date in @queryDates
+                absence = member.getAbsence date
+                status = absence?.status
+                if status?
+                    if (status == 'absent' || status == 'public-holiday')
+                        sprintMemberAvailabilities--
+
+        new Summary sprintMemberAvailabilities, sprintMemberDays
+
 
 class Member
     constructor: (config, @name) ->
