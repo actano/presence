@@ -30,17 +30,19 @@ module.exports = Promise.coroutine (queryDate) ->
                 member.cssClass = []
                 member.dates = []
                 for date in team.queryDates
-                    memberDate = cssClass: [], date: date
-                    memberDate.cssClass.push 'preWeekend' if date.day() == 5
-                    memberDate.cssClass.push 'postWeekend' if date.day() == 1
+                    memberDate =
+                        status: null
+                        date: date
+                        description: null
+                        content: null
 
                     absence = member.getAbsence date
                     status = absence?.status
+                    memberDate.status = status
                     if status?
                         if (status == 'absent' || status == 'public-holiday')
                             sprintMemberAvailabilities--
                         memberDate.description = absence.description
-                        memberDate.cssClass.push status
 
                     if date.isSame resultDate, 'day'
                         memberDate.content = member.name

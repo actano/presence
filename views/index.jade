@@ -8,6 +8,17 @@ mixin teamHeadline(team)
         if team.sprint.scrum
             time=team.sprint.start.format(deDate) + ' – ' + team.sprint.end.format(deDate)
 
+mixin teamMemberCell(member, memberDate)
+    - var date = memberDate.date
+    - var today = isToday(date) ? 'today' : null
+    - var week = date.week() % 2 ? 'weekOdd' : 'weekEven'
+    - var preWeekend = date.day() == 5 ? 'preWeekend' : null
+    - var postWeekend = date.day() == 1 ? 'postWeekend' : null
+    td(class=today)
+        span.status(class=[memberDate.status, preWeekend, postWeekend], title=memberDate.description)
+            if today
+                span=member.name
+
 mixin teamMemberRow(team, member)
     tr(class=member.cssClass)
         th(scope=row)
@@ -15,12 +26,7 @@ mixin teamMemberRow(team, member)
             span=member.name
         if member.dates
             for memberDate in member.dates
-                - var today = isToday(memberDate.date)
-                - var week = memberDate.date.week() % 2 ? 'weekOdd' : 'weekEven'
-                td(class=[today ? 'today' : null, week])
-                    span.status(class=memberDate.cssClass, title=memberDate.description)
-                        if today
-                            span=member.name
+                +teamMemberCell(member, memberDate)
 
 mixin teamScrumFooter(team, cells)
     if team.summary
