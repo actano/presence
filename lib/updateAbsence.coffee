@@ -38,7 +38,6 @@ class Team
     constructor: (@name) ->
         @members = {}
         @sprint = null
-        @queryDates = []
         @status = null
 
     selectedMember: (date) ->
@@ -55,14 +54,15 @@ class Team
                 return avail[Math.floor(rng() * avail.length)]
 
     sprintSummary: ->
-        sprintDays = Object.keys(@queryDates).length
+        sprintDays = @sprint.datesCount()
         sprintMembers = Object.keys(@members).length
         sprintMemberDays = sprintDays * sprintMembers
         sprintMemberAvailabilities = Number(sprintMemberDays)
 
         for name, member of @members
-            for date in @queryDates
-                absence = member.getAbsence date
+            iter = @sprint.dates()
+            until (date = iter.next()).done
+                absence = member.getAbsence date.value
                 status = absence?.status
                 if status?
                     if (status == 'absent' || status == 'public-holiday')
@@ -102,10 +102,6 @@ module.exports = Promise.coroutine (userDate) ->
                 currentSprintStartDate = sprintStartDate.add(sprintsSinceFirstStart * team.sprint.durationWeeks, 'weeks')
                 currentSprintEndDate = moment(currentSprintStartDate).add(team.sprint.durationWeeks, 'weeks').subtract(1, 'days')
                 result.sprint = new Sprint sprintsSinceFirstStart, currentSprintStartDate, currentSprintEndDate, team.sprint.scrum
-
-                iter = result.sprint.dates()
-                until (date = iter.next()).done
-                    result.queryDates.push date.value
 
         # init team-members with gravatar urls
         for member in team.members
@@ -179,8 +175,9 @@ module.exports = Promise.coroutine (userDate) ->
                 return processAbsence()
 
         #iterate over the dates (in the sprint or today)
-        for queryDate in result.queryDates
-            updateCalendar teamCalendar, 'personal', queryDate
-            updateCalendar holidayCalendar, 'public-holiday', queryDate
+        iter = result.sprint.dates()
+        until (date = iter.next()).done
+            updateCalendar teamCalendar, 'personal', date.value
+            updateCalendar holidayCalendar, 'public-holiday', date.value
 
         result
