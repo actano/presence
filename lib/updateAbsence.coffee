@@ -34,10 +34,21 @@ class Sprint
             result++
         result
 
+initSprint = (sprintConfig, date) ->
+    return unless sprintConfig?
+    sprintStartDate = moment sprintConfig.startDate
+    weeksSinceSprintStart = date.diff(sprintStartDate, 'weeks')
+    if weeksSinceSprintStart >= 0 and (date.isAfter(sprintStartDate, 'day') or date.isSame(sprintStartDate, 'day'))
+        sprintsSinceFirstStart = Math.floor weeksSinceSprintStart / sprintConfig.durationWeeks
+        currentSprintStartDate = sprintStartDate.add(sprintsSinceFirstStart * sprintConfig.durationWeeks, 'weeks')
+        currentSprintEndDate = moment(currentSprintStartDate).add(sprintConfig.durationWeeks, 'weeks').subtract(1, 'days')
+        new Sprint sprintsSinceFirstStart, currentSprintStartDate, currentSprintEndDate, sprintConfig.scrum
+
 class Team
-    constructor: (@name) ->
+    constructor: (teamConfig, date) ->
+        @name = teamConfig.name
+        @sprint = initSprint teamConfig.sprint, date
         @members = {}
-        @sprint = null
         @status = null
 
     selectedMember: (date) ->
@@ -91,17 +102,7 @@ module.exports = Promise.coroutine (userDate) ->
 
     for team in config.teams
 
-        result = new Team(team.name)
-
-        # initalize sprint information
-        if team.sprint
-            sprintStartDate = moment team.sprint.startDate
-            weeksSinceSprintStart = userDate.diff(sprintStartDate, 'weeks')
-            if weeksSinceSprintStart >= 0 and (userDate.isAfter(sprintStartDate, 'day') or userDate.isSame(sprintStartDate, 'day'))
-                sprintsSinceFirstStart = Math.floor weeksSinceSprintStart / team.sprint.durationWeeks
-                currentSprintStartDate = sprintStartDate.add(sprintsSinceFirstStart * team.sprint.durationWeeks, 'weeks')
-                currentSprintEndDate = moment(currentSprintStartDate).add(team.sprint.durationWeeks, 'weeks').subtract(1, 'days')
-                result.sprint = new Sprint sprintsSinceFirstStart, currentSprintStartDate, currentSprintEndDate, team.sprint.scrum
+        result = new Team team, userDate
 
         # init team-members with gravatar urls
         for member in team.members
