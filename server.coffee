@@ -26,7 +26,6 @@ module.exports = Promise.coroutine (queryDate) ->
         avail = []
 
         for name, member of team.members
-            member.cssClass = []
             member.dates = []
             for date in team.queryDates
                 memberDate =
@@ -43,7 +42,6 @@ module.exports = Promise.coroutine (queryDate) ->
                         sprintMemberAvailabilities--
 
                 if date.isSame resultDate, 'day'
-                    member.cssClass.push status if status?
                     avail.push member unless absence?
                 member.dates.push memberDate
 
