@@ -35,7 +35,6 @@ app.get '/', (req, res, next) ->
         data =
             today: teams.date
             moment: moment
-            date: teams.date
             teams: teams
 
         res.render 'index', data

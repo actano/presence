@@ -7,7 +7,7 @@ mixin teamHeadline(team)
         - var head = team.head
 
         unless team.sprint.scrum
-            small W#{date.isoWeek()}
+            small W#{today.isoWeek()}
         if team.sprint.scrum
             small S#{team.sprint.count + 1}
             time=team.sprint.start.format(deDate) + ' – ' + team.sprint.end.format(deDate)
@@ -61,7 +61,7 @@ mixin calendarHead(queryDates)
 
 mixin renderTeam(team)
     - var cells = team.queryDates.length + 1
-    - var selectedMember = team.selectedMember(date)
+    - var selectedMember = team.selectedMember(today)
     table
         caption
             +teamHeadline(team)
@@ -92,7 +92,7 @@ html
 
         h1 Presence for  
             form(action='/')
-                input(type='date' name='date' value=date.format(isoDate), onchange='document.forms[0].submit()')
+                input(type='date' name='date' value=today.format(isoDate), onchange='document.forms[0].submit()')
 
         ul.teams
             for team in teams
