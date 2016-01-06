@@ -34,6 +34,7 @@ class Member
 
         @image_url = getGravatarUrlFromName @name
         @absences = {}
+        @selected = false
 
 
     getAbsence: (date) ->

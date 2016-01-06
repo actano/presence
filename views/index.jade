@@ -20,7 +20,8 @@ mixin teamMemberCell(member, memberDate)
                 span=member.name
 
 mixin teamMemberRow(team, member)
-    tr(class=member.cssClass)
+    - var selected = member.selected ? 'selected' : null
+    tr(class=[member.cssClass, selected])
         th(scope=row)
             img(src=member.image_url + '?s=40')
             span=member.name

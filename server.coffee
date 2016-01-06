@@ -56,7 +56,7 @@ module.exports = Promise.coroutine (queryDate) ->
 
             if avail.length and team.sprint.scrum
                 selectedMember = avail[Math.floor(rng() * avail.length)]
-                selectedMember.cssClass.push 'selected'
+                selectedMember.selected = true
             team.summary = new Summary sprintMemberAvailabilities, sprintMemberDays
 
         else
