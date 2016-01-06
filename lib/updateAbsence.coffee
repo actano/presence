@@ -22,6 +22,11 @@ class Summary
 
 class Sprint
     constructor: (@count, @start, @end, @scrum) ->
+    dates: ->
+        date = moment @start
+        while not date.isAfter @end
+            yield moment date unless date.day() is 0 or date.day() is 6
+            date.add 1, 'days'
 
 class Team
     constructor: (@name) ->
@@ -92,11 +97,11 @@ module.exports = Promise.coroutine (userDate) ->
                 currentSprintEndDate = moment(currentSprintStartDate).add(team.sprint.durationWeeks, 'weeks').subtract(1, 'days')
                 result.sprint = new Sprint sprintsSinceFirstStart, currentSprintStartDate, currentSprintEndDate, team.sprint.scrum
 
-                result.queryDates = []
-                queryDate = moment(result.sprint.start)
-                while not queryDate.isAfter(result.sprint.end)
-                    result.queryDates.push(moment(queryDate)) unless queryDate.day() is 0 or queryDate.day() is 6
-                    queryDate.add(1, 'days')
+                iter = result.sprint.dates()
+                date = iter.next()
+                while not date.done
+                    result.queryDates.push date.value
+                    date = iter.next()
 
         # init team-members with gravatar urls
         for member in team.members
