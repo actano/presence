@@ -13,14 +13,15 @@ mixin teamMemberHead(member)
         img(src=member.image_url + '?s=40')
         span=member.name
 
-mixin teamMemberCell(member, memberDate)
-    - var date = memberDate.date
+mixin teamMemberCell(member, date)
     - var todayClass = date.isSame(today, 'day') ? 'today' : null
     - var week = date.week() % 2 ? 'weekOdd' : 'weekEven'
     - var preWeekend = date.day() == 5 ? 'preWeekend' : null
     - var postWeekend = date.day() == 1 ? 'postWeekend' : null
+    - var absence = member.getAbsence(date)
+    - var status = absence ? absence.status : null
     td(class=todayClass)
-        span.status(class=[memberDate.status, preWeekend, postWeekend])
+        span.status(class=[status, preWeekend, postWeekend])
             if todayClass
                 span=member.name
 
@@ -30,9 +31,8 @@ mixin teamMemberRow(team, member)
     - var status = absence ? absence.status : null
     tr(class=[status, selected])
         +teamMemberHead(member)
-        if member.dates
-            for memberDate in member.dates
-                +teamMemberCell(member, memberDate)
+        for date in team.queryDates
+            +teamMemberCell(member, date)
 
 mixin teamScrumFooter(team, cells)
     if team.summary

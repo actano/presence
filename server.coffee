@@ -28,22 +28,14 @@ module.exports = Promise.coroutine (queryDate) ->
         for name, member of team.members
             member.dates = []
             for date in team.queryDates
-                memberDate =
-                    status: null
-                    date: date
-                    description: null
-                    content: null
-
                 absence = member.getAbsence date
                 status = absence?.status
-                memberDate.status = status
                 if status?
                     if (status == 'absent' || status == 'public-holiday')
                         sprintMemberAvailabilities--
 
                 if date.isSame resultDate, 'day'
                     avail.push member unless absence?
-                member.dates.push memberDate
 
         if avail.length and team.sprint.scrum
             selectedMember = avail[Math.floor(rng() * avail.length)]
