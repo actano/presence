@@ -98,10 +98,8 @@ module.exports = Promise.coroutine (userDate) ->
                 result.sprint = new Sprint sprintsSinceFirstStart, currentSprintStartDate, currentSprintEndDate, team.sprint.scrum
 
                 iter = result.sprint.dates()
-                date = iter.next()
-                while not date.done
+                until (date = iter.next()).done
                     result.queryDates.push date.value
-                    date = iter.next()
 
         # init team-members with gravatar urls
         for member in team.members
