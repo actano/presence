@@ -78,11 +78,7 @@ class Member
 module.exports = Promise.coroutine (userDate) ->
     config = require('./config') userDate
 
-    # skip weekends
-    while userDate.day() is 0 or userDate.day() is 6
-        userDate.add(1, 'days')
-
-    teams = for team in config.teams
+    for team in config.teams
 
         result = new Team(team.name)
 
@@ -179,5 +175,3 @@ module.exports = Promise.coroutine (userDate) ->
             updateCalendar holidayCalendar, 'public-holiday', queryDate
 
         result
-    teams.date = userDate
-    teams
