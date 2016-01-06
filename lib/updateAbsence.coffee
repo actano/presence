@@ -2,13 +2,6 @@ fs = require 'fs'
 path = require 'path'
 ICAL = require 'ical.js'
 moment = require 'moment'
-md5 = require 'MD5'
-urlify = require('urlify').create
-    addEToUmlauts: true
-    szToSs: true
-    spaces: "."
-    nonPrintable: "_"
-    trim: true
 
 Promise = require 'bluebird'
 Promise.promisifyAll fs
@@ -84,11 +77,6 @@ class Team
 
 class Member
     constructor: (config, @name) ->
-        getGravatarUrlFromName = (name) ->
-            name_md5 = md5 urlify(name.toLowerCase()) + config.emailSuffix
-            "#{config.gravatarPrefix}#{name_md5}"
-
-        @image_url = getGravatarUrlFromName @name
         @absences = {}
         @selected = false
 

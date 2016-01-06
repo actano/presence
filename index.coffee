@@ -22,6 +22,7 @@ app.use autoprefixer browsers: 'last 2 versions', cascade: false
 # respond with rendered html
 app.get '/', (req, res, next) ->
     presence = require './lib/presence'
+    config = require './lib/config'
     moment = require 'moment'
     if req.query?.date?
         date = moment req.query.date
@@ -39,6 +40,7 @@ app.get '/', (req, res, next) ->
             today: date
             moment: moment
             teams: teams
+            gravatarUrlFromName: config.gravatarUrlFromName
 
         res.render 'index', data
 

@@ -1,3 +1,13 @@
+md5 = require 'MD5'
+urlify = require('urlify').create
+    addEToUmlauts: true
+    szToSs: true
+    spaces: "."
+    nonPrintable: "_"
+    trim: true
+
+gravatarUrlFromName = null
+
 module.exports = (date) ->
     isoDate = date.format 'YYYY-MM-DD'
     fs = require 'fs'
@@ -61,4 +71,17 @@ module.exports = (date) ->
         return 1 if a.weight > b.weight
         return a.name.localeCompare b.name
 
+    # set static function
+    module.exports.gravatarUrlFromName = gravatarUrlFromName = (name) ->
+        name_md5 = md5 urlify(name.toLowerCase()) + config.emailSuffix
+        "#{config.gravatarPrefix}#{name_md5}"
+
     config
+
+module.exports.gravatarUrlFromName = (name) ->
+    unless gravatarUrlFromName?
+        # load some default config to init fn
+        moment = require 'moment'
+        module.exports(moment())
+    gravatarUrlFromName name
+

@@ -14,7 +14,7 @@ mixin teamHeadline(team)
 
 mixin teamMemberHead(member)
     th(scope=row)
-        img(src=member.image_url + '?s=40')
+        img(src=gravatarUrlFromName(member.name) + '?s=40')
         span=member.name
 
 mixin teamMemberCell(member, date)
