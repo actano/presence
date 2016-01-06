@@ -1,10 +1,11 @@
-moment = require 'moment'
 Promise = require 'bluebird'
-updateAbsence = require './updateAbsence'
+Promise.longStackTraces()
+moment = require 'moment'
 
 inMemCache = {}
 
-module.exports = Promise.method (date) ->
+getAbsence = Promise.method (date) ->
+    updateAbsence = require './updateAbsence'
     key = date.format 'YYYY-MM-DD'
     cacheEntry = inMemCache[key]
     now = moment()
@@ -14,3 +15,6 @@ module.exports = Promise.method (date) ->
             validUntil: now.add 60, 'seconds'
 
     cacheEntry.absence
+
+module.exports = (date, cb) ->
+    getAbsence(date).asCallback cb

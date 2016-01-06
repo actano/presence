@@ -1,8 +1,5 @@
 path = require 'path'
 
-Promise = require 'bluebird'
-Promise.longStackTraces()
-
 express = require 'express'
 
 app = express()
@@ -23,23 +20,25 @@ autoprefixer = require 'express-autoprefixer'
 app.use autoprefixer browsers: 'last 2 versions', cascade: false
 
 # respond with rendered html
-app.get '/', Promise.coroutine (req, res) ->
+app.get '/', (req, res, next) ->
+    presence = require './lib/presence'
     moment = require 'moment'
-    getAbsence = require './getAbsence'
     if req.query?.date?
         date = moment req.query.date
         date = null unless date.isValid()
     date = moment() unless date?
     date.startOf 'day'
 
-    teams = yield getAbsence date
-    data =
-        today: teams.date
-        moment: moment
-        date: teams.date
-        teams: teams
+    presence date, (err, teams) ->
+        return next err if err?
 
-    res.render 'index', data
+        data =
+            today: teams.date
+            moment: moment
+            date: teams.date
+            teams: teams
+
+        res.render 'index', data
 
 app.use express.static publicDir
 

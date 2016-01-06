@@ -13,7 +13,7 @@ urlify = require('urlify').create
 Promise = require 'bluebird'
 Promise.promisifyAll fs
 
-icsFromURL = require './lib/ics-from-url'
+icsFromURL = require './ics-from-url'
 isoDate = 'YYYY-MM-DD'
 
 class Summary
@@ -111,7 +111,7 @@ module.exports = Promise.coroutine (userDate) ->
 
         teamCalendar = new ICAL.Component ICAL.parse teamCalendarData.content
 
-        holidayCalendarData = yield fs.readFileAsync path.join(__dirname, 'calendars', 'public-holidays_de.ics'), 'utf-8'
+        holidayCalendarData = yield fs.readFileAsync path.join(path.dirname(__dirname), 'calendars', 'public-holidays_de.ics'), 'utf-8'
         holidayCalendar = new ICAL.Component ICAL.parse holidayCalendarData
 
         updateCalendar = (calendar, calendarType, queryDate) ->
