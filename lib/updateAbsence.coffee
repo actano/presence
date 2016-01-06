@@ -27,6 +27,12 @@ class Sprint
         while not date.isAfter @end
             yield moment date unless date.day() is 0 or date.day() is 6
             date.add 1, 'days'
+    datesCount: ->
+        result = 0
+        iter = @dates()
+        until iter.next().done
+            result++
+        result
 
 class Team
     constructor: (@name) ->

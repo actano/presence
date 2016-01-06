@@ -35,7 +35,7 @@ mixin teamMemberRow(team, member, selected)
     - var status = absence ? absence.status : null
     tr(class=[status, selectedClass])
         +teamMemberHead(member)
-        for date in team.queryDates
+        - for (date of team.sprint.dates())
             +teamMemberCell(member, date)
 
 mixin teamScrumFooter(team, cells)
@@ -46,26 +46,26 @@ mixin teamScrumFooter(team, cells)
                 - var percentage = summary.percentage
                 .percentage(style='width: ' + percentage + '%') #{summary.avail}/#{summary.total}d available
 
-mixin calendarHead(queryDates)
+mixin calendarHead(team)
     col.head
-    for date in queryDates
+    - for (date of team.sprint.dates())
         - var todayClass = date.isSame(today, 'day') ? 'today' : null
         - var week = date.week() % 2 ? 'weekOdd' : 'weekEven'
         col(class=[todayClass, week])
     thead
         tr
             th
-            for date in queryDates
+            - for (date of team.sprint.dates())
                 - var week = date.week() % 2 ? 'weekOdd' : 'weekEven'
                 th(scope=col, class=week)=date.format('D')
 
 mixin renderTeam(team)
-    - var cells = team.queryDates.length + 1
+    - var cells = team.sprint.datesCount() + 1
     - var selectedMember = team.selectedMember(today)
     table
         caption
             +teamHeadline(team)
-        +calendarHead(team.queryDates)
+        +calendarHead(team)
         if team.members
             tbody
                 for member in team.members
