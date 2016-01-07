@@ -45,7 +45,7 @@ class Team
             for name, member of @members
                 absence = member.absences(date).next().value
                 continue if absence?.date.isSame date, 'day'
-                avail.push member unless absence?
+                avail.push member
 
             if avail.length
                 seedrandom = require 'seedrandom'
