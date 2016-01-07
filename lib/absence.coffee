@@ -13,7 +13,7 @@ Absence.fromEvents = (eventIterator, start) ->
 createAbsence = (event, day) ->
     startDate = day.startDate()
     if event.calendar.holidays
-        return date: startDate, status: 'public-holiday', description: event.name()
+        return new Absence startDate, 'public-holiday', event.name()
     endDate = day.endDate()
     duration = endDate.diff startDate, 'minutes'
     status = if duration < 7 * 60 then 'awayPartial' else 'absent'
