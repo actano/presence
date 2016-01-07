@@ -2,10 +2,10 @@ moment = require 'moment'
 Absence = require './absence'
 
 class Member
-    constructor: (@team, @name) ->
+    constructor: (@calendars, @name) ->
 
     events: ->
-        for calendar in @team.calendars
+        for calendar in @calendars
             iter = calendar.events()
             until (item = iter.next()).done
                 event = item.value

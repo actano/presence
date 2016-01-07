@@ -36,7 +36,7 @@ class Team
         @status = null
         @members = {}
         for member in teamConfig.members
-            @members[member] = new Member this, member
+            @members[member] = new Member @calendars, member
 
     selectedMember: (date) ->
         if @sprint.scrum
