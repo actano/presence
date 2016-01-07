@@ -17,16 +17,15 @@ mixin teamMemberHead(member)
         img(src=gravatarUrlFromName(member.name) + '?s=40')
         span=member.name
 
-mixin teamMemberCell(member, date)
-    - var todayClass = date.isSame(today, 'day') ? 'today' : null
+mixin teamMemberCell(member, day)
     -
+        var todayClass = day.date.isSame(today, 'day') ? 'today' : null
         var cssClass = []
-        if (date.day() == 5) cssClass.push('preWeekend')
-        if (date.day() == 1) cssClass.push('postWeekend')
-        for (absence of member.absences(date)) {
-            if (absence.date.isAfter(date, 'day')) break
-            cssClass.push(absence.status)
-        }
+        if (day.date.day() == 5) cssClass.push('preWeekend')
+        if (day.date.day() == 1) cssClass.push('postWeekend')
+    each absence in day.absences
+        - cssClass.push(absence.status)
+
     td(class=todayClass)
         span.status(class=cssClass)
             if todayClass
@@ -45,7 +44,7 @@ mixin teamMemberRow(team, member, selected)
         +teamMemberHead(member)
         for day in member.dayArray(team.sprint.start, team.sprint.end)
             unless day.isWeekend()
-                +teamMemberCell(member, day.date)
+                +teamMemberCell(member, day)
 
 mixin teamScrumFooter(team, cells)
     - var summary = team.sprintSummary()
