@@ -32,9 +32,15 @@ initSprint = (sprintConfig, date) ->
 class Team
     constructor: (teamConfig, date, @calendars...) ->
         @name = teamConfig.name
+        zero = moment()
+        zero.startOf 'day'
+        sob = moment teamConfig.startOfBusiness, ['HH:mm:ss', 'HH:mm']
+        @startOfBusiness = sob.diff zero, 'minutes'
+        eob = moment teamConfig.endOfBusiness, ['HH:mm:ss', 'HH:mm']
+        @endOfBusiness = Math.max @startOfBusiness + 1, eob.diff zero, 'minutes'
         @sprint = initSprint teamConfig.sprint, date
         @status = null
-        @members = (new Member @calendars, member for member in teamConfig.members)
+        @members = (new Member this, name for name in teamConfig.members)
 
     selectedMember: (date) ->
         if @sprint.scrum

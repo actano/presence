@@ -1,27 +1,28 @@
 class Absence
-    constructor: (@date, @status, @description) ->
+    constructor: (@member, @event, @day) ->
+        @date = @day.startDate()
+        if @event.calendar.holidays
+            @status = 'public-holiday'
+            @description = @event.name()
+        else
+            endDate = @day.endDate()
+            duration = endDate.diff @date, 'minutes'
+            status = if duration < 7 * 60 then 'awayPartial' else 'absent'
+            # switch to away (aka. home-office or business travel)
+            status = 'away' if status is 'absent' and @event.isTravel()
+            @status = status
+            @description = @event.description()
 
-Absence.fromEvents = (eventIterator, start) ->
+Absence.fromEvents = (eventIterator, member, start) ->
     iterators = []
     until (item = eventIterator.next()).done
-        iterator = absences item.value, start
+        iterator = absences item.value, member, start
         iterator.last = iterator.next()
         iterators.push iterator
 
     yield from merge iterators
 
-createAbsence = (event, day) ->
-    startDate = day.startDate()
-    if event.calendar.holidays
-        return new Absence startDate, 'public-holiday', event.name()
-    endDate = day.endDate()
-    duration = endDate.diff startDate, 'minutes'
-    status = if duration < 7 * 60 then 'awayPartial' else 'absent'
-    # switch to away (aka. home-office or business travel)
-    status = 'away' if status is 'absent' and event.isTravel()
-    return new Absence startDate, status, event.description()
-
-absences = (event, start) ->
+absences = (event, member, start) ->
     instanceIterator = event.instances start
     until (item = instanceIterator.next()).done
         instance = item.value
@@ -29,7 +30,7 @@ absences = (event, start) ->
         dayIterator = instance.days start
         until (item = dayIterator.next()).done
             day = item.value
-            yield createAbsence instance.event, day
+            yield new Absence member, instance.event, day
 
 compareIterators = (a, b) ->
     return -1 if a.last.done

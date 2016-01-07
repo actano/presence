@@ -2,10 +2,10 @@ moment = require 'moment'
 Absence = require './absence'
 
 class Member
-    constructor: (@calendars, @name) ->
+    constructor: (@team, @name) ->
 
     events: ->
-        for calendar in @calendars
+        for calendar in @team.calendars
             iter = calendar.events()
             until (item = iter.next()).done
                 event = item.value
@@ -13,7 +13,7 @@ class Member
                     yield event
 
     absences: (date) ->
-        yield from Absence.fromEvents @events(), date
+        yield from Absence.fromEvents @events(), this, date
 
     days: (date) ->
         current = moment(date).startOf 'day'
