@@ -47,9 +47,6 @@ events2absences = (eventIterator, start) ->
 
     yield from merge iterators
 
-key = (date) ->
-    date.format 'YYYY-MM-DD'
-
 dateCompare = (a, b) ->
     return -1 if a.isBefore b
     return 1 if a.isAfter b
@@ -57,7 +54,6 @@ dateCompare = (a, b) ->
 
 class Member
     constructor: (@team, @name) ->
-        @_absences = {}
         @selected = false
 
     events: ->
@@ -68,25 +64,14 @@ class Member
                 if event.calendar.holidays or event.name() is @name
                     yield event
 
-    createAbsences: ->
-        end = @team.sprint.end
-        absenceIterator = events2absences @events(), @team.sprint.start
-        until (item = absenceIterator.next()).done
-            absence = item.value
-            break if absence.date.isAfter end
-            @_absences[key absence.date] = absence
-
     getAbsence: (date) ->
-        @_absences[key date]
+        absenceIterator = @absences date
+        absence = absenceIterator.next().value
+        if absence?.date.isSame date, 'day'
+            return absence
 
     absences: (date) ->
-        result = []
-        for k,absence of @_absences
-            continue if date? and date.isAfter absence.date, 'day'
-            result.push absence
-
-        result.sort (a,b) -> dateCompare a.date, b.date
-        yield a for a in result
+        yield from events2absences @events(), date
 
     days: (date) ->
         current = moment(date).startOf 'day'

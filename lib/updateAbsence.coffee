@@ -23,7 +23,4 @@ module.exports = Promise.coroutine (userDate) ->
 
         result = new Team team, userDate, holidayCalendar, new Calendar teamCalendarData.content
         result.cacheTimestamp = moment teamCalendarData.mtime
-
-        for name, member of result.members
-            member.createAbsences()
         result
