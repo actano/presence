@@ -55,21 +55,25 @@ describe 'ical', ->
             before 'find', ->
                 event = findEvent TEST_EVENT
 
-            it "should be on #{str TEST_MOMENT}", ->
-                startDate = event.startDate()
-                expect startDate, 'startDate'
-                    .to.exist
-
-                expect startDate.isSame TEST_MOMENT, 'day'
-                    .to.be.true
-
             it "should have Description of '#{TEST_DESCRIPTION}'", ->
                 expect event.description()
                     .to.equal TEST_DESCRIPTION
 
+            it "should be in confluence subcalendar '#{confluenceType = 'leaves'}'", ->
+                expect event.confluenceCalendarType()
+                    .to.equal confluenceType
+
             it "should be recurring", ->
                 expect event.icalEvent.isRecurring()
                     .to.be.true
+
+            it "should start on #{str TEST_MOMENT}", ->
+                startDate = event.startDate()
+                expect startDate, 'startDate'
+                .to.exist
+
+                expect startDate.isSame TEST_MOMENT, 'day'
+                .to.be.true
 
             it "first occurance should be on #{str TEST_MOMENT}", ->
                 instanceIterator = event.instances()
@@ -96,7 +100,7 @@ describe 'ical', ->
                 expect date.isBefore(newYear, 'day'), str date
                     .to.be.false
 
-            it.only "should end before #{str endMoment = moment '2017-01-01'}", ->
+            it "should end before #{str endMoment = moment '2017-01-01'}", ->
                 instanceIterator = event.instances endMoment
                 instance = instanceIterator.next().value
                 expect instance, str instance?.date

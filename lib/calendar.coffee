@@ -49,9 +49,29 @@ class Event
             date = moment v.toJSDate()
             yield new Instance this, date
 
+    confluenceCalendarType: ->
+        return @icalEvent.component.getFirstPropertyValue 'x-confluence-subcalendar-type'
+
 class Instance
     constructor: (@event, @date) ->
+        @end = moment(@date).add @event.duration('seconds'), 'seconds'
     startDate: -> moment @date
-    endDate: -> moment(@date).add @event.duration 'seconds'
+    endDate: -> moment @end
+    days: (start) ->
+        if start?
+            return yield from filterAfter start, @days()
+        startDate = @date
+        endDate = @end
+        next = moment(startDate).add(1, 'days').startOf 'day'
+        until startDate.isSame endDate, 'days'
+            yield new Day startDate, moment next
+            startDate = moment next
+            next.add 1, 'days'
+        yield new Day startDate, endDate unless startDate.isSame endDate
+
+class Day
+    constructor: (@start, @end) ->
+    startDate: -> @start
+    endDate: -> @end
 
 module.exports = Calendar
