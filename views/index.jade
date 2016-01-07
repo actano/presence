@@ -74,11 +74,10 @@ mixin renderTeam(team)
         caption
             +teamHeadline(team)
         +calendarHead(team)
-        if team.members
-            tbody
-                for member in team.members
-                    - var selected = selectedMember == member
-                    +teamMemberRow(team, member, selected)
+        tbody
+            each member in team.members
+                - var selected = selectedMember == member
+                +teamMemberRow(team, member, selected)
         if team.sprint.scrum
             +teamScrumFooter(team, cells)
 

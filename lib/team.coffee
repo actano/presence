@@ -34,15 +34,13 @@ class Team
         @name = teamConfig.name
         @sprint = initSprint teamConfig.sprint, date
         @status = null
-        @members = {}
-        for member in teamConfig.members
-            @members[member] = new Member @calendars, member
+        @members = (new Member @calendars, member for member in teamConfig.members)
 
     selectedMember: (date) ->
         if @sprint.scrum
             avail = []
 
-            for name, member of @members
+            for member in @members
                 absence = member.absences(date).next().value
                 continue if absence?.date.isSame date, 'day'
                 avail.push member
@@ -54,11 +52,11 @@ class Team
 
     sprintSummary: ->
         sprintDays = @sprint.datesCount()
-        sprintMembers = Object.keys(@members).length
+        sprintMembers = @members.length
         sprintMemberDays = sprintDays * sprintMembers
         sprintMemberAvailabilities = Number(sprintMemberDays)
 
-        for name, member of @members
+        for member in @members
             iter = @sprint.dates()
             until (item = iter.next()).done
                 date = item.value
