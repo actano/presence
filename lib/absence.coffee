@@ -5,11 +5,11 @@ class Absence
             @status = 'public-holiday'
             @description = @event.name()
         else
+            status = if @event.isTravel() then 'away' else 'absent'
+
             endDate = @day.endDate()
             duration = endDate.diff @date, 'minutes'
-            status = if duration < 7 * 60 then 'awayPartial' else 'absent'
-            # switch to away (aka. home-office or business travel)
-            status = 'away' if status is 'absent' and @event.isTravel()
+            status += 'Partial' if duration < 7 * 60
             @status = status
             @description = @event.description()
 
