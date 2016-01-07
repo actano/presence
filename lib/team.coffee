@@ -1,0 +1,71 @@
+moment = require 'moment'
+Member = require './member'
+
+class Summary
+    constructor: (@avail, @total) ->
+        @percentage = 100 * @avail / @total
+
+class Sprint
+    constructor: (@count, @start, @end, @scrum) ->
+    dates: ->
+        date = moment @start
+        while not date.isAfter @end
+            yield moment date unless date.day() is 0 or date.day() is 6
+            date.add 1, 'days'
+    datesCount: ->
+        result = 0
+        iter = @dates()
+        until iter.next().done
+            result++
+        result
+
+initSprint = (sprintConfig, date) ->
+    return unless sprintConfig?
+    sprintStartDate = moment sprintConfig.startDate
+    weeksSinceSprintStart = date.diff(sprintStartDate, 'weeks')
+    if weeksSinceSprintStart >= 0 and (date.isAfter(sprintStartDate, 'day') or date.isSame(sprintStartDate, 'day'))
+        sprintsSinceFirstStart = Math.floor weeksSinceSprintStart / sprintConfig.durationWeeks
+        currentSprintStartDate = sprintStartDate.add(sprintsSinceFirstStart * sprintConfig.durationWeeks, 'weeks')
+        currentSprintEndDate = moment(currentSprintStartDate).add(sprintConfig.durationWeeks, 'weeks').subtract(1, 'days')
+        new Sprint sprintsSinceFirstStart, currentSprintStartDate, currentSprintEndDate, sprintConfig.scrum
+
+class Team
+    constructor: (teamConfig, date, @calendars...) ->
+        @name = teamConfig.name
+        @sprint = initSprint teamConfig.sprint, date
+        @status = null
+        @members = {}
+        for member in teamConfig.members
+            @members[member] = new Member this, member
+
+    selectedMember: (date) ->
+        if @sprint.scrum
+            avail = []
+
+            for name, member of @members
+                absence = member.getAbsence date
+                avail.push member unless absence?
+
+            if avail.length
+                seedrandom = require 'seedrandom'
+                rng = seedrandom date.format 'YYYY-MM-DD'
+                return avail[Math.floor(rng() * avail.length)]
+
+    sprintSummary: ->
+        sprintDays = @sprint.datesCount()
+        sprintMembers = Object.keys(@members).length
+        sprintMemberDays = sprintDays * sprintMembers
+        sprintMemberAvailabilities = Number(sprintMemberDays)
+
+        for name, member of @members
+            iter = @sprint.dates()
+            until (date = iter.next()).done
+                absence = member.getAbsence date.value
+                status = absence?.status
+                if status?
+                    if (status == 'absent' || status == 'public-holiday')
+                        sprintMemberAvailabilities--
+
+        new Summary sprintMemberAvailabilities, sprintMemberDays
+
+module.exports = Team
