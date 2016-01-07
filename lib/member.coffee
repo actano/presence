@@ -3,7 +3,6 @@ Absence = require './absence'
 
 class Member
     constructor: (@team, @name) ->
-        @selected = false
 
     events: ->
         for calendar in @team.calendars
