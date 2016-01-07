@@ -30,13 +30,19 @@ mixin teamMemberCell(member, date)
                 span=member.name
 
 mixin teamMemberRow(team, member, selected)
-    - var selectedClass = selected ? 'selected' : null
-    - var absence = member.getAbsence(today)
-    - var status = absence ? absence.status : null
-    tr(class=[status, selectedClass])
+    -
+        var cssClass = []
+        if (selected) cssClass.push('selected')
+        for (absence of member.absences(today)) {
+            if (absence.date.isAfter(today, 'day')) break
+            cssClass.push(absence.status)
+        }
+
+    tr(class=cssClass)
         +teamMemberHead(member)
-        - for (date of team.sprint.dates())
-            +teamMemberCell(member, date)
+        for day in member.dayArray(team.sprint.start, team.sprint.end)
+            unless day.isWeekend()
+                +teamMemberCell(member, day.date)
 
 mixin teamScrumFooter(team, cells)
     - var summary = team.sprintSummary()
