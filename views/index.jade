@@ -19,17 +19,15 @@ mixin teamMemberHead(member)
 
 mixin teamMemberCell(member, day)
     -
-        var todayClass = day.date.isSame(today, 'day') ? 'today' : null
-        var cssClass = []
-        if (day.date.day() == 5) cssClass.push('preWeekend')
-        if (day.date.day() == 1) cssClass.push('postWeekend')
-    each absence in day.absences
-        - cssClass.push(absence.status)
+        var dayClass = []
+        if (day.date.isSame(today, 'day')) dayClass.push('today')
+        if (day.date.day() == 5) dayClass.push('preWeekend')
+        if (day.date.day() == 1) dayClass.push('postWeekend')
 
-    td(class=todayClass)
-        span.status(class=cssClass)
-            if todayClass
-                span=member.name
+    td(class=dayClass)
+        div
+            each absence in day.absences
+                span.status(class=absence.status)
 
 mixin teamMemberRow(team, member, selected)
     -

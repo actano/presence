@@ -116,25 +116,25 @@ table
             vertical-align bottom
             padding 0 1px
 
-            span
-                display block
+            div
+                background-color $colorAvailable
                 height $dayHeight
                 width $dayWidth
                 margin-bottom 4px
 
-                // Span for the member name INSIDE of today box
                 span
-                  display none
-                    
-            &.today span
+                    position absolute
+                    height $dayHeight
+                    width $dayWidth
+
+            &.today div
+            &.today div span
                 width ($dayWidth * 2)
 
-            &:not(.today) span
+            &:not(.today) div
                 opacity 0.2
-                
 
 .status
-    background-color $colorAvailable
     &.absent
     &.public-holiday
         color darkslategray
