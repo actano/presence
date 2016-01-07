@@ -53,16 +53,18 @@ module.exports = (date) ->
         teams = sorted.teams
 
         for team in teams
-            defaults = teamMap[team.name] || config.teamDefaults
-            applyDefaults defaults, team
+            defaults = teamMap[team.name]
+            applyDefaults defaults, team if defaults?
+            team.sprint = {} unless team.sprint?
             team.sprint.startDate = from unless team.sprint.startDate?
-            team.calendar = url.resolve config.calendarPrefix, team.calendar
             teamMap[team.name] = team
 
     config.teams = []
     for name, team of teamMap
+        applyDefaults config.teamDefaults, team
         continue if team.sprint?.startDate > isoDate
         continue if team.members.length is 0
+        team.calendar = url.resolve config.calendarPrefix, team.calendar
         team.members.sort (a,b) -> a.localeCompare b
         config.teams.push team
 
