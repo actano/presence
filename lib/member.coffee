@@ -64,12 +64,6 @@ class Member
                 if event.calendar.holidays or event.name() is @name
                     yield event
 
-    getAbsence: (date) ->
-        absenceIterator = @absences date
-        absence = absenceIterator.next().value
-        if absence?.date.isSame date, 'day'
-            return absence
-
     absences: (date) ->
         yield from events2absences @events(), date
 

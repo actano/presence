@@ -43,7 +43,8 @@ class Team
             avail = []
 
             for name, member of @members
-                absence = member.getAbsence date
+                absence = member.absences(date).next().value
+                continue if absence?.date.isSame date, 'day'
                 avail.push member unless absence?
 
             if avail.length
@@ -59,12 +60,16 @@ class Team
 
         for name, member of @members
             iter = @sprint.dates()
-            until (date = iter.next()).done
-                absence = member.getAbsence date.value
-                status = absence?.status
-                if status?
+            until (item = iter.next()).done
+                date = item.value
+                absenceIterator = member.absences date
+                until (item = absenceIterator.next()).done
+                    absence = item.value
+                    break unless (absence.date.isSame date, 'day')
+                    status = absence.status
                     if (status == 'absent' || status == 'public-holiday')
                         sprintMemberAvailabilities--
+                        break
 
         new Summary sprintMemberAvailabilities, sprintMemberDays
 
