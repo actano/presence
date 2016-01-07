@@ -27,7 +27,9 @@ mixin teamMemberCell(member, day)
     td(class=dayClass)
         div
             each absence in day.absences
-                span.status(class=absence.status)
+                - var top = String(absence.startPercentage * 100) + '%'
+                - var height = String((absence.endPercentage - absence.startPercentage) * 100) + '%'
+                span.status(class=absence.status, style={top: top, height: height})
 
 mixin teamMemberRow(team, member, selected)
     -
