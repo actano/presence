@@ -11,6 +11,42 @@ createAbsence = (event, day) ->
     status = 'away' if status is 'absent' and event.isTravel()
     return date: startDate, status: status, description: event.description()
 
+absences = (event, start) ->
+    instanceIterator = event.instances start
+    until (item = instanceIterator.next()).done
+        instance = item.value
+
+        dayIterator = instance.days start
+        until (item = dayIterator.next()).done
+            day = item.value
+            yield createAbsence instance.event, day
+
+compareIterators = (a, b) ->
+    return -1 if a.last.done
+    return 1 if b.last.done
+    dateCompare a.last.value.date, b.last.value.date
+
+merge = (iterators) ->
+    iterators.sort compareIterators
+    while iterators.length
+        iterator = iterators[0]
+        {done, value} = iterator.last
+        if done
+            iterators.shift()
+            continue
+        yield value
+        iterator.last = iterator.next()
+        iterators.sort compareIterators
+
+events2absences = (eventIterator, start) ->
+    iterators = []
+    until (item = eventIterator.next()).done
+        iterator = absences item.value, start
+        iterator.last = iterator.next()
+        iterators.push iterator
+
+    yield from merge iterators
+
 key = (date) ->
     date.format 'YYYY-MM-DD'
 
@@ -32,47 +68,9 @@ class Member
                 if event.calendar.holidays or event.name() is @name
                     yield event
 
-    _processEvents: ->
-        start = @team.sprint.start
-
-        iterators = []
-
-        absences = (event) ->
-            instanceIterator = event.instances start
-            until (item = instanceIterator.next()).done
-                instance = item.value
-
-                dayIterator = instance.days start
-                until (item = dayIterator.next()).done
-                    day = item.value
-                    yield createAbsence instance.event, day
-
-        sort = (a, b) ->
-            return -1 if a.last.done
-            return 1 if b.last.done
-            dateCompare a.last.value.date, b.last.value.date
-
-        eventIterator = @events()
-        until (item = eventIterator.next()).done
-            iterator = absences item.value
-            last = iterator.next()
-            iterators.push {iterator, last}
-
-        iterators.sort sort
-
-        while iterators.length
-            next = iterators[0]
-            {done, value} = next.last
-            if done
-                iterators.shift()
-                continue
-            yield value
-            next.last = next.iterator.next()
-            iterators.sort sort
-
     createAbsences: ->
         end = @team.sprint.end
-        absenceIterator = @_processEvents()
+        absenceIterator = events2absences @events(), @team.sprint.start
         until (item = absenceIterator.next()).done
             absence = item.value
             break if absence.date.isAfter end
