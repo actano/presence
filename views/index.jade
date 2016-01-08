@@ -1,11 +1,31 @@
-- var deDate = 'DD.MM.'
-- var isoDate = 'YYYY-MM-DD'
+-
+    var deDate = 'DD.MM.'
+    var isoDate = 'YYYY-MM-DD'
+    function dayClass(date) {
+        var dayClass = [];
+        if (date.isSame(today, 'day')) dayClass.push('today')
+        if (date.day() == 5) dayClass.push('preWeekend')
+        if (date.day() == 1) dayClass.push('postWeekend')
+        dayClass.push(date.week() % 2 ? 'weekOdd' : 'weekEven')
+        return dayClass
+    }
+    function statusClasses(member, date, classes){
+        result = Array.prototype.slice.call(arguments, 2);
+        for (absence of member.absences(date)) {
+            if (absence.date.isAfter(date, 'day')) break
+            result.push(absence.status)
+        }
+        return result
+    }
+    function teamDates(team) {
+        result = []
+        for (date of team.sprint.dates()) result.push(date);
+        return result;
+    }
 
 mixin teamHeadline(team)
     h2.headline
         name=team.name
-        - var head = team.head
-
         unless team.sprint.scrum
             small W#{today.isoWeek()}
         if team.sprint.scrum
@@ -18,13 +38,7 @@ mixin teamMemberHead(member)
         span=member.name
 
 mixin teamMemberCell(member, day)
-    -
-        var dayClass = []
-        if (day.date.isSame(today, 'day')) dayClass.push('today')
-        if (day.date.day() == 5) dayClass.push('preWeekend')
-        if (day.date.day() == 1) dayClass.push('postWeekend')
-
-    td(class=dayClass)
+    td(class=dayClass(day.date))
         div
             each absence in day.absences
                 - var top = String(absence.startPercentage * 100) + '%'
@@ -32,15 +46,7 @@ mixin teamMemberCell(member, day)
                 span.status(class=absence.status, style={top: top, height: height})
 
 mixin teamMemberRow(team, member, selected)
-    -
-        var cssClass = []
-        if (selected) cssClass.push('selected')
-        for (absence of member.absences(today)) {
-            if (absence.date.isAfter(today, 'day')) break
-            cssClass.push(absence.status)
-        }
-
-    tr(class=cssClass)
+    tr(class=statusClasses(member, today, selected ? 'selected' : null))
         +teamMemberHead(member)
         for day in member.dayArray(team.sprint.start, team.sprint.end)
             unless day.isWeekend()
@@ -51,21 +57,20 @@ mixin teamScrumFooter(team, cells)
     tfoot
         tr
             td(colspan=cells)
-                - var percentage = summary.percentage
-                .percentage(style='width: ' + percentage + '%') #{summary.avail}/#{summary.total}d available
+                - var percentage = String(summary.percentage) + '%'
+                .percentage(style={width: percentage}) #{summary.avail}/#{summary.total}d available
 
 mixin calendarHead(team)
+    - var dates = teamDates(team)
+
     col.head
-    - for (date of team.sprint.dates())
-        - var todayClass = date.isSame(today, 'day') ? 'today' : null
-        - var week = date.week() % 2 ? 'weekOdd' : 'weekEven'
-        col(class=[todayClass, week])
+    each date in dates
+        col(class=dayClass(date))
     thead
         tr
             th
-            - for (date of team.sprint.dates())
-                - var week = date.week() % 2 ? 'weekOdd' : 'weekEven'
-                th(scope=col, class=week)=date.format('D')
+            each date in dates
+                th(scope=col, class=dayClass(date))=date.format('D')
 
 mixin renderTeam(team)
     - var cells = team.sprint.datesCount() + 1
