@@ -33,7 +33,7 @@ app.get '/', (req, res, next) ->
     presence date, (err, teams) ->
         return next err if err?
 
-        data = new Helpers date
+        data = new Helpers date.locale 'de'
         data.teams = teams
         data.gravatarUrlFromName = config.gravatarUrlFromName
 

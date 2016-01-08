@@ -53,12 +53,12 @@ class Helpers
 
     startOfCalendar: (team, date) ->
         start = date.clone()
-        start.day -1 unless start.day() is 1
+        start.weekday -7 unless start.weekday() is 0
         moment.max start, team.sprint.start
 
     endOfCalendar: (team, date) ->
         end = date.clone().add 1, 'weeks'
-        end.day 7 unless end.day() is 0
+        end.weekday 6 unless end.weekday() is 6
         moment.max end, team.sprint.end
 
 module.exports = Helpers
