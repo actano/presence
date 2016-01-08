@@ -17,9 +17,15 @@
         }
         return result
     }
-    function teamDates(team) {
-        result = []
-        for (date of team.sprint.dates()) result.push(date);
+    function dateArray(start, end) {
+        result = [];
+        date = start.clone().startOf('day');
+        while (!date.isAfter(end, 'day')) {
+            if (date.day() != 0 && date.day() != 6) {
+                result.push(date);
+            }
+            date = date.clone().add(1, 'days');
+        }
         return result;
     }
 
@@ -60,9 +66,7 @@ mixin teamScrumFooter(team, cells)
                 - var percentage = String(summary.percentage) + '%'
                 .percentage(style={width: percentage}) #{summary.avail}/#{summary.total}d available
 
-mixin calendarHead(team)
-    - var dates = teamDates(team)
-
+mixin calendarHead(dates)
     col.head
     each date in dates
         col(class=dayClass(date))
@@ -73,22 +77,23 @@ mixin calendarHead(team)
                 th(scope=col, class=dayClass(date))=date.format('D')
 
 mixin renderTeam(team)
-    - var cells = team.sprint.datesCount() + 1
-    - var selectedMember = team.selectedMember(today)
+    -
+        var selectedMember = team.selectedMember(today)
+        var start = team.sprint.start
+        var end = team.sprint.end
+        var dates = dateArray(start, end)
     table
         caption
             +teamHeadline(team)
-        +calendarHead(team)
+        +calendarHead(dates)
         tbody
             each member in team.members
-                - var selected = selectedMember == member
-                +teamMemberRow(member, team.sprint.start, team.sprint.end, selected)
+                +teamMemberRow(member, start, end, selectedMember == member)
         if team.sprint.scrum
-            +teamScrumFooter(team, cells)
+            +teamScrumFooter(team, dates.length + 1)
 
     if team.status
-        - var timestamp = team.cacheTimestamp.format('L LT')
-        h2.error Calendar failed: "#{team.status}", loading data from cache (#{timestamp}).
+        h2.error Calendar failed: "#{team.status}", loading data from cache (#{team.cacheTimestamp.format('L LT')}).
 
 doctype
 html
