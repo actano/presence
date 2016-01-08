@@ -1,51 +1,6 @@
 -
     var deDate = 'DD.MM.'
     var isoDate = 'YYYY-MM-DD'
-    function dayClass(date) {
-        var dayClass = [];
-        if (date.isSame(today, 'day')) dayClass.push('today')
-        if (date.day() == 5) dayClass.push('preWeekend')
-        if (date.day() == 1) dayClass.push('postWeekend')
-        dayClass.push(date.week() % 2 ? 'weekOdd' : 'weekEven')
-        return dayClass
-    }
-    function absenceClass(absence) {
-        if (absence.isHoliday()) return 'public-holiday'
-        if (absence.isTravel()) return 'away'
-        return 'absent'
-    }
-    function statusClasses(member, date, classes){
-        result = Array.prototype.slice.call(arguments, 2);
-        for (absence of member.absences(date)) {
-            if (absence.date.isAfter(date, 'day')) break
-            result.push(absenceClass(absence))
-        }
-        return result
-    }
-    function dateArray(start, end) {
-        result = [];
-        date = start.clone().startOf('day');
-        while (!date.isAfter(end, 'day')) {
-            if (date.day() != 0 && date.day() != 6) {
-                result.push(date);
-            }
-            date = date.clone().add(1, 'days');
-        }
-        return result;
-    }
-    function absencePercentage(team, startDate, endDate) {
-        var sob = team.startOfBusiness
-        var eob = team.endOfBusiness
-        var zero = startDate.clone().startOf('day').add(sob, 'minutes');
-        eob -= sob;
-        var start = Math.max(0, startDate.diff(zero, 'minutes'));
-        var end = Math.min(eob, endDate.diff(zero, 'minutes'));
-        return {
-            start: start / eob,
-            end: end / eob
-        };
-    };
-
 
 mixin teamHeadline(team)
     h2.headline
