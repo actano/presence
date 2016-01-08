@@ -28,10 +28,6 @@ app.get '/', (req, res, next) ->
         date = moment req.query.date
         date = null unless date.isValid()
     date = moment() unless date?
-    date.startOf 'day'
-    # skip weekends
-    while date.day() is 0 or date.day() is 6
-        date.add(1, 'days')
 
     presence date, (err, teams) ->
         return next err if err?
