@@ -3,7 +3,7 @@ moment = require 'moment'
 class Helpers
     constructor: (@today) ->
 
-    dayClass: (date) =>
+    dayClass: (team, date) =>
         result = []
         if date.isSame(@today, 'day')
             result.push 'today'
@@ -12,6 +12,9 @@ class Helpers
         if date.day() == 1
             result.push 'postWeekend'
         result.push if date.week() % 2 then 'weekOdd' else 'weekEven'
+        if team.sprint.scrum
+            offSprint = date.isBefore(team.sprint.start, 'day') or date.isAfter(team.sprint.end, 'day')
+            result.push if offSprint then 'offSprint' else 'inSprint'
         result
 
     absenceClass: (absence) ->
@@ -30,9 +33,10 @@ class Helpers
             result.push @absenceClass(absence)
         result
 
-    dateArray: (start, end) ->
+    dateArray: (start, end) =>
         result = []
         date = start.clone().startOf 'day'
+        date.locale @today.locale()
         until date.isAfter(end, 'day')
             unless date.day() % 6 is 0
                 result.push date
@@ -51,13 +55,14 @@ class Helpers
             end: end / eob
         }
 
-    startOfCalendar: (team, date) ->
-        start = date.clone()
+    startOfCalendar: (team, date) =>
+        start = date.clone().locale @today.locale()
         start.weekday -7 unless start.weekday() is 0
         moment.max start, team.sprint.start
 
-    endOfCalendar: (team, date) ->
+    endOfCalendar: (team, date) =>
         end = date.clone().add 1, 'weeks'
+        end.locale @today.locale()
         end.weekday 6 unless end.weekday() is 6
         moment.max end, team.sprint.end
 
