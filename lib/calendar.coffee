@@ -1,13 +1,9 @@
 ICAL = require 'ical.js'
 moment = require 'moment'
 
-str = (moment) -> moment.format 'YYYY-MM-DD HH:mm'
-
 filterAfter = (start, iter) ->
     until (item = iter.next()).done
         end = item.value.endDate()
-#        _start = item.value.startDate()
-#        console.log "#{str start}: #{str _start} - #{str end}"
         yield item.value if end.isAfter start
 
 class Calendar
