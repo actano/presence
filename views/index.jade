@@ -37,42 +37,20 @@ mixin teamHeadline(team)
             time=team.sprint.start.format(deDate) + '–' + team.sprint.end.format(deDate)
 
 mixin teamMemberHead(member)
-    th(scope=row)
-        img(src=gravatarUrlFromName(member.name) + '?s=40')
-        span=member.name
+    img(src=gravatarUrlFromName(member.name) + '?s=40')
+    span=member.name
 
 mixin teamMemberCell(member, day)
-    td(class=dayClass(day.date))
-        div
-            each absence in day.absences
-                - var top = String(absence.startPercentage * 100) + '%'
-                - var height = String((absence.endPercentage - absence.startPercentage) * 100) + '%'
-                span.status(class=absence.status, style={top: top, height: height})
+    div
+        each absence in day.absences
+            - var top = String(absence.startPercentage * 100) + '%'
+            - var height = String((absence.endPercentage - absence.startPercentage) * 100) + '%'
+            span.status(class=absence.status, style={top: top, height: height})
 
-mixin teamMemberRow(member, start, end, selected)
-    tr(class=statusClasses(member, today, selected ? 'selected' : null))
-        +teamMemberHead(member)
-        for day in member.dayArray(start, end)
-            unless day.isWeekend()
-                +teamMemberCell(member, day)
-
-mixin teamScrumFooter(team, cells)
+mixin teamSummary(team)
     - var summary = team.sprintSummary()
-    tfoot
-        tr
-            td(colspan=cells)
-                - var percentage = String(summary.percentage) + '%'
-                .percentage(style={width: percentage}) #{summary.avail}/#{summary.total}d available
-
-mixin calendarHead(dates)
-    col.head
-    each date in dates
-        col(class=dayClass(date))
-    thead
-        tr
-            th
-            each date in dates
-                th(scope=col, class=dayClass(date))=date.format('D')
+    - var percentage = String(summary.percentage) + '%'
+    .percentage(style={width: percentage}) #{summary.avail}/#{summary.total}d available
 
 mixin renderTeam(team)
     -
@@ -83,12 +61,32 @@ mixin renderTeam(team)
     table
         caption
             +teamHeadline(team)
-        +calendarHead(dates)
+
+        col.head
+        each date in dates
+            col(class=dayClass(date))
+
+        thead
+            tr
+                th
+                each date in dates
+                    th(scope=col, class=dayClass(date))=date.format('D')
+
         tbody
             each member in team.members
-                +teamMemberRow(member, start, end, selectedMember == member)
+                tr(class=statusClasses(member, today, selectedMember == member ? 'selected' : null))
+                    th(scope=row)
+                        +teamMemberHead(member)
+                    for day in member.dayArray(start, end)
+                        unless day.isWeekend()
+                            td(class=dayClass(day.date))
+                                +teamMemberCell(member, day)
+
         if team.sprint.scrum
-            +teamScrumFooter(team, dates.length + 1)
+            tfoot
+                tr
+                    td(colspan=dates.length + 1)
+                        +teamSummary(team)
 
     if team.status
         h2.error Calendar failed: "#{team.status}", loading data from cache (#{team.cacheTimestamp.format('L LT')}).
