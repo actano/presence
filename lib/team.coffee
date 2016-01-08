@@ -40,7 +40,7 @@ class Team
         @endOfBusiness = Math.max @startOfBusiness + 1, eob.diff zero, 'minutes'
         @sprint = initSprint teamConfig.sprint, date
         @status = null
-        @members = (new Member this, name for name in teamConfig.members)
+        @members = (new Member @calendars, name for name in teamConfig.members)
 
     selectedMember: (date) ->
         if @sprint.scrum
