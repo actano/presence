@@ -33,7 +33,9 @@
         }
         return result;
     }
-    function absencePercentage(sob, eob, startDate, endDate) {
+    function absencePercentage(team, startDate, endDate) {
+        var sob = team.startOfBusiness
+        var eob = team.endOfBusiness
         var zero = startDate.clone().startOf('day').add(sob, 'minutes');
         eob -= sob;
         var start = Math.max(0, startDate.diff(zero, 'minutes'));
@@ -56,10 +58,10 @@ mixin teamMemberHead(member)
     img(src=gravatarUrlFromName(member.name) + '?s=40')
     span=member.name
 
-mixin teamMemberCell(member, day)
+mixin teamMemberCell(team, member, day)
     div
         each absence in day.absences
-            - var percentage = absencePercentage(member.team.startOfBusiness, member.team.endOfBusiness, absence.date, absence.day.endDate())
+            - var percentage = absencePercentage(team, absence.date, absence.day.endDate())
             - var top = String(percentage.start * 100) + '%'
             - var height = String((percentage.end - percentage.start) * 100) + '%'
             span.status(class=absenceClass(absence), style={top: top, height: height})
@@ -97,7 +99,7 @@ mixin renderTeam(team)
                     for day in member.dayArray(start, end)
                         unless day.isWeekend()
                             td(class=dayClass(day.date))
-                                +teamMemberCell(member, day)
+                                +teamMemberCell(team, member, day)
 
         if team.sprint.scrum
             tfoot
