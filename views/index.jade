@@ -29,8 +29,8 @@ mixin teamSummary(team)
 mixin renderTeam(team)
     -
         var selectedMember = team.selectedMember(today)
-        var start = team.sprint.start
-        var end = team.sprint.end
+        var start = startOfCalendar(team, today)
+        var end = endOfCalendar(team, today)
         var dates = dateArray(start, end)
     table
         caption

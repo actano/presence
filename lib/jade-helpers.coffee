@@ -1,3 +1,5 @@
+moment = require 'moment'
+
 class Helpers
     constructor: (@today) ->
 
@@ -48,5 +50,15 @@ class Helpers
             start: start / eob
             end: end / eob
         }
+
+    startOfCalendar: (team, date) ->
+        start = date.clone()
+        start.day -1 unless start.day() is 1
+        moment.max start, team.sprint.start
+
+    endOfCalendar: (team, date) ->
+        end = date.clone().add 1, 'weeks'
+        end.day 7 unless end.day() is 0
+        moment.max end, team.sprint.end
 
 module.exports = Helpers
