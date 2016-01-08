@@ -45,10 +45,10 @@ mixin teamMemberCell(member, day)
                 - var height = String((absence.endPercentage - absence.startPercentage) * 100) + '%'
                 span.status(class=absence.status, style={top: top, height: height})
 
-mixin teamMemberRow(team, member, selected)
+mixin teamMemberRow(member, start, end, selected)
     tr(class=statusClasses(member, today, selected ? 'selected' : null))
         +teamMemberHead(member)
-        for day in member.dayArray(team.sprint.start, team.sprint.end)
+        for day in member.dayArray(start, end)
             unless day.isWeekend()
                 +teamMemberCell(member, day)
 
@@ -82,7 +82,7 @@ mixin renderTeam(team)
         tbody
             each member in team.members
                 - var selected = selectedMember == member
-                +teamMemberRow(team, member, selected)
+                +teamMemberRow(member, team.sprint.start, team.sprint.end, selected)
         if team.sprint.scrum
             +teamScrumFooter(team, cells)
 
