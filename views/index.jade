@@ -9,11 +9,16 @@
         dayClass.push(date.week() % 2 ? 'weekOdd' : 'weekEven')
         return dayClass
     }
+    function absenceClass(absence) {
+        if (absence.isHoliday()) return 'public-holiday'
+        if (absence.isTravel()) return 'away'
+        return 'absent'
+    }
     function statusClasses(member, date, classes){
         result = Array.prototype.slice.call(arguments, 2);
         for (absence of member.absences(date)) {
             if (absence.date.isAfter(date, 'day')) break
-            result.push(absence.status)
+            result.push(absenceClass(absence))
         }
         return result
     }
@@ -45,7 +50,7 @@ mixin teamMemberCell(member, day)
         each absence in day.absences
             - var top = String(absence.startPercentage * 100) + '%'
             - var height = String((absence.endPercentage - absence.startPercentage) * 100) + '%'
-            span.status(class=absence.status, style={top: top, height: height})
+            span.status(class=absenceClass(absence), style={top: top, height: height})
 
 mixin teamSummary(team)
     - var summary = team.sprintSummary()

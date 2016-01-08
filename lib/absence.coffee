@@ -4,12 +4,10 @@ class Absence
     constructor: (@member, @event, @day) ->
         @date = @day.startDate()
         if @event.calendar.holidays
-            @status = 'public-holiday'
             @description = @event.name()
             @startPercentage = 0
             @endPercentage = 1
         else
-            status = if @event.isTravel() then 'away' else 'absent'
             zero = moment(@date).startOf 'day'
             sob = @member.team.startOfBusiness
             eob = @member.team.endOfBusiness
@@ -19,9 +17,16 @@ class Absence
 
             @startPercentage = (start - sob) / (eob - sob)
             @endPercentage = (end - sob) / (eob - sob)
-            status += 'Partial' if (@endPercentage - @startPercentage) < 0.8
-            @status = status
             @description = @event.description()
+
+    isHoliday: ->
+        @event.calendar.holidays
+
+    isTravel: ->
+        @event.isTravel()
+
+    isAbsence: ->
+        not (@isHoliday() or @isTravel())
 
 Absence.fromEvents = (eventIterator, member, start) ->
     iterators = []

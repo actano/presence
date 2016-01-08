@@ -70,8 +70,7 @@ class Team
                 until (item = absenceIterator.next()).done
                     absence = item.value
                     break unless (absence.date.isSame date, 'day')
-                    status = absence.status
-                    if (status == 'absent' || status == 'public-holiday')
+                    if absence.isHoliday() or absence.isAbsence()
                         sprintMemberAvailabilities--
                         break
 
