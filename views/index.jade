@@ -32,11 +32,9 @@
 mixin teamHeadline(team)
     h2.headline
         name=team.name
-        unless team.sprint.scrum
-            small W#{today.isoWeek()}
         if team.sprint.scrum
             small S#{team.sprint.count + 1}
-            time=team.sprint.start.format(deDate) + ' – ' + team.sprint.end.format(deDate)
+            time=team.sprint.start.format(deDate) + '–' + team.sprint.end.format(deDate)
 
 mixin teamMemberHead(member)
     th(scope=row)
