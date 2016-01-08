@@ -1,23 +1,6 @@
-moment = require 'moment'
-
 class Absence
     constructor: (@member, @event, @day) ->
         @date = @day.startDate()
-        if @event.calendar.holidays
-            @description = @event.name()
-            @startPercentage = 0
-            @endPercentage = 1
-        else
-            zero = moment(@date).startOf 'day'
-            sob = @member.team.startOfBusiness
-            eob = @member.team.endOfBusiness
-
-            start = Math.max sob, @date.diff zero, 'minutes'
-            end = Math.min eob, @day.endDate().diff zero, 'minutes'
-
-            @startPercentage = (start - sob) / (eob - sob)
-            @endPercentage = (end - sob) / (eob - sob)
-            @description = @event.description()
 
     isHoliday: ->
         @event.calendar.holidays

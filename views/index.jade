@@ -33,6 +33,17 @@
         }
         return result;
     }
+    function absencePercentage(sob, eob, startDate, endDate) {
+        var zero = startDate.clone().startOf('day').add(sob, 'minutes');
+        eob -= sob;
+        var start = Math.max(0, startDate.diff(zero, 'minutes'));
+        var end = Math.min(eob, endDate.diff(zero, 'minutes'));
+        return {
+            start: start / eob,
+            end: end / eob
+        };
+    };
+
 
 mixin teamHeadline(team)
     h2.headline
@@ -48,8 +59,9 @@ mixin teamMemberHead(member)
 mixin teamMemberCell(member, day)
     div
         each absence in day.absences
-            - var top = String(absence.startPercentage * 100) + '%'
-            - var height = String((absence.endPercentage - absence.startPercentage) * 100) + '%'
+            - var percentage = absencePercentage(member.team.startOfBusiness, member.team.endOfBusiness, absence.date, absence.day.endDate())
+            - var top = String(percentage.start * 100) + '%'
+            - var height = String((percentage.end - percentage.start) * 100) + '%'
             span.status(class=absenceClass(absence), style={top: top, height: height})
 
 mixin teamSummary(team)
