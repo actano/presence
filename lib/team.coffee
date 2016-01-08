@@ -8,9 +8,9 @@ class Summary
 class Sprint
     constructor: (@count, @start, @end, @scrum) ->
     dates: ->
-        date = moment @start
+        date = @start.clone()
         while not date.isAfter @end
-            yield moment date unless date.day() is 0 or date.day() is 6
+            yield date.clone() unless date.day() is 0 or date.day() is 6
             date.add 1, 'days'
     datesCount: ->
         result = 0
@@ -26,7 +26,7 @@ initSprint = (sprintConfig, date) ->
     if weeksSinceSprintStart >= 0 and (date.isAfter(sprintStartDate, 'day') or date.isSame(sprintStartDate, 'day'))
         sprintsSinceFirstStart = Math.floor weeksSinceSprintStart / sprintConfig.durationWeeks
         currentSprintStartDate = sprintStartDate.add(sprintsSinceFirstStart * sprintConfig.durationWeeks, 'weeks')
-        currentSprintEndDate = moment(currentSprintStartDate).add(sprintConfig.durationWeeks, 'weeks').subtract(1, 'days')
+        currentSprintEndDate = currentSprintStartDate.clone().add(sprintConfig.durationWeeks, 'weeks').subtract(1, 'days')
         new Sprint sprintsSinceFirstStart, currentSprintStartDate, currentSprintEndDate, sprintConfig.scrum
 
 class Team

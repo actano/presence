@@ -1,4 +1,3 @@
-moment = require 'moment'
 Absence = require './absence'
 
 class Member
@@ -16,7 +15,7 @@ class Member
         yield from Absence.fromEvents @events(), this, date
 
     days: (date) ->
-        current = moment(date).startOf 'day'
+        current = date.clone().startOf 'day'
         day = new Day current
 
         absenceIterator = @absences date
@@ -40,12 +39,12 @@ class Member
             return result if item.value.date.isAfter endDate
             result.push item.value
         while result.length < count
-            result.push new Day moment(startDate).add result.length, 'days'
+            result.push new Day startDate.clone().add result.length, 'days'
         result
 
 class Day
     constructor: (date) ->
-        @date = moment date
+        @date = date.clone()
         @absences = []
 
     isWeekend: ->
