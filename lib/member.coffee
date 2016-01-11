@@ -12,13 +12,12 @@ class Member
                     yield event
                     continue
 
-                if (event.name() is @name)
-                    attendeeIterator = event.attendees()
-                    until (item = attendeeIterator.next()).done
-                        attendee = item.value
-                        if attendee.cn() is @name
-                            yield event
-                            break
+                attendeeIterator = event.attendees()
+                until (item = attendeeIterator.next()).done
+                    attendee = item.value
+                    if attendee.cn() is @name
+                        yield event
+                        break
 
     absences: (date) ->
         yield from Absence.fromEvents @events(), this, date
