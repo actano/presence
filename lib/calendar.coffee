@@ -48,6 +48,15 @@ class Event
     confluenceCalendarType: ->
         return @icalEvent.component.getFirstPropertyValue 'x-confluence-subcalendar-type'
 
+    attendees: ->
+        attendees = @icalEvent.attendees
+        yield new Attendee a for a in attendees
+
+class Attendee
+    constructor: (@property) ->
+    cn: ->
+        @property.getParameter 'cn'
+
 class Instance
     constructor: (@event, @date) ->
         @end = moment(@date).add @event.duration('seconds'), 'seconds'

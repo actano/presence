@@ -2,6 +2,7 @@ describe 'ical', ->
     EVENT_COUNT = 1
     TEST_EVENT = 'Test'
     TEST_DESCRIPTION = 'Test Description'
+    TEST_USER = 'Test User'
 
     {fs, path, Calendar, expect} = {}
 
@@ -105,6 +106,14 @@ describe 'ical', ->
                 instance = instanceIterator.next().value
                 expect instance, str instance?.date
                     .to.not.exist
+
+            it "should have #{TEST_USER} as first attendee", ->
+                attendeeIterator = event.attendees()
+                attendee = attendeeIterator.next().value
+                expect attendee
+                    .to.exist
+                expect attendee.cn()
+                    .to.equal TEST_USER
 
 
 

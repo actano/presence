@@ -8,8 +8,17 @@ class Member
             iter = calendar.events()
             until (item = iter.next()).done
                 event = item.value
-                if event.calendar.holidays or event.name() is @name
+                if (event.calendar.holidays)
                     yield event
+                    continue
+
+                if (event.name() is @name)
+                    attendeeIterator = event.attendees()
+                    until (item = attendeeIterator.next()).done
+                        attendee = item.value
+                        if attendee.cn() is @name
+                            yield event
+                            break
 
     absences: (date) ->
         yield from Absence.fromEvents @events(), this, date
