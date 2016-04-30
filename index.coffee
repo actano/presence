@@ -25,7 +25,7 @@ app.get '/', (req, res, next) ->
     config = require './lib/config'
     Helpers = require './lib/jade-helpers'
     moment = require 'moment'
-    if req.query?.date?
+    if req.query? && req.query.date?
         date = moment req.query.date
         date = null unless date.isValid()
     date = moment() unless date?
