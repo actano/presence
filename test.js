@@ -1,2 +1,2 @@
-require './test/config'
-require './test/calendar'
+import './test/config';
+import './test/calendar';
