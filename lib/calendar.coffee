@@ -5,6 +5,7 @@ filterAfter = (start, iter) ->
     until (item = iter.next()).done
         end = item.value.endDate()
         yield item.value if end.isAfter start
+    return
 
 class Calendar
     constructor: (content) ->
@@ -12,11 +13,16 @@ class Calendar
     events: ->
         # each logical item in the confluence calendar
         # is a 'vevent'; lookup all events of that type
-        for event in @component.getAllSubcomponents 'vevent'
+        vevents = @component.getAllSubcomponents 'vevent'
+        for event in vevents
             yield new Event this, new ICAL.Event event
+            
+        return
 
 class Event
-    constructor: (@calendar, @icalEvent) ->
+    constructor: (calendar, icalEvent) ->
+        @calendar = calendar
+        @icalEvent = icalEvent
 
     isTravel: ->
         @icalEvent.component.jCal[1].some ([name, meta, type, value]) ->
@@ -26,8 +32,8 @@ class Event
     summary: -> @icalEvent.summary.split(':')[1]
     name: -> @icalEvent.summary.split(':')[0]
     description: -> @icalEvent.description
-    startDate: -> moment @icalEvent.startDate?.toJSDate()
-    endDate: -> moment @icalEvent.endDate?.toJSDate()
+    startDate: -> if @icalEvent.startDate? then moment @icalEvent.startDate.toJSDate() else null
+    endDate: -> if @icalEvent.endDate? then moment @icalEvent.endDate.toJSDate() else null
     duration: (unit) ->
         @endDate().diff @startDate(), unit
 
@@ -44,6 +50,7 @@ class Event
         while (v = iter.next())?
             date = moment v.toJSDate()
             yield new Instance this, date
+        return
 
     confluenceCalendarType: ->
         return @icalEvent.component.getFirstPropertyValue 'x-confluence-subcalendar-type'
@@ -51,14 +58,18 @@ class Event
     attendees: ->
         attendees = @icalEvent.attendees
         yield new Attendee a for a in attendees
+        return
 
 class Attendee
-    constructor: (@property) ->
+    constructor: (property) ->
+        @property = property
     cn: ->
         @property.getParameter 'cn'
 
 class Instance
-    constructor: (@event, @date) ->
+    constructor: (event, date) ->
+        @event = event
+        @date = date
         @end = moment(@date).add @event.duration('seconds'), 'seconds'
     startDate: -> moment @date
     endDate: -> moment @end
@@ -73,9 +84,12 @@ class Instance
             startDate = moment next
             next.add 1, 'days'
         yield new Day startDate, endDate unless startDate.isSame endDate
+        return
 
 class Day
-    constructor: (@start, @end) ->
+    constructor: (start, end) ->
+        @start = start
+        @end = end
     startDate: -> @start
     endDate: -> @end
 
