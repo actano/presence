@@ -1,48 +1,50 @@
-path = require 'path'
+import path from 'path';
 
-express = require 'express'
+import express from 'express';
 
-app = express()
+let app = express();
 
-viewsDir  = path.join __dirname, 'views'
-stylesDir = path.join __dirname, 'styles'
-publicDir = path.join __dirname, 'public'
+let viewsDir  = path.join(__dirname, 'views');
+let stylesDir = path.join(__dirname, 'styles');
+let publicDir = path.join(__dirname, 'public');
 
-app.set 'views', viewsDir
-app.set 'view engine', 'jade'
+app.set('views', viewsDir);
+app.set('view engine', 'jade');
 
-app.locals.compileDebug = false
+app.locals.compileDebug = false;
 
-stylus = require 'stylus'
-app.use stylus.middleware src: stylesDir, dest: publicDir
+import stylus from 'stylus';
+app.use(stylus.middleware({src: stylesDir, dest: publicDir}));
 
-autoprefixer = require 'express-autoprefixer'
-app.use autoprefixer browsers: 'last 2 versions', cascade: false
+import autoprefixer from 'express-autoprefixer';
+app.use(autoprefixer({browsers: 'last 2 versions', cascade: false}));
 
-# respond with rendered html
-app.get '/', (req, res, next) ->
-    presence = require './lib/presence'
-    config = require './lib/config'
-    Helpers = require './lib/jade-helpers'
-    moment = require 'moment'
-    if req.query? && req.query.date?
-        date = moment req.query.date
-        date = null unless date.isValid()
-    date = moment() unless date?
+// respond with rendered html
+app.get('/', function(req, res, next) {
+    let presence = require('./lib/presence');
+    let config = require('./lib/config');
+    let Helpers = require('./lib/jade-helpers');
+    let moment = require('moment');
+    if ((req.query != null) && (req.query.date != null)) {
+        var date = moment(req.query.date);
+        if (!date.isValid()) { date = null; }
+    }
+    if (date == null) { var date = moment(); }
 
-    presence date, (err, teams) ->
-        return next err if err?
+    return presence(date, function(err, teams) {
+        if (err != null) { return next(err); }
 
-        data = new Helpers date.locale 'de'
-        data.teams = teams
-        data.gravatarUrlFromName = config.gravatarUrlFromName
+        let data = new Helpers(date.locale('de'));
+        data.teams = teams;
+        data.gravatarUrlFromName = config.gravatarUrlFromName;
 
-        res.render 'index', data
+        return res.render('index', data);
+    });
+});
 
-app.use express.static publicDir
+app.use(express.static(publicDir));
 
-port = process.env.PORT or 3000
+let port = process.env.PORT || 3000;
 
-app.listen port, ->
-    console.log "Listening on port #{port}..."
+app.listen(port, () => console.log(`Listening on port ${port}...`));
 
