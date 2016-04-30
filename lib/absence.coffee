@@ -1,6 +1,9 @@
 class Absence
-    constructor: (@member, @event, @day) ->
-        @date = @day.startDate()
+    constructor: (member, event, day) ->
+        @member = member
+        @event = event
+        @day = day
+        @date = day.startDate()
 
     isHoliday: ->
         @event.calendar.holidays
@@ -19,6 +22,7 @@ Absence.fromEvents = (eventIterator, member, start) ->
         iterators.push iterator
 
     yield from merge iterators
+    return
 
 absences = (event, member, start) ->
     instanceIterator = event.instances start
@@ -29,6 +33,7 @@ absences = (event, member, start) ->
         until (item = dayIterator.next()).done
             day = item.value
             yield new Absence member, instance.event, day
+    return
 
 compareIterators = (a, b) ->
     return -1 if a.last.done
@@ -46,6 +51,7 @@ merge = (iterators) ->
         yield value
         iterator.last = iterator.next()
         iterators.sort compareIterators
+    return
 
 dateCompare = (a, b) ->
     return -1 if a.isBefore b
