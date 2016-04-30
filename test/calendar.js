@@ -1,18 +1,13 @@
+import Calendar from '../lib/calendar'
+import fs from 'fs'
+import path from 'path'
+import {expect} from 'chai'
+
 describe('ical', function() {
     const EVENT_COUNT = 1;
     const TEST_EVENT = 'Test';
     const TEST_DESCRIPTION = 'Test Description';
     const TEST_USER = 'Test User';
-
-    let {fs, path, Calendar, expect} = {};
-
-    before('require', function() {
-        fs = require('fs');
-        path = require('path');
-        ({expect} = require('chai'));
-
-        return Calendar = require('../lib/calendar');
-    });
 
     let read = function() {
         const content = fs.readFileSync(path.join(__dirname, 'test.ics'), 'utf-8');
@@ -25,10 +20,7 @@ describe('ical', function() {
         let calendar = null;
 
         let findEvent = function(name) {
-            let item;
-            let eventIterator = calendar.events();
-            while (!(item = eventIterator.next()).done) {
-                let event = item.value;
+            for (const event of calendar.events()) {
                 if (name === event.name()) { return event; }
             }
         };
@@ -36,13 +28,9 @@ describe('ical', function() {
         before('read', () => calendar = read());
 
         it(`should iterate ${EVENT_COUNT} events`, function() {
-            let eventIterator = calendar.events();
             let count = 0;
-            while (!eventIterator.next().done) {
-                count++;
-            }
-            return expect(count)
-                .to.equal(EVENT_COUNT);
+            for (const event of calendar.events()) count++
+            return expect(count).to.equal(EVENT_COUNT);
         });
 
         it(`should find '${TEST_EVENT}'`, function() {
@@ -131,15 +119,16 @@ describe('ical', function() {
 
             let testAttendee = cn =>
                 it(`should have ${cn} as attendee`, function() {
-                    let item;
-                    let attendeeIterator = event.attendees();
-                    let attendee = null;
-                    while (!(item = attendeeIterator.next()).done) {
-                        attendee = item.value;
-                        if (attendee.cn() === cn) { break; }
+                    function find() {
+                        for (const attendee of event.attendees()) {
+                            if (attendee.cn() === cn) {
+                                return attendee;
+                            }
+                        }
                     }
-                    expect(attendee)
-                        .to.exist;
+                    
+                    const attendee = find();
+                    expect(attendee).to.exist;
                     return expect(attendee.cn())
                         .to.equal(cn);
                 })
