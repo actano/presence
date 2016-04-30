@@ -47,7 +47,7 @@ describe 'ical', ->
 
         describe "Event '#{TEST_EVENT}'", ->
             moment = require 'moment'
-            str = (moment) -> if momemnt? then moment.format 'YYYY-MM-DD HH:mm' else 'null'
+            str = (moment) -> if moment? then moment.format 'YYYY-MM-DD HH:mm' else 'null'
 
             TEST_MOMENT = moment '2015-10-29'
                 .startOf 'day'
@@ -104,7 +104,7 @@ describe 'ical', ->
             it "should end before #{str endMoment = moment '2017-01-01'}", ->
                 instanceIterator = event.instances endMoment
                 instance = instanceIterator.next().value
-                expect instance, str instance?.date
+                expect instance, if instance? then str instance.date else null
                     .to.not.exist
 
             testAttendee = (cn) ->
