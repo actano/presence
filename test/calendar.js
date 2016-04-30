@@ -1,11 +1,10 @@
 describe('ical', function() {
-    let EVENT_COUNT = 1;
-    let TEST_EVENT = 'Test';
-    let TEST_DESCRIPTION = 'Test Description';
-    let TEST_USER = 'Test User';
+    const EVENT_COUNT = 1;
+    const TEST_EVENT = 'Test';
+    const TEST_DESCRIPTION = 'Test Description';
+    const TEST_USER = 'Test User';
 
     let {fs, path, Calendar, expect} = {};
-
 
     before('require', function() {
         fs = require('fs');
@@ -16,7 +15,7 @@ describe('ical', function() {
     });
 
     let read = function() {
-        let content = fs.readFileSync(path.join(__dirname, 'test.ics'), 'utf-8');
+        const content = fs.readFileSync(path.join(__dirname, 'test.ics'), 'utf-8');
         return new Calendar(content);
     };
 
@@ -59,7 +58,10 @@ describe('ical', function() {
             let newYear;
             let endMoment;
             let moment = require('moment');
-            let str = function(moment) { if (moment != null) { return moment.format('YYYY-MM-DD HH:mm'); } else { return 'null'; } };
+
+            function str(moment) {
+                return moment ? moment.format('YYYY-MM-DD HH:mm') : 'null';
+            }
 
             let TEST_MOMENT = moment('2015-10-29')
                 .startOf('day');
