@@ -1,3 +1,5 @@
+require('source-map-support').install();
+
 import Calendar from '../lib/calendar'
 import fs from 'fs'
 import path from 'path'
@@ -9,21 +11,21 @@ describe('ical', function() {
     const TEST_DESCRIPTION = 'Test Description';
     const TEST_USER = 'Test User';
 
-    let read = function() {
-        const content = fs.readFileSync(path.join(__dirname, 'test.ics'), 'utf-8');
+    function read() {
+        let content = fs.readFileSync(path.join(__dirname, 'test.ics'), 'utf-8');
         return new Calendar(content);
-    };
+    }
 
     it('should parse ics data', () => read());
 
     return describe('process', function() {
         let calendar = null;
 
-        let findEvent = function(name) {
+        function findEvent(name) {
             for (const event of calendar.events()) {
                 if (name === event.name()) { return event; }
             }
-        };
+        }
 
         before('read', () => calendar = read());
 
@@ -51,8 +53,7 @@ describe('ical', function() {
                 return moment ? moment.format('YYYY-MM-DD HH:mm') : 'null';
             }
 
-            let TEST_MOMENT = moment('2015-10-29')
-                .startOf('day');
+            let TEST_MOMENT = moment('2015-10-29').startOf('day');
 
             let event = null;
             before('find', () => event = findEvent(TEST_EVENT));

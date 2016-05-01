@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "babel-node index.js",
-    "test": "mocha --compilers js:babel-register test.js"
+    "test": "mocha --compilers js:babel-register"
   },
   "author": "Actano GmbH",
   "license": "MIT",
@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "chai": "^3.4.1",
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
+    "source-map-support": "^0.4.0"
   }
 }
