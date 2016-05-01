@@ -18,9 +18,11 @@ module.exports = Promise.coroutine (userDate) ->
     holidayCalendar = new Calendar holidayCalendarData
     holidayCalendar.holidays = true
 
+    results = []
     for team in config.teams
         teamCalendarData = yield icsFromURL team.calendar
 
         result = new Team team, userDate, holidayCalendar, new Calendar teamCalendarData.content
         result.cacheTimestamp = moment teamCalendarData.mtime
-        result
+        results.push result
+    return results
