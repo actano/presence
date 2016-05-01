@@ -1,6 +1,5 @@
 require('source-map-support').install();
 
-import Calendar from '../lib/calendar'
 import fs from 'fs'
 import path from 'path'
 import {expect} from 'chai'
@@ -10,6 +9,12 @@ describe('ical', function() {
     const TEST_EVENT = 'Test';
     const TEST_DESCRIPTION = 'Test Description';
     const TEST_USER = 'Test User';
+
+    let Calendar;
+
+    before('import', () => {
+        return System.import('../lib/calendar').then((module) => Calendar = module.default);
+    });
 
     function read() {
         let content = fs.readFileSync(path.join(__dirname, 'test.ics'), 'utf-8');
