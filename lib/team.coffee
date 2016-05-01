@@ -40,7 +40,10 @@ class Team
         @endOfBusiness = Math.max @startOfBusiness + 1, eob.diff zero, 'minutes'
         @sprint = initSprint teamConfig.sprint, date
         @status = null
-        @members = (new Member @calendars, name for name in teamConfig.members)
+        @members = []
+        for name in teamConfig.members
+            @members.push new Member @calendars, name
+        return
 
     selectedMember: (date) ->
         if @sprint.scrum
@@ -48,7 +51,7 @@ class Team
 
             for member in @members
                 absence = member.absences(date).next().value
-                continue if absence?.date.isSame date, 'day'
+                continue if absence? and absence.date.isSame date, 'day'
                 avail.push member
 
             if avail.length
@@ -69,7 +72,7 @@ class Team
                 absenceIterator = member.absences date
                 until (item = absenceIterator.next()).done
                     absence = item.value
-                    break unless (absence.date.isSame date, 'day')
+                    break unless absence.date.isSame date, 'day'
                     if absence.isHoliday() or absence.isAbsence()
                         sprintMemberAvailabilities--
                         break
