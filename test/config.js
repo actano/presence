@@ -1,13 +1,8 @@
 import { expect } from 'chai';
+import moment from 'moment';
+import config from '../lib/config';
 
 describe('configuration', function() {
-    let {config, moment} = {};
-
-    before('require', function() {
-        moment = require('moment');
-        return config = require('../lib/config');
-    });
-
     return it('should have correct start date', function() {
         let _config = config(moment('2015-10-01'));
         let team = _config.teams[0];
