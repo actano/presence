@@ -37,6 +37,7 @@ module.exports = (date) ->
                 target[k] = defaultValue.concat current
             else if (typeof current is 'object') and (typeof defaultValue is 'object')
                 applyDefaults defaultValue, current
+        return
 
     teamMap = {}
     sortedTeams = []
@@ -62,7 +63,7 @@ module.exports = (date) ->
     config.teams = []
     for name, team of teamMap
         applyDefaults config.teamDefaults, team
-        continue if team.sprint?.startDate > isoDate
+        continue if team.sprint? and team.sprint.startDate > isoDate
         continue if team.members.length is 0
         team.calendar = url.resolve config.calendarPrefix, team.calendar
         team.members.sort (a,b) -> a.localeCompare b
