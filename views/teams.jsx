@@ -37,6 +37,16 @@ class Head extends React.Component {
     }
 }
 
+function model(absence) {
+    let zero = absence.date.clone().startOf('day');
+    return {
+        id: absence.event.icalEvent.uid,
+        className: absenceClass(absence),
+        start: absence.date.diff(zero, 'minutes'),
+        end: absence.day.endDate().diff(zero, 'minutes')
+    }
+}
+
 class Cell extends React.Component {
     render() {
         let date = this.props.date;
@@ -44,7 +54,7 @@ class Cell extends React.Component {
         let absenceIterator = member.absences(date, date);
         let absences = [];
         for (let absence of absenceIterator) {
-            absences.push(absence);
+            absences.push(model(absence));
         }
         return (<Absences {...this.props} absences={absences}/>)
     };
