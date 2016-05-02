@@ -83,29 +83,27 @@ class TeamHeadline extends React.Component {
 }
 
 function dateRange(team, currentDate) {
-    let start = startOfCalendar(team, currentDate);
-    let end = endOfCalendar(team, currentDate);
-    let startOfBusiness = team.startOfBusiness;
-    let endOfBusiness = team.endOfBusiness;
-    let result = {start, end, currentDate, startOfBusiness, endOfBusiness};
-    if (team.sprint.scrum) {
-        result.sprint = {start: team.sprint.start, end: team.sprint.end}
+
+    let sprint = team.sprint.scrum ? {start: team.sprint.start, end: team.sprint.end} : null;
+
+    // start at start of current week
+    let start = currentDate.clone().weekday(0);
+    // end at end of next week
+    let end = start.clone().add('day', 13);
+    if (sprint) {
+        // show at least the current sprint
+        start = moment.min(start, sprint.start);
+        end = moment.max(end, sprint.end);
     }
-    return result;
-}
-
-function startOfCalendar(team, currentDate) {
-    let today = currentDate;
-    let start = today.clone().locale(today.locale());
-    if (start.weekday() !== 0) { start.weekday(-7); }
-    return moment.max(start, team.sprint.start);
-}
-
-function endOfCalendar(team, currentDate) {
-    let today = currentDate;
-    let end = today.clone().locale(today.locale()).add(1, 'weeks');
-    if (end.weekday() !== 6) { end.weekday(6); }
-    return moment.max(end, team.sprint.end);
+    
+    return {
+        currentDate,
+        start,
+        end,
+        sprint,
+        startOfBusiness: team.startOfBusiness,
+        endOfBusiness: team.endOfBusiness
+    };
 }
 
 function dayClass(range, date) {
