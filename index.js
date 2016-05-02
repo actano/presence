@@ -4,6 +4,9 @@ import presence from './lib/presence'
 import config from './lib/config'
 import Helpers from './lib/jade-helpers'
 import moment from 'moment'
+import Teams from './views/teams'
+import React from 'react'
+import ReactDOMServer from 'react-dom/server'
 
 const app = express();
 const viewsDir  = path.join(__dirname, 'views');
@@ -23,24 +26,21 @@ app.use(autoprefixer({browsers: 'last 2 versions', cascade: false}));
 
 // respond with rendered html
 app.get('/', function(req, res, next) {
+    let date;
     if ((req.query != null) && (req.query.date != null)) {
-        var date = moment(req.query.date);
-        if (!date.isValid()) { date = null; }
+        date = moment(req.query.date);
+        if (!date.isValid()) date = null;
     }
-    if (date == null) { var date = moment(); }
+    if (!date) date = moment();
 
-    return presence(date, function(err, teams) {
-        if (err != null) { return next(err); }
-
+    presence(date).then((teams) => {
         let data = new Helpers(date.locale('de'));
         data.teams = teams;
         data.gravatarUrlFromName = config.gravatarUrlFromName;
-        if (!data.gravatarUrlFromName) {
-            throw new Error();
-        }
-
-        return res.render('index', data);
-    });
+        let teamElement = React.createElement(Teams, {teams, date});
+        data.react = ReactDOMServer.renderToString(teamElement);
+        res.render('index', data);
+    }).catch(next);
 });
 
 app.use(express.static(publicDir));

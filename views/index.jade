@@ -1,70 +1,5 @@
 -
-    var deDate = 'DD.MM.'
     var isoDate = 'YYYY-MM-DD'
-
-mixin teamHeadline(team)
-    h2.headline
-        name=team.name
-        if team.sprint.scrum
-            small S#{team.sprint.count + 1}
-            time=team.sprint.start.format(deDate) + '–' + team.sprint.end.format(deDate)
-
-mixin teamMemberHead(member)
-    img(src=gravatarUrlFromName(member.name) + '?s=40')
-    span=member.name
-
-mixin teamMemberCell(team, member, day)
-    div
-        each absence in day.absences
-            - var percentage = absencePercentage(team, absence.date, absence.day.endDate())
-            - var top = String(percentage.start * 100) + '%'
-            - var height = String((percentage.end - percentage.start) * 100) + '%'
-            span.status(class=absenceClass(absence), style={top: top, height: height})
-
-mixin teamSummary(team)
-    - var summary = team.sprintSummary()
-    - var percentage = String(summary.percentage) + '%'
-    .percentage(style={width: percentage}) #{summary.avail}/#{summary.total}d available
-
-mixin renderTeam(team)
-    -
-        var selectedMember = team.selectedMember(today)
-        var start = startOfCalendar(team, today)
-        var end = endOfCalendar(team, today)
-        var dates = dateArray(start, end)
-    table
-        caption
-            +teamHeadline(team)
-
-        col.head
-        each date in dates
-            col(class=dayClass(team, date))
-
-        thead
-            tr
-                th
-                each date in dates
-                    th(scope=col, class=dayClass(team, date))=date.format('D')
-
-        tbody
-            each member in team.members
-                tr(class=statusClasses(member, today, selectedMember == member ? 'selected' : null))
-                    th(scope=row)
-                        +teamMemberHead(member)
-                    for day in member.dayArray(start, end)
-                        unless day.isWeekend()
-                            td(class=dayClass(team, day.date))
-                                +teamMemberCell(team, member, day)
-
-        if team.sprint.scrum
-            tfoot
-                tr
-                    td(colspan=dates.length + 1)
-                        +teamSummary(team)
-
-    if team.status
-        h2.error Calendar failed: "#{team.status}", loading data from cache (#{team.cacheTimestamp.format('L LT')}).
-
 doctype
 html
     head
@@ -81,7 +16,4 @@ html
             form(action='/')
                 input(type='date' name='date' value=today.format(isoDate), onchange='document.forms[0].submit()')
 
-        ul.teams
-            for team in teams
-                li.team(id=team.name)
-                    +renderTeam(team)
+        != react
