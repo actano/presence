@@ -159,7 +159,7 @@ const Team = React.createClass({
                 return (
                     <tfoot>
                     <tr>
-                        <td colSpan={dates.length + 1}><span className="percentage" style={{width}}>{summary.avail}/{summary.total}d available</span></td>
+                        <td colSpan={dates.length + 1}><div className="percentage" style={{width}}>{summary.avail}/{summary.total}d available</div></td>
                     </tr>
                     </tfoot>
                 );
@@ -191,7 +191,7 @@ const Team = React.createClass({
                     {team.members.map((member) => {
                         let className = statusClasses(member, today, selectedMember == member ? 'selected' : null);
                         return (<tr className={className} key={member.name}>
-                            <th scope="row"><img src={gravatarUrlFromName(member.name)}/><span>{member.name}</span></th>
+                            <th scope="row"><img src={gravatarUrlFromName(member.name, 40)}/><span>{member.name}</span></th>
                             {member.dayArray(start, end).map((day) => {
                                 if (day.isWeekend()) return;
                                 return (
