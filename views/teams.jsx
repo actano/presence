@@ -65,30 +65,96 @@ function dateArray(start, end) {
     return result;
 }
 
-class TeamMemberRow extends React.Component {
+class MemberHead extends React.Component {
+    render() {
+        let name = this.props.member.name;
+        return (
+            <div><img src={gravatarUrlFromName(name, 40)}/><span>{name}</span></div>
+        )
+    }
+}
+
+function rowClass(member, date, selected) {
+    let classNames = [];
+    for (let absence of member.absences(date, date)) {
+        classNames.push(absenceClass(absence));
+    }
+    if (selected) classNames.push('selected');
+    return classNames.join(' ');
+}
+
+function isWeekend(date) {
+    return date.day() === 0 || date.day() === 6;
+}
+
+class Calendar extends React.Component {
     render() {
         let range = this.props.dateRange;
-        let member = this.props.member;
-        let selected = this.props.selected;
+        let Caption = this.props.caption;
+        let Foot = this.props.foot;
+        let Head = this.props.rowHead;
+        let Cell = this.props.cell;
+        let dates = dateArray(range.start, range.end);
+        let rows = this.props.rows;
+        let _rowClass = this.props.rowClass;
+        let _rowKey = this.props.rowKey;
 
-        let classNames = [];
-        for (let absence of member.absences(range.currentDate)) {
-            if (absence.date.isAfter(range.currentDate, 'day')) break;
-            classNames.push(absenceClass(absence));
-        }
-        if (selected) classNames.push('selected');
+        return (
+            <table>
+                <caption><Caption {...this.props}/></caption>
+                <colgroup>
+                    <col className="head"/>
+                    {dates.map((date) => (<col className={dayClass(range, date)} key={date.toISOString()}/>))}
+                </colgroup>
+                <thead>
+                <tr>
+                    <th/>
+                    {dates.map((date) =>
+                        (<th scope="col" className={dayClass(range, date)} key={date.toISOString()}>{date.format('D')}</th>)
+                    )}
+                </tr>
+                </thead>
+                <tbody>
+                {rows.map((row) => {
+                    return (<tr className={_rowClass(row)} key={_rowKey(row)}>
+                        <th scope="row"><Head {...this.props} row={row}/></th>
+                        {dates.map((date) => {
+                            if (isWeekend(date)) return;
+                            return (
+                                <td className={dayClass(range, date)} key={date.toISOString()}>
+                                    <Cell {...this.props} row={row} date={date}/>
+                                </td>
+                            )
+                        })}
+                    </tr>)
+                })}
+                </tbody>
+                {Foot ? <tfoot><Foot {...this.props} cols={dates.length + 1}/></tfoot> : null}
+            </table>
+        )
+    }
+}
 
-        return (<tr className={classNames.join(' ')}>
-            <th scope="row"><img src={gravatarUrlFromName(member.name, 40)}/><span>{member.name}</span></th>
-            {member.dayArray(range.start, range.end).map((day) => {
-                if (day.isWeekend()) return;
-                return (
-                    <td className={dayClass(range, day.date)} key={day.date.toISOString()}>
-                        <Absences dateRange={range} absences={day.absences}/>
-                    </td>
-                )
-            })}
-        </tr>)
+class Cell extends React.Component {
+    render() {
+        let date = this.props.date;
+        let member = this.props.row;
+        return (<Absences dateRange={this.props.dateRange} absences={member.absences(date, date)}/>)
+    };
+}
+
+class Head extends React.Component {
+    render() {
+        let member = this.props.row;
+        return (<MemberHead member={member}/>)
+    }
+}
+
+class Foot extends React.Component {
+    render() {
+        let summary = this.props.team.sprintSummary();
+        let cols = this.props.cols;
+        return (<AvailabilityFooter cols={cols} available={summary.avail} total={summary.total}/>)
     }
 }
 
@@ -98,36 +164,30 @@ class Team extends React.Component {
         let today = this.props.date;
 
         let selectedMember = team.selectedMember(today);
-        let summary = team.sprint.scrum ? team.sprintSummary() : null;
-
         let range = dateRange(team, today);
-        let dates = dateArray(range.start, range.end);
         
+        let props = {
+            caption: TeamHeadline,
+            dateRange: range,
+            rows: team.members,
+            rowClass: function(member){
+                return rowClass(member, range.currentDate, member === selectedMember);
+            },
+            rowKey: function(member){
+                return member.name
+            },
+            rowHead: Head,
+            cell: Cell,
+            team
+        };
+        
+        if (team.sprint.scrum) {
+            props.foot = Foot;
+        }
+
         return (
-            <table>
-                <caption><TeamHeadline team={team}/></caption>
-                <colgroup>
-                    <col className="head"/>
-                    {dates.map((date) => (<col className={dayClass(range, date)} key={date.toISOString()}/>))}
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th/>
-                        {dates.map((date) => 
-                            (<th scope="col" className={dayClass(range, date)} key={date.toISOString()}>{date.format('D')}</th>)
-                        )}
-                    </tr>
-                </thead>
-                <tbody>
-                    {team.members.map((member) => {
-                        let props = {dateRange: range, member, selected: selectedMember === member};
-                        return (<TeamMemberRow {...props} key={member.name}/>)
-                    })}
-                </tbody>
-                {summary ? <AvailabilityFooter cols={dates.length + 1} available={summary.avail} total={summary.total}/> : null}
-                {team.status ? <Status status={team.status} lastModified={team.cacheTimestamp}/> : null}
-            </table>
-        );
+            <Calendar {...props}/>
+        )
     }
 }
 
@@ -139,7 +199,12 @@ export default class Teams extends React.Component {
         return (
             <ul className="teams">{
                 teams.map((team) => {
-                    return (<li className="team" id={team.name} key={team.name}><Team team={team} date={date}/></li>)
+                    return (
+                        <li className="team" id={team.name} key={team.name}>
+                            <Team team={team} date={date}/>
+                            {team.status ? <Status status={team.status} lastModified={team.cacheTimestamp}/> : null}
+                        </li>
+                    )
                 })
             }</ul>
         );

@@ -17,7 +17,12 @@ function absencePercentage(range, startDate, endDate) {
 export default class Absences extends React.Component {
     render() {
         let range = this.props.dateRange;
-        let absences = this.props.absences;
+        let absenceIterator = this.props.absences;
+        let absences = [];
+        for (let absence of absenceIterator) {
+            absences.push(absence);
+        }
+        
         return (
             <div>
                 {absences.map((absence) => {
