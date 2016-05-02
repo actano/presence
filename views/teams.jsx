@@ -3,7 +3,6 @@ import moment from 'moment'
 import config from '../lib/config'
 import Status from './status'
 import TeamHeadline from './team-headline'
-import AvailabilityFooter from './availability-footer'
 import Absences from './absences'
 import absenceClass from './absence-class'
 import Calendar from './calendar'
@@ -44,15 +43,22 @@ class Cell extends React.Component {
     render() {
         let date = this.props.date;
         let member = this.props.row;
-        return (<Absences {...this.props} absences={member.absences(date, date)}/>)
+        let absenceIterator = member.absences(date, date);
+        let absences = [];
+        for (let absence of absenceIterator) {
+            absences.push(absence);
+        }
+        return (<Absences {...this.props} absences={absences}/>)
     };
 }
 
 class Foot extends React.Component {
     render() {
         let summary = this.props.team.sprintSummary();
-        let cols = this.props.cols;
-        return (<AvailabilityFooter cols={cols} available={summary.avail} total={summary.total}/>)
+        let avail = summary.avail;
+        let total = summary.total;
+        let width = `${avail/total * 100}%`;
+        return (<div className="percentage" style={{width}}>{avail}/{total}d available</div>)
     }
 }
 

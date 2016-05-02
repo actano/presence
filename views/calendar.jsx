@@ -77,7 +77,7 @@ export default class Calendar extends React.Component {
                     </tr>)
                 })}
                 </tbody>
-                {Foot ? <tfoot><Foot {...this.props} cols={dates.length + 1}/></tfoot> : null}
+                {Foot ? <tfoot><tr><td colSpan={dates.length + 1}><Foot {...this.props} cols={dates.length + 1}/></td></tr></tfoot> : null}
             </table>
         )
     }
