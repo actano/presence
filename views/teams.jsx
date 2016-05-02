@@ -2,7 +2,6 @@ import React from 'react'
 import moment from 'moment'
 import config from '../lib/config'
 const deDate = 'DD.MM.';
-const isoDate = 'YYYY-MM-DD';
 
 function gravatarUrlFromName(name, size) {
     return `${config.gravatarUrlFromName(name)}?s=${size}`
@@ -41,7 +40,7 @@ function statusClasses(member, date, classes) {
 }
 
 
-const TeamMemberCell = React.createClass({
+class TeamMemberCell extends React.Component {
     render() {
         let team = this.props.team;
         let day = this.props.day;
@@ -55,9 +54,9 @@ const TeamMemberCell = React.createClass({
             })}
         </div>)
     }
-});
+}
 
-const TeamHeadline = React.createClass({
+class TeamHeadline extends React.Component {
     render() {
         let team = this.props.team;
 
@@ -87,7 +86,7 @@ const TeamHeadline = React.createClass({
             </h2>
         );
     }    
-});
+}
 
 function startOfCalendar(team, currentDate) {
     let today = currentDate;
@@ -134,7 +133,7 @@ function dateArray(start, end) {
     return result;
 }
 
-const Team = React.createClass({
+class Team extends React.Component {
     render() {
         let team = this.props.team;
         let today = this.props.date;
@@ -202,9 +201,9 @@ const Team = React.createClass({
             </table>
         );
     }
-});
+}
 
-export default React.createClass({
+export default class Teams extends React.Component {
     render() {
         let date = this.props.date;
         
@@ -217,4 +216,4 @@ export default React.createClass({
             <ul className="teams">{ this.props.teams.map(createTeam) }</ul>
         );
     }
-});
+};

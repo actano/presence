@@ -2,7 +2,7 @@ import React from 'react'
 import Teams from './teams.jsx'
 const isoDate = 'YYYY-MM-DD';
 
-export default React.createClass({
+export default class Page extends React.Component {
     render() {
         return (
             <html>
@@ -23,4 +23,4 @@ export default React.createClass({
             </html>
         );
     }
-});
+}
