@@ -89,68 +89,64 @@ const TeamHeadline = React.createClass({
     }    
 });
 
+function startOfCalendar(team, currentDate) {
+    let today = currentDate;
+    let start = today.clone().locale(today.locale());
+    if (start.weekday() !== 0) { start.weekday(-7); }
+    return moment.max(start, team.sprint.start);
+}
+
+function endOfCalendar(team, currentDate) {
+    let today = currentDate;
+    let end = today.clone().locale(today.locale()).add(1, 'weeks');
+    if (end.weekday() !== 6) { end.weekday(6); }
+    return moment.max(end, team.sprint.end);
+}
+
+function dayClass(team, currentDate, date) {
+    let result = [];
+    if (date.isSame(currentDate, 'day')) {
+        result.push('today');
+    }
+    if (date.day() === 5) {
+        result.push('preWeekend');
+    }
+    if (date.day() === 1) {
+        result.push('postWeekend');
+    }
+    result.push(date.week() % 2 ? 'weekOdd' : 'weekEven');
+    if (team.sprint.scrum) {
+        let offSprint = date.isBefore(team.sprint.start, 'day') || date.isAfter(team.sprint.end, 'day');
+        result.push(offSprint ? 'offSprint' : 'inSprint');
+    }
+    return result.join(' ');
+}
+
+function dateArray(start, end) {
+    let result = [];
+    let date = start.clone().startOf('day');
+    while (!date.isAfter(end, 'day')) {
+        if (date.day() % 6 !== 0) {
+            result.push(date);
+        }
+        date = date.clone().add(1, 'days');
+    }
+    return result;
+}
+
 const Team = React.createClass({
-    _team() { return this.props.team; },
-    _date() { return this.props.date; },
-
-    _startOfCalendar() {
-        let today = this._date();
-        let start = today.clone().locale(today.locale());
-        let team = this._team();
-        if (start.weekday() !== 0) { start.weekday(-7); }
-        return moment.max(start, team.sprint.start);
-    },
-
-    _endOfCalendar() {
-        let today = this._date();
-        let team = this._team();
-        let end = today.clone().locale(today.locale()).add(1, 'weeks');
-        if (end.weekday() !== 6) { end.weekday(6); }
-        return moment.max(end, team.sprint.end);
-    },
-
-    _dateArray(start, end) {
-        let result = [];
-        let date = start.clone().startOf('day');
-        while (!date.isAfter(end, 'day')) {
-            if (date.day() % 6 !== 0) {
-                result.push(date);
-            }
-            date = date.clone().add(1, 'days');
-        }
-        return result;
-    },
-
-    _dayClass(date) {
-        let result = [];
-        let team = this._team();
-        let today = this._date();
-        
-        if (date.isSame(today, 'day')) {
-            result.push('today');
-        }
-        if (date.day() === 5) {
-            result.push('preWeekend');
-        }
-        if (date.day() === 1) {
-            result.push('postWeekend');
-        }
-        result.push(date.week() % 2 ? 'weekOdd' : 'weekEven');
-        if (team.sprint.scrum) {
-            let offSprint = date.isBefore(team.sprint.start, 'day') || date.isAfter(team.sprint.end, 'day');
-            result.push(offSprint ? 'offSprint' : 'inSprint');
-        }
-        return result.join(' ');
-    },
-    
-
     render() {
-        let team = this._team();
-        let today = this._date();
+        let team = this.props.team;
+        let today = this.props.date;
+
+        function _dayClass(date){
+            return dayClass(team, today, date);
+        }
+
         let selectedMember = team.selectedMember(today);
-        let start = this._startOfCalendar();
-        let end = this._endOfCalendar();
-        let dates = this._dateArray(start, end);
+        let start = startOfCalendar(team, today);
+        let end = endOfCalendar(team, today);
+        let dates = dateArray(start, end);
         
         function footer(){
             if (team.sprint.scrum) {
@@ -177,13 +173,13 @@ const Team = React.createClass({
                 <caption><TeamHeadline team={team}/></caption>
                 <colgroup>
                     <col className="head"/>
-                    {dates.map((date) => (<col className={this._dayClass(date)} key={date.toISOString()}/>))}
+                    {dates.map((date) => (<col className={_dayClass(date)} key={date.toISOString()}/>))}
                 </colgroup>
                 <thead>
                     <tr>
                         <th/>
                         {dates.map((date) => 
-                            (<th scope="col" className={this._dayClass(date)} key={date.toISOString()}>{date.format('D')}</th>)
+                            (<th scope="col" className={_dayClass(date)} key={date.toISOString()}>{date.format('D')}</th>)
                         )}
                     </tr>
                 </thead>
@@ -195,7 +191,7 @@ const Team = React.createClass({
                             {member.dayArray(start, end).map((day) => {
                                 if (day.isWeekend()) return;
                                 return (
-                                    <td className={this._dayClass(day.date)} key={day.date.toISOString()}><TeamMemberCell team={team} member={member} day={day}/></td>
+                                    <td className={_dayClass(day.date)} key={day.date.toISOString()}><TeamMemberCell team={team} member={member} day={day}/></td>
                                 )
                             })}
                         </tr>)
