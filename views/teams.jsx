@@ -24,9 +24,7 @@ function dateRange(team, currentDate) {
         currentDate,
         start,
         end,
-        sprint,
-        startOfBusiness: team.startOfBusiness,
-        endOfBusiness: team.endOfBusiness
+        sprint
     };
 }
 
@@ -87,7 +85,9 @@ class Team extends React.Component {
             },
             rowHead: Head,
             cell: Cell,
-            team
+            team,
+            startOfBusiness: team.startOfBusiness,
+            endOfBusiness: team.endOfBusiness
         };
         
         if (team.sprint.scrum) {
