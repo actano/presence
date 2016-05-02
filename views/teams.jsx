@@ -1,89 +1,17 @@
 import React from 'react'
 import moment from 'moment'
 import config from '../lib/config'
-const deDate = 'DD.MM.';
+import Status from './status'
+import TeamHeadline from './team-headline'
+import AvailabilityFooter from './availability-footer'
+import Absences from './absences'
+import absenceClass from './absence-class'
 
 function gravatarUrlFromName(name, size) {
     return `${config.gravatarUrlFromName(name)}?s=${size}`
 }
 
-function absenceClass(absence) {
-    if (absence.isHoliday()) {
-        return 'public-holiday';
-    }
-    if (absence.isTravel()) {
-        return 'away';
-    }
-    return 'absent';
-}
-
-function absencePercentage(range, startDate, endDate) {
-    let sob = range.startOfBusiness;
-    let eob = range.endOfBusiness;
-    let zero = startDate.clone().startOf('day').add(sob, 'minutes');
-    eob -= sob;
-    let start = Math.max(0, startDate.diff(zero, 'minutes'));
-    let end = Math.min(eob, endDate.diff(zero, 'minutes'));
-    return {
-        start: start / eob,
-        end: end / eob
-    };
-}
-
-
-class TeamMemberCell extends React.Component {
-    render() {
-        let range = this.props.dateRange;
-        let day = this.props.day;
-        return (
-            <td className={dayClass(range, day.date)}>
-                <div>
-                    {day.absences.map((absence) => {
-                        let percentage = absencePercentage(range, absence.date, absence.day.endDate());
-                        let top = `${percentage.start * 100}%`;
-                        let height = `${(percentage.end - percentage.start) * 100}%`;
-                        let className = [absenceClass(absence),  'status'].join(' ');
-                        return (<span className={className} style={{top, height}} key={absence.event.icalEvent.uid}/>)
-                    })}
-                </div>
-            </td>)
-    }
-}
-
-class TeamHeadline extends React.Component {
-    render() {
-        let team = this.props.team;
-
-        function sprint() {
-            if (team.sprint.scrum) {
-                return (
-                    <small>S{team.sprint.count + 1}</small>
-                )
-            }
-        }
-        
-        function sprintDate() {
-            if (team.sprint.scrum) {
-                let start = team.sprint.start.format(deDate);
-                let end = team.sprint.end.format(deDate);
-                return (
-                    <time>{start}–{end}</time>
-                )
-            }
-        }
-        
-        return (
-            <h2 className="headline">
-                <name>{team.name}</name>
-                {sprint()}
-                {sprintDate()}
-            </h2>
-        );
-    }    
-}
-
 function dateRange(team, currentDate) {
-
     let sprint = team.sprint.scrum ? {start: team.sprint.start, end: team.sprint.end} : null;
 
     // start at start of current week
@@ -137,30 +65,6 @@ function dateArray(start, end) {
     return result;
 }
 
-class Status extends React.Component {
-    render() {
-        return (
-            <h2 className="error">Calendar failed: {this.props.status}, loading data from cache ({this.props.lastModified.format('L LT')})</h2>
-        );
-    }
-}
-
-class AvailabilityFooter extends React.Component {
-    render() {
-        let avail = this.props.available; 
-        let total = this.props.total;
-        let cols = this.props.cols;
-        let width = `${avail/total * 100}%`;
-        return (
-            <tfoot>
-            <tr>
-                <td colSpan={cols}><div className="percentage" style={{width}}>{avail}/{total}d available</div></td>
-            </tr>
-            </tfoot>
-        );
-    }
-}
-
 class TeamMemberRow extends React.Component {
     render() {
         let range = this.props.dateRange;
@@ -179,7 +83,9 @@ class TeamMemberRow extends React.Component {
             {member.dayArray(range.start, range.end).map((day) => {
                 if (day.isWeekend()) return;
                 return (
-                    <TeamMemberCell dateRange={range} member={member} day={day} key={day.date.toISOString()}/>
+                    <td className={dayClass(range, day.date)} key={day.date.toISOString()}>
+                        <Absences dateRange={range} absences={day.absences}/>
+                    </td>
                 )
             })}
         </tr>)
