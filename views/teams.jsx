@@ -17,9 +17,9 @@ function absenceClass(absence) {
     return 'absent';
 }
 
-function absencePercentage(team, startDate, endDate) {
-    let sob = team.startOfBusiness;
-    let eob = team.endOfBusiness;
+function absencePercentage(range, startDate, endDate) {
+    let sob = range.startOfBusiness;
+    let eob = range.endOfBusiness;
     let zero = startDate.clone().startOf('day').add(sob, 'minutes');
     eob -= sob;
     let start = Math.max(0, startDate.diff(zero, 'minutes'));
@@ -30,29 +30,23 @@ function absencePercentage(team, startDate, endDate) {
     };
 }
 
-function statusClasses(member, date, classes) {
-    let result = Array.prototype.slice.call(arguments, 2);
-    for (let absence of member.absences(date)) {
-        if (absence.date.isAfter(date, 'day')) break;
-        result.push(absenceClass(absence));
-    }
-    return result.join(' ');
-}
-
 
 class TeamMemberCell extends React.Component {
     render() {
-        let team = this.props.team;
+        let range = this.props.dateRange;
         let day = this.props.day;
-        return (<div>
-            {day.absences.map((absence) => {
-                let percentage = absencePercentage(team, absence.date, absence.day.endDate());
-                let top = `${percentage.start * 100}%`;
-                let height = `${(percentage.end - percentage.start) * 100}%`;
-                let className = [absenceClass(absence),  'status'].join(' ');
-                return (<span className={className} style={{top, height}} key={absence.event.icalEvent.uid}/>)
-            })}
-        </div>)
+        return (
+            <td className={dayClass(range, day.date)}>
+                <div>
+                    {day.absences.map((absence) => {
+                        let percentage = absencePercentage(range, absence.date, absence.day.endDate());
+                        let top = `${percentage.start * 100}%`;
+                        let height = `${(percentage.end - percentage.start) * 100}%`;
+                        let className = [absenceClass(absence),  'status'].join(' ');
+                        return (<span className={className} style={{top, height}} key={absence.event.icalEvent.uid}/>)
+                    })}
+                </div>
+            </td>)
     }
 }
 
@@ -88,6 +82,18 @@ class TeamHeadline extends React.Component {
     }    
 }
 
+function dateRange(team, currentDate) {
+    let start = startOfCalendar(team, currentDate);
+    let end = endOfCalendar(team, currentDate);
+    let startOfBusiness = team.startOfBusiness;
+    let endOfBusiness = team.endOfBusiness;
+    let result = {start, end, currentDate, startOfBusiness, endOfBusiness};
+    if (team.sprint.scrum) {
+        result.sprint = {start: team.sprint.start, end: team.sprint.end}
+    }
+    return result;
+}
+
 function startOfCalendar(team, currentDate) {
     let today = currentDate;
     let start = today.clone().locale(today.locale());
@@ -102,9 +108,9 @@ function endOfCalendar(team, currentDate) {
     return moment.max(end, team.sprint.end);
 }
 
-function dayClass(team, currentDate, date) {
+function dayClass(range, date) {
     let result = [];
-    if (date.isSame(currentDate, 'day')) {
+    if (date.isSame(range.currentDate, 'day')) {
         result.push('today');
     }
     if (date.day() === 5) {
@@ -114,8 +120,8 @@ function dayClass(team, currentDate, date) {
         result.push('postWeekend');
     }
     result.push(date.week() % 2 ? 'weekOdd' : 'weekEven');
-    if (team.sprint.scrum) {
-        let offSprint = date.isBefore(team.sprint.start, 'day') || date.isAfter(team.sprint.end, 'day');
+    if (range.sprint) {
+        let offSprint = date.isBefore(range.sprint.start, 'day') || date.isAfter(range.sprint.end, 'day');
         result.push(offSprint ? 'offSprint' : 'inSprint');
     }
     return result.join(' ');
@@ -133,71 +139,89 @@ function dateArray(start, end) {
     return result;
 }
 
+class Status extends React.Component {
+    render() {
+        return (
+            <h2 className="error">Calendar failed: {this.props.status}, loading data from cache ({this.props.lastModified.format('L LT')})</h2>
+        );
+    }
+}
+
+class AvailabilityFooter extends React.Component {
+    render() {
+        let avail = this.props.available; 
+        let total = this.props.total;
+        let cols = this.props.cols;
+        let width = `${avail/total * 100}%`;
+        return (
+            <tfoot>
+            <tr>
+                <td colSpan={cols}><div className="percentage" style={{width}}>{avail}/{total}d available</div></td>
+            </tr>
+            </tfoot>
+        );
+    }
+}
+
+class TeamMemberRow extends React.Component {
+    render() {
+        let range = this.props.dateRange;
+        let member = this.props.member;
+        let selected = this.props.selected;
+
+        let classNames = [];
+        for (let absence of member.absences(range.currentDate)) {
+            if (absence.date.isAfter(range.currentDate, 'day')) break;
+            classNames.push(absenceClass(absence));
+        }
+        if (selected) classNames.push('selected');
+
+        return (<tr className={classNames.join(' ')}>
+            <th scope="row"><img src={gravatarUrlFromName(member.name, 40)}/><span>{member.name}</span></th>
+            {member.dayArray(range.start, range.end).map((day) => {
+                if (day.isWeekend()) return;
+                return (
+                    <TeamMemberCell dateRange={range} member={member} day={day} key={day.date.toISOString()}/>
+                )
+            })}
+        </tr>)
+    }
+}
+
 class Team extends React.Component {
     render() {
         let team = this.props.team;
         let today = this.props.date;
 
-        function _dayClass(date){
-            return dayClass(team, today, date);
-        }
-
         let selectedMember = team.selectedMember(today);
-        let start = startOfCalendar(team, today);
-        let end = endOfCalendar(team, today);
-        let dates = dateArray(start, end);
-        
-        function footer(){
-            if (team.sprint.scrum) {
-                let summary = team.sprintSummary();
-                let width = `${summary.percentage}%`;
-                return (
-                    <tfoot>
-                    <tr>
-                        <td colSpan={dates.length + 1}><div className="percentage" style={{width}}>{summary.avail}/{summary.total}d available</div></td>
-                    </tr>
-                    </tfoot>
-                );
-            }
-        }
-        
-        function status(){
-            if (team.status) return (
-                <h2 className="error">Calendar failed: {team.status}, loading data from cache ({team.cacheTimestamp.format('L LT')})</h2>
-            );
-        }
+        let summary = team.sprint.scrum ? team.sprintSummary() : null;
+
+        let range = dateRange(team, today);
+        let dates = dateArray(range.start, range.end);
         
         return (
             <table>
                 <caption><TeamHeadline team={team}/></caption>
                 <colgroup>
                     <col className="head"/>
-                    {dates.map((date) => (<col className={_dayClass(date)} key={date.toISOString()}/>))}
+                    {dates.map((date) => (<col className={dayClass(range, date)} key={date.toISOString()}/>))}
                 </colgroup>
                 <thead>
                     <tr>
                         <th/>
                         {dates.map((date) => 
-                            (<th scope="col" className={_dayClass(date)} key={date.toISOString()}>{date.format('D')}</th>)
+                            (<th scope="col" className={dayClass(range, date)} key={date.toISOString()}>{date.format('D')}</th>)
                         )}
                     </tr>
                 </thead>
                 <tbody>
                     {team.members.map((member) => {
-                        let className = statusClasses(member, today, selectedMember == member ? 'selected' : null);
-                        return (<tr className={className} key={member.name}>
-                            <th scope="row"><img src={gravatarUrlFromName(member.name, 40)}/><span>{member.name}</span></th>
-                            {member.dayArray(start, end).map((day) => {
-                                if (day.isWeekend()) return;
-                                return (
-                                    <td className={_dayClass(day.date)} key={day.date.toISOString()}><TeamMemberCell team={team} member={member} day={day}/></td>
-                                )
-                            })}
-                        </tr>)
+                        let props = {dateRange: range, member, selected: selectedMember === member};
+                        return (<TeamMemberRow {...props} key={member.name}/>)
                     })}
                 </tbody>
-                {footer()}
-                {status()}
+                {summary ? <AvailabilityFooter cols={dates.length + 1} available={summary.avail} total={summary.total}/> : null}
+                {team.status ? <Status status={team.status} lastModified={team.cacheTimestamp}/> : null}
             </table>
         );
     }
@@ -206,14 +230,14 @@ class Team extends React.Component {
 export default class Teams extends React.Component {
     render() {
         let date = this.props.date;
+        let teams = this.props.teams;
         
-        function createTeam(team){
-            return (
-                <li className="team" id={team.name} key={team.name}><Team team={team} date={date}/></li>
-            );
-        }
         return (
-            <ul className="teams">{ this.props.teams.map(createTeam) }</ul>
+            <ul className="teams">{
+                teams.map((team) => {
+                    return (<li className="team" id={team.name} key={team.name}><Team team={team} date={date}/></li>)
+                })
+            }</ul>
         );
     }
 };
