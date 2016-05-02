@@ -6,10 +6,7 @@ import TeamHeadline from './team-headline'
 import AvailabilityFooter from './availability-footer'
 import Absences from './absences'
 import absenceClass from './absence-class'
-
-function gravatarUrlFromName(name, size) {
-    return `${config.gravatarUrlFromName(name)}?s=${size}`
-}
+import Calendar from './calendar'
 
 function dateRange(team, currentDate) {
     let sprint = team.sprint.scrum ? {start: team.sprint.start, end: team.sprint.end} : null;
@@ -34,104 +31,12 @@ function dateRange(team, currentDate) {
     };
 }
 
-function dayClass(range, date) {
-    let result = [];
-    if (date.isSame(range.currentDate, 'day')) {
-        result.push('today');
-    }
-    if (date.day() === 5) {
-        result.push('preWeekend');
-    }
-    if (date.day() === 1) {
-        result.push('postWeekend');
-    }
-    result.push(date.week() % 2 ? 'weekOdd' : 'weekEven');
-    if (range.sprint) {
-        let offSprint = date.isBefore(range.sprint.start, 'day') || date.isAfter(range.sprint.end, 'day');
-        result.push(offSprint ? 'offSprint' : 'inSprint');
-    }
-    return result.join(' ');
-}
-
-function dateArray(start, end) {
-    let result = [];
-    let date = start.clone().startOf('day');
-    while (!date.isAfter(end, 'day')) {
-        if (date.day() % 6 !== 0) {
-            result.push(date);
-        }
-        date = date.clone().add(1, 'days');
-    }
-    return result;
-}
-
-class MemberHead extends React.Component {
+class Head extends React.Component {
     render() {
-        let name = this.props.member.name;
+        let name = this.props.row.name;
         return (
-            <div><img src={gravatarUrlFromName(name, 40)}/><span>{name}</span></div>
-        )
-    }
-}
-
-function rowClass(member, date, selected) {
-    let classNames = [];
-    for (let absence of member.absences(date, date)) {
-        classNames.push(absenceClass(absence));
-    }
-    if (selected) classNames.push('selected');
-    return classNames.join(' ');
-}
-
-function isWeekend(date) {
-    return date.day() === 0 || date.day() === 6;
-}
-
-class Calendar extends React.Component {
-    render() {
-        let range = this.props.dateRange;
-        let Caption = this.props.caption;
-        let Foot = this.props.foot;
-        let Head = this.props.rowHead;
-        let Cell = this.props.cell;
-        let dates = dateArray(range.start, range.end);
-        let rows = this.props.rows;
-        let _rowClass = this.props.rowClass;
-        let _rowKey = this.props.rowKey;
-
-        return (
-            <table>
-                <caption><Caption {...this.props}/></caption>
-                <colgroup>
-                    <col className="head"/>
-                    {dates.map((date) => (<col className={dayClass(range, date)} key={date.toISOString()}/>))}
-                </colgroup>
-                <thead>
-                <tr>
-                    <th/>
-                    {dates.map((date) =>
-                        (<th scope="col" className={dayClass(range, date)} key={date.toISOString()}>{date.format('D')}</th>)
-                    )}
-                </tr>
-                </thead>
-                <tbody>
-                {rows.map((row) => {
-                    return (<tr className={_rowClass(row)} key={_rowKey(row)}>
-                        <th scope="row"><Head {...this.props} row={row}/></th>
-                        {dates.map((date) => {
-                            if (isWeekend(date)) return;
-                            return (
-                                <td className={dayClass(range, date)} key={date.toISOString()}>
-                                    <Cell {...this.props} row={row} date={date}/>
-                                </td>
-                            )
-                        })}
-                    </tr>)
-                })}
-                </tbody>
-                {Foot ? <tfoot><Foot {...this.props} cols={dates.length + 1}/></tfoot> : null}
-            </table>
-        )
+            <div><img src={`${config.gravatarUrlFromName(name)}?s=${40}`}/><span>{name}</span></div>
+        );
     }
 }
 
@@ -139,15 +44,8 @@ class Cell extends React.Component {
     render() {
         let date = this.props.date;
         let member = this.props.row;
-        return (<Absences dateRange={this.props.dateRange} absences={member.absences(date, date)}/>)
+        return (<Absences {...this.props} absences={member.absences(date, date)}/>)
     };
-}
-
-class Head extends React.Component {
-    render() {
-        let member = this.props.row;
-        return (<MemberHead member={member}/>)
-    }
 }
 
 class Foot extends React.Component {
@@ -171,7 +69,12 @@ class Team extends React.Component {
             dateRange: range,
             rows: team.members,
             rowClass: function(member){
-                return rowClass(member, range.currentDate, member === selectedMember);
+                let classNames = [];
+                for (let absence of member.absences(range.currentDate, range.currentDate)) {
+                    classNames.push(absenceClass(absence));
+                }
+                if (member === selectedMember) classNames.push('selected');
+                return classNames.join(' ');
             },
             rowKey: function(member){
                 return member.name
