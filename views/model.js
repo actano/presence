@@ -1,10 +1,11 @@
 import seedrandom from 'seedrandom'
-import absenceClass from './absence-class'
 import moment from 'moment'
 
 export default function teamModel(team, currentDate) {
     let result = {
         name: team.name,
+        status: team.status,
+        cacheTimestamp: team.cacheTimestamp,
         startOfBusiness: team.startOfBusiness,
         endOfBusiness: team.endOfBusiness,
         range: dateRange(team, currentDate),
@@ -80,9 +81,9 @@ function model(absence) {
     let zero = absence.date.clone().startOf('day');
     return {
         id: absence.event.icalEvent.uid,
-        className: absenceClass(absence),
         start: absence.date.diff(zero, 'minutes'),
-        end: absence.day.endDate().diff(zero, 'minutes')
+        end: absence.day.endDate().diff(zero, 'minutes'),
+        type: absence.isHoliday() ? 'holiday' : absence.isTravel() ? 'travel' : 'absence'
     }
 }
 

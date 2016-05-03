@@ -9,14 +9,14 @@ export default class Absences extends React.Component {
         
         return (
             <div>
-                {absences.map((a) => {
-                    let start = Math.max(0, a.start - sob) / eob;
-                    let end = Math.min(eob, a.end - sob) / eob;
+                {absences.map((absence) => {
+                    let start = Math.max(0, absence.start - sob) / eob;
+                    let end = Math.min(eob, absence.end - sob) / eob;
                     
                     let top = `${start * 100}%`;
                     let height = `${(end - start) * 100}%`;
-                    let className = a.className + ' status';
-                    return (<span className={className} style={{top, height}} key={a.id}/>)
+                    let className = `${absence.type} status`;
+                    return (<span className={className} style={{top, height}} key={absence.id}/>)
                 })}
             </div>
         )

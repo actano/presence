@@ -1,6 +1,5 @@
 import React from 'react'
 import Teams from './teams.jsx'
-const isoDate = 'YYYY-MM-DD';
 
 export default class Page extends React.Component {
     render() {
@@ -14,10 +13,10 @@ export default class Page extends React.Component {
             <body>
                 <form action="/">
                     <h1>
-                        Presence for <input id="dateinput" type="date" name="date" value={this.props.date.format(isoDate)}/><input type="submit" style={{visibility: 'hidden'}}/>
+                        Presence for <input id="dateinput" type="date" name="date" value={this.props.date}/><input type="submit" style={{visibility: 'hidden'}}/>
                     </h1>
                 </form>
-                <Teams teams={this.props.teams} date={this.props.date}/>
+                <Teams teams={this.props.teams}/>
                 <script type="text/javascript" src="/client.js"></script>
             </body>
             </html>

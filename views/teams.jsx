@@ -4,7 +4,6 @@ import Status from './status'
 import TeamHeadline from './team-headline'
 import Absences from './absences'
 import Calendar from './calendar'
-import teamModel from './model'
 
 function dateKey(date) {
     return date.format('YYYY-MM-DD');
@@ -40,7 +39,7 @@ class Foot extends React.Component {
 
 class Team extends React.Component {
     render() {
-        let team = teamModel(this.props.team, this.props.date);
+        let team = this.props.team;
 
         let props = {
             caption: TeamHeadline,
@@ -51,7 +50,7 @@ class Team extends React.Component {
                 let absences = member.absences[dateKey(team.range.currentDate)];
                 if (absences) {
                     for (let absence of absences) {
-                        classNames.push(absence.className);
+                        classNames.push(absence.type);
                     }
                 }
                 if (member.selected) classNames.push('selected');
@@ -79,7 +78,6 @@ class Team extends React.Component {
 
 export default class Teams extends React.Component {
     render() {
-        let date = this.props.date;
         let teams = this.props.teams;
         
         return (
@@ -87,7 +85,7 @@ export default class Teams extends React.Component {
                 teams.map((team) => {
                     return (
                         <li className="team" id={team.name} key={team.name}>
-                            <Team team={team} date={date}/>
+                            <Team team={team}/>
                             {team.status ? <Status status={team.status} lastModified={team.cacheTimestamp}/> : null}
                         </li>
                     )

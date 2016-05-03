@@ -95,7 +95,7 @@ table
             font-weight bold
             text-decoration underline
 
-        tr.absent
+        tr.absence
             th img
                 opacity 0.3
 
@@ -139,14 +139,14 @@ table
                 opacity 0.2
 
 .status
-    &.absent
-    &.public-holiday
+    &.absence
+    &.holiday
         color darkslategray
         text-decoration line-through
         background-color $colorAbsent
-    &.public-holiday
+    &.holiday
         background-image striped($colorHoliday)
-    &.away
+    &.travel
         background-color $colorAway
         border 4px solid $actanoBlue
 
