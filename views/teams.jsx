@@ -7,6 +7,10 @@ import Absences from './absences'
 import absenceClass from './absence-class'
 import Calendar from './calendar'
 
+function dateKey(date) {
+    return date.format('YYYY-MM-DD');
+}
+
 function dateRange(team, currentDate) {
     let sprint = team.sprint.scrum ? {start: team.sprint.start, end: team.sprint.end} : null;
 
@@ -30,7 +34,7 @@ function dateRange(team, currentDate) {
 
 class Head extends React.Component {
     render() {
-        let name = this.props.row.name;
+        let name = memberModel(this.props.row).name;
         return (
             <div><img src={`${config.gravatarUrlFromName(name)}?s=${40}`}/><span>{name}</span></div>
         );
@@ -47,22 +51,32 @@ function model(absence) {
     }
 }
 
+function memberModel(member, date) {
+    let result = {
+        name: member.name,
+        absences: {}
+    };
+    if (date) {
+        let absences = [];
+        for (let absence of member.absences(date, date)) {
+            absences.push(model(absence));
+        }
+        result.absences[dateKey(date)] = absences;
+    }
+    return result;
+}
+
 class Cell extends React.Component {
     render() {
         let date = this.props.date;
-        let member = this.props.row;
-        let absenceIterator = member.absences(date, date);
-        let absences = [];
-        for (let absence of absenceIterator) {
-            absences.push(model(absence));
-        }
-        return (<Absences {...this.props} absences={absences}/>)
+        let member = memberModel(this.props.row, date);
+        return (<Absences {...this.props} absences={member.absences[dateKey(date)]}/>)
     };
 }
 
 class Foot extends React.Component {
     render() {
-        let summary = this.props.team.sprintSummary();
+        let summary = this.props.team.sprint.summary;
         let avail = summary.avail;
         let total = summary.total;
         let width = `${avail/total * 100}%`;
@@ -70,22 +84,38 @@ class Foot extends React.Component {
     }
 }
 
+function teamModel(team) {
+    let result = {
+        name: team.name
+    };
+    if (team.sprint.scrum) {
+        result.sprint = {
+            number: team.sprint.count + 1,
+            start: team.sprint.start,
+            end: team.sprint.end,
+            summary: team.sprintSummary()
+        }
+    }
+    return result;
+}
+
 class Team extends React.Component {
     render() {
         let team = this.props.team;
         let today = this.props.date;
 
-        let selectedMember = team.selectedMember(today);
         let range = dateRange(team, today);
+        let selectedMember = team.selectedMember(range.currentDate);
         
         let props = {
             caption: TeamHeadline,
             dateRange: range,
             rows: team.members,
             rowClass: function(member){
+                let m = memberModel(member, range.currentDate);
                 let classNames = [];
-                for (let absence of member.absences(range.currentDate, range.currentDate)) {
-                    classNames.push(absenceClass(absence));
+                for (let absence of m.absences[dateKey(range.currentDate)]) {
+                    classNames.push(absence.className);
                 }
                 if (member === selectedMember) classNames.push('selected');
                 return classNames.join(' ');
@@ -95,7 +125,7 @@ class Team extends React.Component {
             },
             rowHead: Head,
             cell: Cell,
-            team,
+            team: teamModel(team),
             startOfBusiness: team.startOfBusiness,
             endOfBusiness: team.endOfBusiness
         };
