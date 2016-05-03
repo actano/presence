@@ -5,7 +5,7 @@ import moment from 'moment'
 import Page from './views/index.jsx'
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
-import teamModel from './views/model'
+import teamModel from './lib/model'
 
 const app = express();
 const stylesDir = path.join(__dirname, 'styles');
