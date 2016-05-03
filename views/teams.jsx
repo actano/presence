@@ -6,6 +6,7 @@ import TeamHeadline from './team-headline'
 import Absences from './absences'
 import absenceClass from './absence-class'
 import Calendar from './calendar'
+import seedrandom from 'seedrandom'
 
 function dateKey(date) {
     return date.format('YYYY-MM-DD');
@@ -34,7 +35,7 @@ function dateRange(team, currentDate) {
 
 class Head extends React.Component {
     render() {
-        let name = memberModel(this.props.row).name;
+        let name = this.props.row.name;
         return (
             <div><img src={`${config.gravatarUrlFromName(name)}?s=${40}`}/><span>{name}</span></div>
         );
@@ -51,17 +52,20 @@ function model(absence) {
     }
 }
 
-function memberModel(member, date) {
+function memberModel(member, start = null, end = start) {
     let result = {
         name: member.name,
         absences: {}
     };
-    if (date) {
-        let absences = [];
-        for (let absence of member.absences(date, date)) {
+    if (start) {
+        for (let absence of member.absences(start, end)) {
+            let key = dateKey(absence.date);
+            let absences = result.absences[key];
+            if (!absences) {
+                result.absences[key] = absences = [];
+            }
             absences.push(model(absence));
         }
-        result.absences[dateKey(date)] = absences;
     }
     return result;
 }
@@ -69,8 +73,9 @@ function memberModel(member, date) {
 class Cell extends React.Component {
     render() {
         let date = this.props.date;
-        let member = memberModel(this.props.row, date);
-        return (<Absences {...this.props} absences={member.absences[dateKey(date)]}/>)
+        let member = this.props.row;
+        let absences = member.absences[dateKey(date)];
+        return (<Absences {...this.props} absences={absences || []}/>)
     };
 }
 
@@ -84,11 +89,31 @@ class Foot extends React.Component {
     }
 }
 
-function teamModel(team) {
+function teamModel(team, currentDate) {
     let result = {
-        name: team.name
+        name: team.name,
+        startOfBusiness: team.startOfBusiness,
+        endOfBusiness: team.endOfBusiness,
+        range: dateRange(team, currentDate),
+        members: []
     };
+    for (let member of team.members) {
+        result.members.push(memberModel(member, result.range.start, result.range.end));
+    }
     if (team.sprint.scrum) {
+        let avail = [];
+        let key = dateKey(currentDate);
+        for (let member of result.members) {
+            let absences = member.absences[key];
+            if (!absences) {
+                avail.push(member);
+            }
+        }
+        if (avail.length) {
+            let rng = seedrandom(key);
+            avail[Math.floor(rng() * avail.length)].selected = true;
+        }
+
         result.sprint = {
             number: team.sprint.count + 1,
             start: team.sprint.start,
@@ -101,23 +126,21 @@ function teamModel(team) {
 
 class Team extends React.Component {
     render() {
-        let team = this.props.team;
-        let today = this.props.date;
+        let team = teamModel(this.props.team, this.props.date);
 
-        let range = dateRange(team, today);
-        let selectedMember = team.selectedMember(range.currentDate);
-        
         let props = {
             caption: TeamHeadline,
-            dateRange: range,
+            dateRange: team.range,
             rows: team.members,
             rowClass: function(member){
-                let m = memberModel(member, range.currentDate);
                 let classNames = [];
-                for (let absence of m.absences[dateKey(range.currentDate)]) {
-                    classNames.push(absence.className);
+                let absences = member.absences[dateKey(team.range.currentDate)];
+                if (absences) {
+                    for (let absence of absences) {
+                        classNames.push(absence.className);
+                    }
                 }
-                if (member === selectedMember) classNames.push('selected');
+                if (member.selected) classNames.push('selected');
                 return classNames.join(' ');
             },
             rowKey: function(member){
@@ -125,12 +148,12 @@ class Team extends React.Component {
             },
             rowHead: Head,
             cell: Cell,
-            team: teamModel(team),
+            team: team,
             startOfBusiness: team.startOfBusiness,
             endOfBusiness: team.endOfBusiness
         };
         
-        if (team.sprint.scrum) {
+        if (team.sprint) {
             props.foot = Foot;
         }
 
