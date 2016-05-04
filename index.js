@@ -1,10 +1,11 @@
 import path from 'path';
 import express from 'express';
-import presence from './lib/presence'
-import moment from 'moment'
-import Page from './views/index.jsx'
-import React from 'react'
 import ReactDOMServer from 'react-dom/server'
+import moment from 'moment'
+
+import presence from './lib/presence'
+import Page from './views'
+import React from 'react'
 import teamModel from './lib/model'
 
 const app = express();
