@@ -6,7 +6,6 @@ import moment from 'moment'
 import presence from './lib/presence'
 import Page from './views'
 import React from 'react'
-import teamModel from './lib/model'
 
 const app = express();
 const stylesDir = path.join(__dirname, 'styles');
@@ -34,8 +33,6 @@ app.get('/', function(req, res, next) {
     date = date.locale('de_DE').startOf('day');
 
     presence(date).then((teams) => {
-        teams = teams.map((team) => teamModel(team, date));
-        
         let pageElement = React.createElement(Page, {teams, date: date.format('YYYY-MM-DD')});
         let html = ReactDOMServer.renderToString(pageElement);
         res.send('<!DOCTYPE html>' + html);

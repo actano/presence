@@ -47,7 +47,7 @@ class Team extends React.Component {
             rows: team.members,
             rowClass: function(member){
                 let classNames = [];
-                let absences = member.absences[dateKey(team.range.currentDate)];
+                let absences = member.absences[team.range.currentDate];
                 if (absences) {
                     for (let absence of absences) {
                         classNames.push(absence.type);

@@ -1,4 +1,5 @@
 import React from 'react'
+import moment from 'moment'
 
 function isWeekend(date) {
     return date.day() === 0 || date.day() === 6;
@@ -6,7 +7,8 @@ function isWeekend(date) {
 
 function dateArray(start, end) {
     let result = [];
-    let date = start.clone().startOf('day');
+    let date = moment(start).startOf('day');
+    end = moment(end).startOf('day');
     while (!date.isAfter(end, 'day')) {
         if (date.day() % 6 !== 0) {
             result.push(date);

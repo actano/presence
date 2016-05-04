@@ -1,7 +1,8 @@
 import React from 'react'
+import moment from 'moment'
 
 function format(date) {
-    return date.format('DD.MM.');
+    return moment(date).format('DD.MM.');
 }
 
 export default class TeamHeadline extends React.Component {
