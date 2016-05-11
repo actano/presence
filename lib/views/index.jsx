@@ -17,7 +17,6 @@ export default class Page extends React.Component {
             <html>
             <head>
                 <title>Actano - Presence</title>
-                <link rel="stylesheet" href="/styles.css"/>
                 <meta name="viewport" content="width=device-width"/>
             </head>
             <body>

@@ -1,20 +1,14 @@
-import path from 'path';
 import express from 'express';
 import ReactDOMServer from 'react-dom/server'
 import moment from 'moment'
 
 import presence from './lib/presence'
-import Page from './views'
+import Page from './lib/views'
 import React from 'react'
 
 const app = express();
-const stylesDir = path.join(__dirname, 'styles');
-const publicDir = path.join(__dirname, 'public');
 
 app.locals.compileDebug = false;
-
-import stylus from 'stylus';
-app.use(stylus.middleware({src: stylesDir, dest: publicDir}));
 
 import autoprefixer from 'express-autoprefixer';
 app.use(autoprefixer({browsers: 'last 2 versions', cascade: false}));
@@ -45,8 +39,6 @@ app.get('/', function(req, res, next) {
         res.send('<!DOCTYPE html>' + html);
     }).catch(next);
 });
-
-app.use(express.static(publicDir));
 
 let port = process.env.PORT || 3000;
 
