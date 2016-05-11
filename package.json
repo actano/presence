@@ -7,7 +7,9 @@
     "npm": "3.8.6"
   },
   "scripts": {
+    "postinstall": "npm run webpack",
     "start": "babel-node index.js",
+    "webpack": "webpack",
     "test": "mocha --compilers js:babel-register"
   },
   "author": "Actano GmbH",
@@ -16,7 +18,9 @@
     "MD5": "^1.2.1",
     "autoprefixer": "^6.3.6",
     "babel-cli": "^6.7.7",
+    "babel-loader": "^6.2.4",
     "babel-plugin-system-import-transformer": "^2.0.0",
+    "babel-preset-es2015": "^6.6.0",
     "babel-preset-es2015-node6": "^0.2.0",
     "babel-preset-react": "^6.5.0",
     "babel-register": "^6.7.2",
@@ -32,7 +36,8 @@
     "request": "^2.67.0",
     "seedrandom": "^2.4.2",
     "stylus": "^0.54.5",
-    "urlify": "^0.3.6"
+    "urlify": "^0.3.6",
+    "webpack": "^1.13.0"
   },
   "devDependencies": {
     "chai": "^3.4.1",

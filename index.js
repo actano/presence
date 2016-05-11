@@ -19,9 +19,8 @@ app.use(stylus.middleware({src: stylesDir, dest: publicDir}));
 import autoprefixer from 'express-autoprefixer';
 app.use(autoprefixer({browsers: 'last 2 versions', cascade: false}));
 
-app.get('/client.js', (req, res, next) => {
-    res.sendFile(path.join(__dirname, 'client.js'), next);
-});
+app.use(express.static('build'));
+
 // respond with rendered html
 app.get('/', function(req, res, next) {
     let date;
