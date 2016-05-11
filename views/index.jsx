@@ -3,6 +3,16 @@ import Teams from './teams.jsx'
 
 export default class Page extends React.Component {
     render() {
+        let form = () => {
+            return (
+                <form action="/">
+                    <h1>
+                        Presence for <input id="dateinput" type="date" name="date" value={this.props.date}/><input type="submit" style={{visibility: 'hidden'}}/>
+                    </h1>
+                    <script type="text/javascript" src="/client.js"></script>
+                </form>
+            );
+        };
         return (
             <html>
             <head>
@@ -11,13 +21,8 @@ export default class Page extends React.Component {
                 <meta name="viewport" content="width=device-width"/>
             </head>
             <body>
-                <form action="/">
-                    <h1>
-                        Presence for <input id="dateinput" type="date" name="date" value={this.props.date}/><input type="submit" style={{visibility: 'hidden'}}/>
-                    </h1>
-                </form>
+                {this.props.framed ? null : form()}
                 <Teams teams={this.props.teams}/>
-                <script type="text/javascript" src="/client.js"></script>
             </body>
             </html>
         );

@@ -25,15 +25,23 @@ app.get('/client.js', (req, res, next) => {
 // respond with rendered html
 app.get('/', function(req, res, next) {
     let date;
-    if ((req.query != null) && (req.query.date != null)) {
+    if (req.query.date) {
         date = moment(req.query.date);
         if (!date.isValid()) date = null;
     }
     if (!date) date = moment();
     date = date.locale('de_DE').startOf('day');
 
+    let framed = !!req.query.framed;
+
     presence(date).then((teams) => {
-        let pageElement = React.createElement(Page, {teams, date: date.format('YYYY-MM-DD')});
+        let props = {
+            teams,
+            framed,
+            date: date.format('YYYY-MM-DD')
+        };
+
+        let pageElement = React.createElement(Page, props);
         let html = ReactDOMServer.renderToString(pageElement);
         res.send('<!DOCTYPE html>' + html);
     }).catch(next);
