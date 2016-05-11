@@ -9,7 +9,6 @@ export default class Page extends React.Component {
                     <h1>
                         Presence for <input id="dateinput" type="date" name="date" value={this.props.date}/><input type="submit" style={{visibility: 'hidden'}}/>
                     </h1>
-                    <script type="text/javascript" src="/client.js"></script>
                 </form>
             );
         };
@@ -21,8 +20,8 @@ export default class Page extends React.Component {
             </head>
             <body>
                 {this.props.framed ? null : form()}
-                <div id="absence">
-                    <Teams {...this.props} teams={this.props.teams}/>
+                <div>
+                    <script type="text/javascript" src="/client.js"></script>
                 </div>
             </body>
             </html>

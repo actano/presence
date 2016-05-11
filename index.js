@@ -49,8 +49,13 @@ app.get('/', function(req, res, next) {
 
     function json() {
         let date = getDate(req.query.date);
+        let _config = config(date);
         presence(date).then((teams) => {
-            res.send(teams);
+            res.send({
+                teams: teams,
+                gravatarPrefix: _config.gravatarPrefix,
+                emailSuffix: _config.emailSuffix
+            });
         }).catch(next);
     }
 

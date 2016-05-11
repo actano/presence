@@ -1,6 +1,9 @@
 module.exports = {
     context: __dirname + '/lib',
     entry: './client',
+    resolve: {
+        extensions: ['', '.jsx', '.js']
+    },
     output: {
         path: __dirname + '/build',
         filename: 'client.js'
