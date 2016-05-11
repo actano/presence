@@ -1,3 +1,5 @@
+autoprefixer = require('autoprefixer');
+
 module.exports = {
     context: __dirname + '/lib',
     entry: './client',
@@ -14,5 +16,8 @@ module.exports = {
             {test: /\.json$/, exclude: /node_modules/, loader: "json-loader"},
             {test: /\.styl$/, loader: 'style-loader!css-loader!postcss-loader!stylus-loader?{"sourceMap": true, "requireSyntax": true, "resolve url": true}'}
         ]
+    },
+    postcss: function(){
+        return [autoprefixer({browsers: ['last 2 versions', 'Firefox 15']})]
     }
 };

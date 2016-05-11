@@ -18,7 +18,7 @@ export default class Page extends React.Component {
             <body>
                 {this.props.framed ? null : form()}
                 <div>
-                    <script type="text/javascript" src="/client.js"></script>
+                    <script type="text/javascript" src="client.js"></script>
                 </div>
             </body>
             </html>

@@ -1,6 +1,7 @@
 import express from 'express';
 import ReactDOMServer from 'react-dom/server'
 import moment from 'moment'
+import socketio from 'socket.io'
 
 import presence from './lib/presence'
 import Page from './lib/views'
@@ -13,18 +14,18 @@ app.locals.compileDebug = false;
 
 app.use(express.static('build'));
 
-// respond with rendered html
-app.get('/', function(req, res, next) {
-    function getDate(dateParam) {
-        let date;
-        if (dateParam) {
-            date = moment(dateParam);
-            if (!date.isValid()) date = null;
-        }
-        if (!date) date = moment();
-        date = date.locale('de_DE').startOf('day');
-        return date;
+function getDate(dateParam) {
+    let date;
+    if (dateParam) {
+        date = moment(dateParam);
+        if (!date.isValid()) date = null;
     }
+    if (!date) date = moment();
+    date = date.locale('de_DE').startOf('day');
+    return date;
+}
+
+app.get('/', function(req, res, next) {
 
     function html() {
         let date = getDate(req.query.date);
@@ -61,5 +62,20 @@ app.get('/', function(req, res, next) {
 
 let port = process.env.PORT || 3000;
 
-app.listen(port, () => console.log(`Listening on port ${port}...`));
+const server = app.listen(port, () => console.log(`Listening on port ${port}...`));
+const io = socketio(server, {path: '/rt'});
+io.on('connection', (client) => {
+    client.on('date', (date) => {
+        date = getDate(date);
+        let _config = config(date);
+        presence(date).then((teams) => {
+            client.emit('teams', {
+                date: date.format('YYYY-MM-DD'),
+                teams: teams,
+                gravatarPrefix: _config.gravatarPrefix,
+                emailSuffix: _config.emailSuffix
+            });
+        });
+    });
+});
 
