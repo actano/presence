@@ -1,9 +1,9 @@
 import React from 'react'
-import config from '../config'
 import Status from './status'
 import TeamHeadline from './team-headline'
 import Absences from './absences'
 import Calendar from './calendar'
+import gravatarUrlFromName from '../gravatar'
 
 function dateKey(date) {
     return date.format('YYYY-MM-DD');
@@ -12,8 +12,10 @@ function dateKey(date) {
 class Head extends React.Component {
     render() {
         let name = this.props.row.name;
+        let gravatarPrefix = this.props.gravatarPrefix;
+        let emailSuffix = this.props.emailSuffix;
         return (
-            <div><img src={`${config.gravatarUrlFromName(name)}?s=${40}`}/><span>{name}</span></div>
+            <div><img src={`${gravatarUrlFromName(gravatarPrefix, emailSuffix, name)}?s=${40}`}/><span>{name}</span></div>
         );
     }
 }
@@ -42,6 +44,8 @@ class Team extends React.Component {
         let team = this.props.team;
 
         let props = {
+            gravatarPrefix: this.props.gravatarPrefix,
+            emailSuffix: this.props.emailSuffix,
             caption: TeamHeadline,
             dateRange: team.range,
             rows: team.members,
@@ -85,7 +89,7 @@ export default class Teams extends React.Component {
                 teams.map((team) => {
                     return (
                         <li className="team" id={team.name} key={team.name}>
-                            <Team team={team}/>
+                            <Team {...this.props} team={team}/>
                             {team.status ? <Status status={team.status} lastModified={team.cacheTimestamp}/> : null}
                         </li>
                     )

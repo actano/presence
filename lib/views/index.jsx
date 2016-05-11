@@ -21,7 +21,9 @@ export default class Page extends React.Component {
             </head>
             <body>
                 {this.props.framed ? null : form()}
-                <Teams teams={this.props.teams}/>
+                <div id="absence">
+                    <Teams {...this.props} teams={this.props.teams}/>
+                </div>
             </body>
             </html>
         );

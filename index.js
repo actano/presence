@@ -5,6 +5,7 @@ import moment from 'moment'
 import presence from './lib/presence'
 import Page from './lib/views'
 import React from 'react'
+import config from './lib/config'
 
 const app = express();
 
@@ -29,11 +30,15 @@ app.get('/', function(req, res, next) {
         let date = getDate(req.query.date);
         let framed = !!req.query.framed;
 
+        let _config = config(date);
+        
         presence(date).then((teams) => {
             let props = {
                 teams,
                 framed,
-                date: date.format('YYYY-MM-DD')
+                date: date.format('YYYY-MM-DD'),
+                gravatarPrefix: _config.gravatarPrefix,
+                emailSuffix: _config.emailSuffix
             };
 
             let pageElement = React.createElement(Page, props);
