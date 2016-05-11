@@ -1,5 +1,5 @@
 import React from 'react'
-import config from '../lib/config'
+import config from '../config'
 import Status from './status'
 import TeamHeadline from './team-headline'
 import Absences from './absences'
