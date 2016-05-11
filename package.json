@@ -27,7 +27,6 @@
     "bluebird": "^3.1.1",
     "css-loader": "^0.23.1",
     "express": "^4.12.3",
-    "express-autoprefixer": "^5.0.1",
     "ical.js": "^1.1.2",
     "js-yaml": "^3.4.6",
     "moment": "^2.10.2",

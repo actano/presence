@@ -10,9 +10,6 @@ const app = express();
 
 app.locals.compileDebug = false;
 
-import autoprefixer from 'express-autoprefixer';
-app.use(autoprefixer({browsers: 'last 2 versions', cascade: false}));
-
 app.use(express.static('build'));
 
 // respond with rendered html
