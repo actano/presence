@@ -1,15 +1,12 @@
 import React from 'react'
-import Teams from './teams.jsx'
 
 export default class Page extends React.Component {
     render() {
         let form = () => {
             return (
-                <form action="/">
-                    <h1>
-                        Presence for <input id="dateinput" type="date" name="date" value={this.props.date}/><input type="submit" style={{visibility: 'hidden'}}/>
-                    </h1>
-                </form>
+                <h1>
+                    Presence for <input id="dateinput" type="date" name="date" value={this.props.date}/>
+                </h1>
             );
         };
         return (
