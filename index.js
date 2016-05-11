@@ -79,3 +79,8 @@ io.on('connection', (client) => {
     });
 });
 
+// dumb pushing out of update events every 5 minutes
+setInterval(()=> {
+    io.emit('update')
+}, 5 * 50 * 1000);
+
