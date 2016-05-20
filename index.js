@@ -63,7 +63,7 @@ app.get('/', function(req, res, next) {
 let port = process.env.PORT || 3000;
 
 const server = app.listen(port, () => console.log(`Listening on port ${port}...`));
-const io = socketio(server, {path: '/rt'});
+const io = socketio(server, {serveClient: false, path: '/rt'});
 io.on('connection', (client) => {
     client.on('date', (date) => {
         date = getDate(date);
@@ -82,5 +82,5 @@ io.on('connection', (client) => {
 // dumb pushing out of update events every 5 minutes
 setInterval(()=> {
     io.emit('update')
-}, 5 * 50 * 1000);
+}, 5 * 60 * 1000);
 
