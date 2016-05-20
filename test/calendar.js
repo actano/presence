@@ -12,7 +12,7 @@ describe('ical', function() {
     let Calendar;
 
     before('import', () => {
-        return System.import('../lib/calendar').then((module) => Calendar = module.default);
+        System.import('../lib/calendar').then((module) => Calendar = module.default);
     });
 
     function read() {
@@ -22,7 +22,7 @@ describe('ical', function() {
 
     it('should parse ics data', () => read());
 
-    return describe('process', function() {
+    describe('process', function() {
         let calendar = null;
 
         function findEvent(name) {
@@ -36,16 +36,16 @@ describe('ical', function() {
         it(`should iterate ${EVENT_COUNT} events`, function() {
             let count = 0;
             for (const event of calendar.events()) count++
-            return expect(count).to.equal(EVENT_COUNT);
+            expect(count).to.equal(EVENT_COUNT);
         });
 
         it(`should find '${TEST_EVENT}'`, function() {
             let event = findEvent(TEST_EVENT);
-            return expect(event, TEST_EVENT)
+            expect(event, TEST_EVENT)
             .to.exist;
         });
 
-        return describe(`Event '${TEST_EVENT}'`, function() {
+        describe(`Event '${TEST_EVENT}'`, function() {
             let confluenceType;
             let nextWeek;
             let christmas;
@@ -81,28 +81,28 @@ describe('ical', function() {
                 expect(startDate, 'startDate')
                 .to.exist;
 
-                return expect(startDate.isSame(TEST_MOMENT, 'day'))
+                expect(startDate.isSame(TEST_MOMENT, 'day'))
                 .to.be.true;
             });
 
             it(`first occurance should be on ${str(TEST_MOMENT)}`, function() {
                 let instanceIterator = event.instances();
                 let {date} = instanceIterator.next().value;
-                return expect(date.isSame(TEST_MOMENT, 'day'))
+                expect(date.isSame(TEST_MOMENT, 'day'))
                     .to.be.true;
             });
 
             it(`starting a week later, first occurance should be on ${str(nextWeek = moment(TEST_MOMENT).add(1, 'weeks'))}`, function() {
                 let instanceIterator = event.instances(nextWeek);
                 let {date} = instanceIterator.next().value;
-                return expect(date.isSame(nextWeek, 'day'))
+                expect(date.isSame(nextWeek, 'day'))
                     .to.be.true;
             });
 
             it(`first occurance should stay on ${str(TEST_MOMENT)}, when iterating from a day before`, function() {
                 let instanceIterator = event.instances(moment(TEST_MOMENT).subtract(1, 'days'));
                 let {date} = instanceIterator.next().value;
-                return expect(date.isSame(TEST_MOMENT, 'day'), str(date))
+                expect(date.isSame(TEST_MOMENT, 'day'), str(date))
                     .to.be.true;
             });
 
@@ -110,14 +110,14 @@ describe('ical', function() {
                 let beforeChristmas = christmas.subtract(1, 'days');
                 let instanceIterator = event.instances(beforeChristmas);
                 let {date} = instanceIterator.next().value;
-                return expect(date.isBefore(newYear, 'day'), str(date))
+                expect(date.isBefore(newYear, 'day'), str(date))
                     .to.be.false;
             });
 
             it(`should end before ${str(endMoment = moment('2017-01-01'))}`, function() {
                 let instanceIterator = event.instances(endMoment);
                 let instance = instanceIterator.next().value;
-                return expect(instance, (instance != null) ? str(instance.date) : null)
+                expect(instance, (instance != null) ? str(instance.date) : null)
                     .to.not.exist;
             });
 
@@ -131,16 +131,16 @@ describe('ical', function() {
                         }
                     }
                     
-                    const attendee = find();
+                    let attendee = find();
                     expect(attendee).to.exist;
-                    return expect(attendee.cn())
+                    expect(attendee.cn())
                         .to.equal(cn);
                 })
             ;
 
             testAttendee(`${TEST_USER}`);
             testAttendee(`${TEST_USER}1`);
-            return testAttendee(`${TEST_USER}2`);
+            testAttendee(`${TEST_USER}2`);
         });
     });
 });
