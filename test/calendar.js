@@ -1,8 +1,7 @@
-require('source-map-support').install();
-
 import fs from 'fs'
 import path from 'path'
 import {expect} from 'chai'
+import moment from 'moment'
 
 describe('ical', function() {
     const EVENT_COUNT = 1;
@@ -52,7 +51,6 @@ describe('ical', function() {
             let christmas;
             let newYear;
             let endMoment;
-            let moment = require('moment');
 
             function str(moment) {
                 return moment ? moment.format('YYYY-MM-DD HH:mm') : 'null';
