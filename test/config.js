@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import moment from 'moment';
+import { LocalDate } from 'js-joda';
 
 describe('configuration', function() {
     let config;
@@ -9,7 +9,7 @@ describe('configuration', function() {
     });
 
     it('should have correct start date', function() {
-        let _config = config(moment('2015-10-01'));
+        let _config = config(LocalDate.parse('2015-10-01'));
         let team = _config.teams[0];
         expect(team).to.exist;
         expect(team.sprint.startDate).to.equal('2015-09-30');
