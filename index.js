@@ -6,7 +6,6 @@ import presence from './lib/presence'
 import Page from './lib/views'
 import React from 'react'
 import config from './lib/config'
-import { toMoment } from './lib/util'
 
 const app = express();
 
@@ -24,7 +23,7 @@ function getDate(dateParam) {
         }
     }
     if (!date) date = LocalDate.now();
-    return toMoment(date);
+    return date;
 }
 
 app.get('/', function(req, res, next) {
@@ -35,7 +34,7 @@ app.get('/', function(req, res, next) {
 
         let props = {
             framed,
-            date: date.format('YYYY-MM-DD')
+            date: date.toString()
         };
 
         let pageElement = React.createElement(Page, props);
@@ -72,7 +71,7 @@ io.on('connection', (client) => {
         let _config = config(date);
         presence(date).then((teams) => {
             client.emit('teams', {
-                date: date.format('YYYY-MM-DD'),
+                date: date.toString(),
                 teams: teams,
                 gravatarPrefix: _config.gravatarPrefix,
                 emailSuffix: _config.emailSuffix
