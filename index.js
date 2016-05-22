@@ -1,12 +1,12 @@
 import express from 'express';
 import ReactDOMServer from 'react-dom/server'
-import moment from 'moment'
 import socketio from 'socket.io'
-
+import { LocalDate } from 'js-joda'
 import presence from './lib/presence'
 import Page from './lib/views'
 import React from 'react'
 import config from './lib/config'
+import { toMoment } from './lib/util'
 
 const app = express();
 
@@ -17,12 +17,14 @@ app.use(express.static('build'));
 function getDate(dateParam) {
     let date;
     if (dateParam) {
-        date = moment(dateParam);
-        if (!date.isValid()) date = null;
+        try {
+            date = LocalDate.parse(dateParam);
+        } catch (e) {
+            date = null;
+        }
     }
-    if (!date) date = moment();
-    date = date.locale('de_DE').startOf('day');
-    return date;
+    if (!date) date = LocalDate.now();
+    return toMoment(date);
 }
 
 app.get('/', function(req, res, next) {
