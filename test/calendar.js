@@ -59,6 +59,10 @@ describe('ical', () => {
                 return moment ? moment.format('YYYY-MM-DD HH:mm') : 'null';
             }
 
+            function day(moment) {
+                return moment ? moment.format('YYYY-MM-DD') : 'null';
+            }
+
             let TEST_MOMENT = moment('2015-10-29').startOf('day');
 
             let event = null;
@@ -76,10 +80,17 @@ describe('ical', () => {
                 expect(event.icalEvent.isRecurring()).to.be.true
             );
 
-            it(`should start on ${str(TEST_MOMENT)}`, () => {
+            it(`should start on ${day(TEST_MOMENT)}`, () => {
                 let startDate = toMoment(event.startDate());
                 expect(startDate, 'startDate').to.exist;
                 expect(startDate.isSame(TEST_MOMENT, 'day')).to.be.true;
+            });
+
+            let testMoment;
+            it(`should start at ${str(testMoment = moment('2015-10-29T13:30').locale('de_DE'))}`, () => {
+                let startDate = toMoment(event.startDate());
+                expect(startDate, 'startDate').to.exist;
+                expect(startDate.isSame(testMoment, 'minute')).to.be.true;
             });
 
             it(`first occurance should be on ${str(TEST_MOMENT)}`, () => {
