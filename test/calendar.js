@@ -2,7 +2,6 @@ import fs from 'fs'
 import path from 'path'
 import {expect} from 'chai'
 import moment from 'moment'
-import ICAL from 'ical.js'
 
 describe('ical', () => {
     const EVENT_COUNT = 1;
@@ -11,9 +10,11 @@ describe('ical', () => {
     const TEST_USER = 'Test User';
 
     let Calendar;
+    let toMoment;
 
     before('import', () => {
         System.import('../lib/calendar').then((module) => Calendar = module.default);
+        System.import('../lib/util').then((module) => toMoment = module.toMoment);
     });
 
     function read() {
@@ -44,8 +45,7 @@ describe('ical', () => {
 
         it(`should find '${TEST_EVENT}'`, () => {
             let event = findEvent(TEST_EVENT);
-            expect(event, TEST_EVENT)
-                .to.exist;
+            expect(event, TEST_EVENT).to.exist;
         });
 
         describe(`Event '${TEST_EVENT}'`, () => {
@@ -65,63 +65,65 @@ describe('ical', () => {
             before('find', () => event = findEvent(TEST_EVENT));
 
             it(`should have Description of '${TEST_DESCRIPTION}'`, () =>
-                expect(event.description())
-                    .to.equal(TEST_DESCRIPTION)
+                expect(event.description()).to.equal(TEST_DESCRIPTION)
             );
 
             it(`should be in confluence subcalendar '${confluenceType = 'leaves'}'`, () =>
-                expect(event.confluenceCalendarType())
-                    .to.equal(confluenceType)
+                expect(event.confluenceCalendarType()).to.equal(confluenceType)
             );
 
             it("should be recurring", () =>
-                expect(event.icalEvent.isRecurring())
-                    .to.be.true
+                expect(event.icalEvent.isRecurring()).to.be.true
             );
 
             it(`should start on ${str(TEST_MOMENT)}`, () => {
-                let startDate = event.startDate();
-                expect(startDate, 'startDate')
-                    .to.exist;
-
-                expect(startDate.isSame(TEST_MOMENT, 'day'))
-                    .to.be.true;
+                let startDate = toMoment(event.startDate());
+                expect(startDate, 'startDate').to.exist;
+                expect(startDate.isSame(TEST_MOMENT, 'day')).to.be.true;
             });
 
             it(`first occurance should be on ${str(TEST_MOMENT)}`, () => {
-                let instanceIterator = event.instances();
-                let {date} = instanceIterator.next().value;
-                expect(date.isSame(TEST_MOMENT, 'day'))
-                    .to.be.true;
+                for (let instance of event.instances()) {
+                    let date = toMoment(instance.startDate());
+                    expect(date.isSame(TEST_MOMENT, 'day')).to.be.true;
+                    return;
+                }
+                throw new Error("No instances");
             });
 
             it(`starting a week later, first occurance should be on ${str(nextWeek = moment(TEST_MOMENT).add(1, 'weeks'))}`, () => {
-                let instanceIterator = event.instances(nextWeek);
-                let {date} = instanceIterator.next().value;
-                expect(date.isSame(nextWeek, 'day'))
-                    .to.be.true;
+                for (let instance of event.instances(nextWeek)) {
+                    let date = toMoment(instance.startDate());
+                    expect(date.isSame(nextWeek, 'day')).to.be.true;
+                    return;
+                }
+                throw new Error("No instances");
             });
 
             it(`first occurance should stay on ${str(TEST_MOMENT)}, when iterating from a day before`, () => {
-                let instanceIterator = event.instances(moment(TEST_MOMENT).subtract(1, 'days'));
-                let {date} = instanceIterator.next().value;
-                expect(date.isSame(TEST_MOMENT, 'day'), str(date))
-                    .to.be.true;
+                for (let instance of event.instances(moment(TEST_MOMENT).subtract(1, 'days'))) {
+                    let date = toMoment(instance.startDate());
+                    expect(date.isSame(TEST_MOMENT, 'day'), str(date)).to.be.true;
+                    return;
+                }
+                throw new Error("No instances");
             });
 
             it(`should be excluded between ${str(christmas = moment('2015-12-24'))} and ${str(newYear = moment('2016-01-01'))}`, () => {
                 let beforeChristmas = christmas.subtract(1, 'days');
-                let instanceIterator = event.instances(beforeChristmas);
-                let {date} = instanceIterator.next().value;
-                expect(date.isBefore(newYear, 'day'), str(date))
-                    .to.be.false;
+                for (let instance of event.instances(beforeChristmas)) {
+                    let date = toMoment(instance.startDate());
+                    expect(date.isBefore(newYear, 'day'), str(date)).to.be.false;
+                    return;
+                }
+                throw new Error("No instances");
             });
 
             it(`should end before ${str(endMoment = moment('2017-01-01'))}`, () => {
-                let instanceIterator = event.instances(endMoment);
-                let instance = instanceIterator.next().value;
-                expect(instance, (instance != null) ? str(instance.date) : null)
-                    .to.not.exist;
+                for (let instance of event.instances(endMoment)) {
+                    let date = toMoment(instance.startDate());
+                    expect(instance, str(date)).to.not.exist;
+                }
             });
 
             let testAttendee = cn =>
@@ -136,8 +138,7 @@ describe('ical', () => {
 
                     let attendee = find();
                     expect(attendee).to.exist;
-                    expect(attendee.cn())
-                        .to.equal(cn);
+                    expect(attendee.cn()).to.equal(cn);
                 });
 
             testAttendee(`${TEST_USER}`);
