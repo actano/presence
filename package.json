@@ -25,6 +25,8 @@
     "babel-preset-react": "^6.5.0",
     "babel-register": "^6.7.2",
     "bluebird": "^3.1.1",
+    "cldr-core": "^29.0.0",
+    "cldrjs": "^0.4.5",
     "css-loader": "^0.23.1",
     "express": "^4.12.3",
     "ical.js": "^1.1.2",
