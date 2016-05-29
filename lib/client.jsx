@@ -65,8 +65,7 @@ function init() {
     });
 
     render(<Provider; store={store}>
-        <App/>
+        <App/>;
     </Provider>, container)
-};
-
+};;
 init();
