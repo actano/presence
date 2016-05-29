@@ -83,7 +83,10 @@ class Team extends React.Component {
 export default class Teams extends React.Component {
     render() {
         let teams = this.props.teams;
-        
+        if (!teams) {
+            return null;
+        }
+
         return (
             <ul className="teams">{
                 teams.map((team) => {
