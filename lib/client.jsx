@@ -64,8 +64,8 @@ function init() {
         store.dispatch(changeTeams(data));
     });
 
-    render(<Provider; store={store}>
-        <App/>;
+    render(<Provider store={store}>
+        <App/>
     </Provider>, container)
-};;
+}
 init();
