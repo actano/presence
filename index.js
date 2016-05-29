@@ -29,16 +29,14 @@ function getDate(dateParam) {
 app.get('/', function(req, res, next) {
 
     function html() {
-        let date = getDate(req.query.date);
         let framed = !!req.query.framed;
 
         let props = {
-            framed,
-            date: date.toString()
+            framed
         };
 
         let pageElement = React.createElement(Page, props);
-        let html = ReactDOMServer.renderToString(pageElement);
+        let html = ReactDOMServer.renderToStaticMarkup(pageElement);
         res.send('<!DOCTYPE html>' + html);
     }
 

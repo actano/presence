@@ -8,7 +8,7 @@ import {actionCreator as changeTeams} from './redux/teams'
 import {actionCreator as changeDate} from './redux/date'
 import store from './store'
 
-export default function init() {
+export default function init(Header) {
     let server = io({path: "/rt"});
     let container = document.all[document.all.length-1].parentElement;
 
@@ -54,6 +54,9 @@ export default function init() {
     });
 
     render(<Provider store={store}>
+        <div>
+        {Header ? <Header/> : null}
         <App/>
+        </div>
     </Provider>, container)
 }
