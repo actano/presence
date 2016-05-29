@@ -12,7 +12,7 @@ export default class Page extends React.Component {
             <body>
                 {this.props.framed ? null : <Form date={this.props.date}/>}
                 <div>
-                    <script type="text/javascript" src="client.js"></script>
+                    <script type="text/javascript" src={this.props.framed ? 'auto.js' : 'edit.js'}></script>
                 </div>
             </body>
             </html>

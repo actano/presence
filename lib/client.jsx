@@ -2,30 +2,29 @@ import css from './views/styles.styl'
 import Teams from './views/teams.jsx'
 import { render } from 'react-dom'
 import React from 'react'
-import moment from 'moment'
 import io from 'socket.io-client'
 import { Provider, connect } from 'react-redux'
-import { createStore } from 'redux'
-import presence from './redux'
 import {actionCreator as changeTeams} from './redux/teams'
 import {actionCreator as changeDate} from './redux/date'
+import store from './store'
 
-function init() {
+export default function init() {
     let server = io({path: "/rt"});
     let container = document.all[document.all.length-1].parentElement;
-    let store = createStore(presence);
 
+    let selectDate = (state) => state && state.date;
+    let selectServerDate = (state) => state && state.server && state.server.date;
+    
     store.subscribe(() => {
         let state = store.getState();
-        let serverDate = state.server ? state.server.date : null;
+        let serverDate = selectServerDate(state);
         if (serverDate) {
-            let date = state.date;
+            let date = selectDate(state);
             if (!date) {
                 store.dispatch(changeDate(serverDate));
             } else if (serverDate !== date) {
-                console.log(`${serverDate} !== ${date}`);
                 store.dispatch(changeTeams());
-                server.emit('date', date);
+                queryServerUpdate();
             }
         }
     });
@@ -33,32 +32,22 @@ function init() {
     function mapStateToProps(state) {
         return state && state.server || {};
     }
+    
+    function queryServerUpdate() {
+        let state = store.getState();
+        let date = selectDate(state);
+        if (date) {
+            server.emit('date', date);
+        }
+    }
 
     let App = connect(mapStateToProps)(Teams);
 
-    let dateVal = moment().format('YYYY-MM-DD');
-
-    let dateInput = document.getElementById('dateinput');
-    if (dateInput) {
-        dateVal = moment(dateInput.value).format('YYYY-MM-DD');
-
-        dateInput.onblur = function(){
-            dateVal = moment(dateInput.value).format('YYYY-MM-DD');
-            store.dispatch(changeDate(dateVal));
-        };
-    } else {
-        // follow the sun
-        setInterval(() => {
-            dateVal = moment().format('YYYY-MM-DD');
-            store.dispatch(changeDate(dateVal));
-        }, 10000);
-    }
-
     ['connect', 'reconnect'].forEach((event) => {
-        server.on(event, () => server.emit('date', dateVal));
+        server.on(event, queryServerUpdate);
     });
     
-    server.on('update', () => server.emit('date', dateVal));
+    server.on('update', queryServerUpdate);
 
     server.on('teams', (data) => {
         store.dispatch(changeTeams(data));
@@ -68,4 +57,3 @@ function init() {
         <App/>
     </Provider>, container)
 }
-init();

@@ -2,13 +2,13 @@ autoprefixer = require('autoprefixer');
 
 module.exports = {
     context: __dirname + '/lib',
-    entry: './client',
+    entry: {edit: './input-date', auto: './follow-the-sun'},
     resolve: {
         extensions: ['', '.jsx', '.js']
     },
     output: {
         path: __dirname + '/build',
-        filename: 'client.js'
+        filename: '[name].js'
     },
     module: {
         loaders: [
