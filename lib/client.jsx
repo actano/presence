@@ -4,7 +4,7 @@ import { render } from 'react-dom'
 import React from 'react'
 import io from 'socket.io-client'
 import { Provider, connect } from 'react-redux'
-import {actionCreator as changeTeams, select as selectTeams} from './redux/teams'
+import {actionCreator as changeServer, select as selectServer} from './redux/server'
 import {actionCreator as changeDate, select as selectDate} from './redux/date'
 import store from './redux'
 
@@ -14,14 +14,14 @@ export default function init(Header) {
 
     store.subscribe(() => {
         let state = store.getState();
-        let server = selectTeams(state);
+        let server = selectServer(state);
         let serverDate = server && server.date;
         if (serverDate) {
             let date = selectDate(state);
             if (!date) {
                 store.dispatch(changeDate(serverDate));
             } else if (serverDate !== date) {
-                store.dispatch(changeTeams());
+                store.dispatch(changeServer());
                 queryServerUpdate();
             }
         }
@@ -48,7 +48,7 @@ export default function init(Header) {
     server.on('update', queryServerUpdate);
 
     server.on('teams', (data) => {
-        store.dispatch(changeTeams(data));
+        store.dispatch(changeServer(data));
     });
 
     render(<Provider store={store}>
