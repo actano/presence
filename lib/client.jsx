@@ -28,7 +28,7 @@ export default function init(Header) {
     });
 
     function mapStateToProps(state) {
-        return state && state.server || {};
+        return selectServer(state) || {};
     }
     
     function queryServerUpdate() {
