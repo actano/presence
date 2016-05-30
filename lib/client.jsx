@@ -4,20 +4,18 @@ import { render } from 'react-dom'
 import React from 'react'
 import io from 'socket.io-client'
 import { Provider, connect } from 'react-redux'
-import {actionCreator as changeTeams} from './redux/teams'
-import {actionCreator as changeDate} from './redux/date'
-import store from './store'
+import {actionCreator as changeTeams, select as selectTeams} from './redux/teams'
+import {actionCreator as changeDate, select as selectDate} from './redux/date'
+import store from './redux'
 
 export default function init(Header) {
     let server = io({path: "/rt"});
     let container = document.all[document.all.length-1].parentElement;
 
-    let selectDate = (state) => state && state.date;
-    let selectServerDate = (state) => state && state.server && state.server.date;
-    
     store.subscribe(() => {
         let state = store.getState();
-        let serverDate = selectServerDate(state);
+        let server = selectTeams(state);
+        let serverDate = server && server.date;
         if (serverDate) {
             let date = selectDate(state);
             if (!date) {
