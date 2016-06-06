@@ -7,9 +7,9 @@ root = true
 [*]
 charset = utf-8
 
-[**.{coffee,js,json,styl,jade,yaml,yml}]
+[**.{coffee,js,jsx,json,styl,jade,yaml,yml}]
 indent_style = space
-indent_size = 4
+indent_size = 2
 insert_final_newline = true
 
 [{package,npm-shrinkwrap}.json]
