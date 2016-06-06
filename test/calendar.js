@@ -4,6 +4,9 @@ import { expect } from 'chai'
 import { Instant, LocalDate } from 'js-joda'
 import { toLocalDate } from '../lib/util'
 
+/* eslint-env mocha */
+/* eslint-disable no-unused-expressions */
+
 describe('ical', () => {
   const EVENT_COUNT = 1
   const TEST_EVENT = 'Test'
@@ -11,15 +14,17 @@ describe('ical', () => {
   const TEST_USER = 'Test User'
 
   let Calendar
-  let toMoment
+
+  function importCalendar(module) {
+    Calendar = module.default
+  }
 
   before('import', () => {
-    System.import('../lib/calendar').then((module) => Calendar = module.default)
-    System.import('../lib/util').then((module) => toMoment = module.toMoment)
+    System.import('../lib/calendar').then(importCalendar)
   })
 
   function read() {
-    let content = fs.readFileSync(path.join(__dirname, 'test.ics'), 'utf-8')
+    const content = fs.readFileSync(path.join(__dirname, 'test.ics'), 'utf-8')
     return new Calendar(content)
   }
 
@@ -28,75 +33,77 @@ describe('ical', () => {
   describe('process', () => {
     let calendar = null
 
+    before('read', () => {
+      calendar = read()
+      return calendar
+    })
+
     function findEvent(name) {
       for (const event of calendar.events()) {
         if (name === event.name()) {
           return event
         }
       }
+      return null
     }
-
-    before('read', () => calendar = read())
 
     it(`should iterate ${EVENT_COUNT} events`, () => {
       let count = 0
-      for (const event of calendar.events()) count++
+      for (const event of calendar.events()) if (event) count++
       expect(count).to.equal(EVENT_COUNT)
     })
 
     it(`should find '${TEST_EVENT}'`, () => {
-      let event = findEvent(TEST_EVENT)
+      const event = findEvent(TEST_EVENT)
       expect(event, TEST_EVENT).to.exist
     })
 
     describe(`Event '${TEST_EVENT}'`, () => {
-      let confluenceType
-      let nextWeek
-      let christmas
-      let newYear
-      let endMoment
-
-      let TEST_DAY = LocalDate.parse('2015-10-29')
+      const TEST_DAY = LocalDate.parse('2015-10-29')
 
       let event = null
-      before('find', () => event = findEvent(TEST_EVENT))
+      before('find', () => {
+        event = findEvent(TEST_EVENT)
+      })
 
       it(`should have Description of '${TEST_DESCRIPTION}'`, () =>
-                expect(event.description()).to.equal(TEST_DESCRIPTION)
-            )
+        expect(event.description()).to.equal(TEST_DESCRIPTION)
+      )
 
-      it(`should be in confluence subcalendar '${confluenceType = 'leaves'}'`, () =>
-                expect(event.confluenceCalendarType()).to.equal(confluenceType)
-            )
+      const confluenceType = 'leaves'
+      it(`should be in confluence subcalendar '${confluenceType}'`, () =>
+        expect(event.confluenceCalendarType()).to.equal(confluenceType)
+      )
 
       it('should be recurring', () =>
-                expect(event.icalEvent.isRecurring()).to.be.true
-            )
+        expect(event.icalEvent.isRecurring()).to.be.true
+      )
 
       it(`should start on ${TEST_DAY}`, () => {
-        let startDate = event.startDate()
+        const startDate = event.startDate()
         expect(startDate, 'startDate').to.exist
         expect(TEST_DAY.equals(toLocalDate(startDate))).to.be.true
       })
 
       let testMoment
       it(`should start at ${testMoment = Instant.parse('2015-10-29T12:30:00Z')}`, () => {
-        let startDate = event.startDate()
+        const startDate = event.startDate()
         expect(startDate.equals(testMoment)).to.be.true
       })
 
       it(`first occurance should be on ${TEST_DAY}`, () => {
-        for (let instance of event.instances()) {
-          let date = toLocalDate(instance.startDate())
+        for (const instance of event.instances()) {
+          const date = toLocalDate(instance.startDate())
           expect(date.equals(TEST_DAY)).to.be.true
           return
         }
         throw new Error('No instances')
       })
 
-      it(`starting a week later, first occurance should be on ${nextWeek = TEST_DAY.plusWeeks(1)}`, () => {
-        for (let instance of event.instances(nextWeek)) {
-          let date = toLocalDate(instance.startDate())
+      const nextWeek = TEST_DAY.plusWeeks(1)
+      it(`starting a week later, first occurance should be on ${nextWeek}`, () => {
+        for (const instance of event.instances(nextWeek)) {
+          const date = toLocalDate(instance.startDate())
           expect(date.equals(nextWeek)).to.be.true
           return
         }
@@ -104,45 +111,49 @@ describe('ical', () => {
       })
 
       it(`first occurance should stay on ${TEST_DAY}, when iterating from a day before`, () => {
-        for (let instance of event.instances(TEST_DAY.minusDays(1))) {
-          let date = toLocalDate(instance.startDate())
+        for (const instance of event.instances(TEST_DAY.minusDays(1))) {
+          const date = toLocalDate(instance.startDate())
           expect(date.equals(TEST_DAY), date.toString()).to.be.true
           return
         }
         throw new Error('No instances')
       })
 
-      it(`should be excluded between ${christmas = LocalDate.parse('2015-12-24')} and ${newYear = LocalDate.parse('2016-01-01')}`, () => {
-        let beforeChristmas = christmas.minusDays(1)
-        for (let instance of event.instances(beforeChristmas)) {
-          let date = toLocalDate(instance.startDate())
+      const christmas = LocalDate.parse('2015-12-24')
+      const newYear = LocalDate.parse('2016-01-01')
+      it(`should be excluded between ${christmas} and ${newYear}`, () => {
+        const beforeChristmas = christmas.minusDays(1)
+        for (const instance of event.instances(beforeChristmas)) {
+          const date = toLocalDate(instance.startDate())
           expect(newYear.compareTo(date), date.toString()).to.be.below(0)
           return
         }
         throw new Error('No instances')
       })
 
-      it(`should end before ${endMoment = LocalDate.parse('2017-01-01')}`, () => {
-        for (let instance of event.instances(endMoment)) {
-          let date = instance.startDate()
+      const endMoment = LocalDate.parse('2017-01-01')
+      it(`should end before ${endMoment}`, () => {
+        for (const instance of event.instances(endMoment)) {
+          const date = instance.startDate()
           expect(instance, date.toString()).to.not.exist
         }
       })
 
-      let testAttendee = cn =>
-                it(`should have ${cn} as attendee`, () => {
-                  function find() {
-                    for (const attendee of event.attendees()) {
-                      if (attendee.cn() === cn) {
-                        return attendee
-                      }
-                    }
-                  }
+      const testAttendee = cn =>
+        it(`should have ${cn} as attendee`, () => {
+          function find() {
+            for (const attendee of event.attendees()) {
+              if (attendee.cn() === cn) {
+                return attendee
+              }
+            }
+            return null
+          }
 
-                  let attendee = find()
-                  expect(attendee).to.exist
-                  expect(attendee.cn()).to.equal(cn)
-                })
+          const attendee = find()
+          expect(attendee).to.exist
+          expect(attendee.cn()).to.equal(cn)
+        })
 
       testAttendee(`${TEST_USER}`)
       testAttendee(`${TEST_USER}1`)
@@ -150,6 +161,3 @@ describe('ical', () => {
     })
   })
 })
-
-
-

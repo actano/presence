@@ -1,16 +1,20 @@
 import { expect } from 'chai'
 import { LocalDate } from 'js-joda'
 
-describe('configuration', function () {
+/* eslint-env mocha */
+/* eslint-disable no-unused-expressions */
+
+describe('configuration', () => {
   let config
+  function importConfig(module) {
+    config = module.default
+  }
 
-  before('import', () => {
-    return System.import('../lib/config').then((module) => config = module.default)
-  })
+  before('import', () => System.import('../lib/config').then(importConfig))
 
-  it('should have correct start date', function () {
-    let _config = config(LocalDate.parse('2015-10-01'))
-    let team = _config.teams[0]
+  it('should have correct start date', () => {
+    const _config = config(LocalDate.parse('2015-10-01'))
+    const team = _config.teams[0]
     expect(team).to.exist
     expect(team.sprint.startDate).to.equal('2015-09-30')
   })
