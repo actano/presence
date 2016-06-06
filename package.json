@@ -10,7 +10,8 @@
     "postinstall": "npm run webpack",
     "start": "babel-node index.js",
     "webpack": "webpack",
-    "test": "mocha --compilers js:babel-register",
+    "test": "npm run lint && npm run mocha",
+    "mocha": "mocha --compilers js:babel-register",
     "lint": "eslint \"lib/**/*.js\" \"lib/**/*.jsx\" \"test/**/*.js\""
   },
   "author": "Actano GmbH",
