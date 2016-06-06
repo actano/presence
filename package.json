@@ -11,7 +11,7 @@
     "start": "babel-node index.js",
     "webpack": "webpack",
     "test": "mocha --compilers js:babel-register",
-    "lint": "eslint \"lib/**/*.js\" \"test/**/*.js\""
+    "lint": "eslint \"lib/**/*.js\" \"lib/**/*.jsx\" \"test/**/*.js\""
   },
   "author": "Actano GmbH",
   "license": "MIT",
@@ -26,6 +26,7 @@
     "babel-preset-react": "^6.5.0",
     "babel-register": "^6.7.2",
     "bluebird": "^3.1.1",
+    "bunyan": "^1.8.1",
     "cldr-core": "^29.0.0",
     "cldrjs": "^0.4.5",
     "css-loader": "^0.23.1",
