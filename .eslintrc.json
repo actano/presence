@@ -1,3 +1,13 @@
 {
-    "extends": "actano"
+  "extends": "actano",
+  "rules": {
+    // Overwrite https://github.com/airbnb/javascript/blob/d06147d279549c08dacd2ef4835cbccf2b1f1159/packages/eslint-config-airbnb-base/rules/best-practices.js#L116-L125
+    // Drop ForInStatement
+    "no-restricted-syntax": [
+      2,
+      "DebuggerStatement",
+      "LabeledStatement",
+      "WithStatement"
+    ]
+  }
 }
