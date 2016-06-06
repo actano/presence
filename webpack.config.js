@@ -19,5 +19,6 @@ module.exports = {
     },
     postcss: function(){
         return [autoprefixer({browsers: ['last 2 versions', 'Firefox 15']})]
-    }
+    },
+    devtool: "source-map"
 };
