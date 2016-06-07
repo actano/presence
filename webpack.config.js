@@ -2,7 +2,7 @@ autoprefixer = require('autoprefixer');
 
 module.exports = {
     context: __dirname + '/lib',
-    entry: {edit: './input-date', auto: './follow-the-sun'},
+    entry: {edit: './input-date', auto: './follow-the-sun', subpage: './subpage'},
     resolve: {
         extensions: ['', '.jsx', '.js']
     },
