@@ -62,7 +62,7 @@ app.get('/', (req, res, next) => {
 
 const port = process.env.PORT || 3000
 
-const server = app.listen(port, () => logger.log('Listening on port %s...', port))
+const server = app.listen(port, () => logger.info('Listening on port %s...', port))
 const io = socketio(server, { serveClient: false, path: '/rt' })
 io.on('connection', (client) => {
   client.on('date', (date) => {
