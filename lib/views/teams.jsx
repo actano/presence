@@ -4,6 +4,7 @@ import TeamHeadline from './team-headline'
 import Absences from './absences'
 import Calendar from './calendar'
 import gravatarUrlFromName from '../gravatar'
+import './teams.styl'
 
 function dateKey(date) {
   return date.format('YYYY-MM-DD')
