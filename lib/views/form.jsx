@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import './form.styl'
 
 export default class Form extends React.Component {
   constructor(props) {
