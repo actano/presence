@@ -4,7 +4,7 @@ import TeamHeadline from './team-headline'
 import Absences from './absences'
 import Calendar from './calendar'
 import gravatarUrlFromName from '../gravatar'
-import './teams.styl'
+import { teams as classTeams } from './teams.styl'
 
 function dateKey(date) {
   return date.format('YYYY-MM-DD')
@@ -104,7 +104,7 @@ export default function renderTeams(props) {
   }
 
   return (
-    <ul className="teams">{
+    <ul className={classTeams}>{
       teams.map((team) =>
         <li className="team" id={team.name} key={team.name}>
           <Team {...props} team={team} />
