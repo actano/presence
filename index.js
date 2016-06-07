@@ -6,6 +6,9 @@ import presence from './lib/presence'
 import Page from './lib/views'
 import React from 'react'
 import config from './lib/config'
+import bunyan from 'bunyan'
+
+const logger = bunyan({ name: 'index' })
 
 const app = express()
 
@@ -26,26 +29,24 @@ function getDate(dateParam) {
   return date
 }
 
-app.get('/', function (req, res, next) {
-
+app.get('/', (req, res, next) => {
   function html() {
-    let framed = !!req.query.framed
+    const framed = !!req.query.framed
 
-    let props = {
+    const props = {
       framed,
     }
 
-    let pageElement = React.createElement(Page, props)
-    let html = ReactDOMServer.renderToStaticMarkup(pageElement)
-    res.send('<!DOCTYPE html>' + html)
+    const pageElement = React.createElement(Page, props)
+    res.send(`<!DOCTYPE html>${ReactDOMServer.renderToStaticMarkup(pageElement)}`)
   }
 
   function json() {
-    let date = getDate(req.query.date)
-    let _config = config(date)
+    const date = getDate(req.query.date)
+    const _config = config(date)
     presence(date).then((teams) => {
       res.send({
-        teams: teams,
+        teams,
         gravatarPrefix: _config.gravatarPrefix,
         emailSuffix: _config.emailSuffix,
       })
@@ -55,22 +56,22 @@ app.get('/', function (req, res, next) {
   res.format({
     'text/html': html,
     'application/json': json,
-    'default': html,
+    default: html,
   })
 })
 
-let port = process.env.PORT || 3000
+const port = process.env.PORT || 3000
 
-const server = app.listen(port, () => console.log(`Listening on port ${port}...`))
+const server = app.listen(port, () => logger.log('Listening on port %s...', port))
 const io = socketio(server, { serveClient: false, path: '/rt' })
 io.on('connection', (client) => {
   client.on('date', (date) => {
-    date = getDate(date)
-    let _config = config(date)
-    presence(date).then((teams) => {
+    const _date = getDate(date)
+    const _config = config(_date)
+    presence(_date).then((teams) => {
       client.emit('teams', {
-        date: date.toString(),
-        teams: teams,
+        date: _date.toString(),
+        teams,
         gravatarPrefix: _config.gravatarPrefix,
         emailSuffix: _config.emailSuffix,
       })
