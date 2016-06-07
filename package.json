@@ -12,7 +12,7 @@
     "webpack": "webpack",
     "test": "npm run lint && npm run mocha",
     "mocha": "mocha --compilers js:babel-register",
-    "lint": "eslint \"lib/**/*.js\" \"lib/**/*.jsx\" \"test/**/*.js\""
+    "lint": "eslint index.js \"lib/**/*.js\" \"lib/**/*.jsx\" \"test/**/*.js\""
   },
   "author": "Actano GmbH",
   "license": "MIT",
