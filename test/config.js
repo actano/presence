@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { LocalDate } from 'js-joda'
+import { describe, before, it } from 'mocha'
 
-/* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
 
 describe('configuration', () => {
