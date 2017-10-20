@@ -3,8 +3,8 @@
   "version": "0.2.0",
   "description": "",
   "engines": {
-    "node": "6",
-    "npm": "3.8.6"
+    "node": "^8.0",
+    "npm": "^5.4"
   },
   "scripts": {
     "postinstall": "npm run webpack",
