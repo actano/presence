@@ -3,14 +3,14 @@
   "version": "0.2.0",
   "description": "",
   "engines": {
-    "node": "^8.0",
-    "npm": "^5.4"
+    "node": ">= 8",
+    "yarn": ">= 1"
   },
   "scripts": {
-    "postinstall": "npm run webpack",
+    "postinstall": "test \\! -f webpack.config.js || yarn webpack",
     "start": "babel-node index.js",
     "webpack": "webpack",
-    "test": "npm run lint && npm run mocha",
+    "test": "yarn lint && yarn mocha",
     "mocha": "mocha --compilers js:babel-register",
     "lint": "eslint --ext js,jsx ."
   },
