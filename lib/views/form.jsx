@@ -14,7 +14,7 @@ export default class Form extends React.Component {
           type="date"
           value={this.state.value}
           onBlur={() => this.props.onChangeDate(this.state.value)}
-          onChange={(event) => this.setState({ value: event.target.value })}
+          onChange={event => this.setState({ value: event.target.value })}
         />
       </h1>
     )

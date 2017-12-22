@@ -46,7 +46,7 @@ export default function init(uri) {
     return selectServer(state) || {}
   }
 
-  let App = connect(mapStateToProps)(Teams)
+  const App = connect(mapStateToProps)(Teams)
 
   return function actanoPresence(element, Header) {
     if (Header) {

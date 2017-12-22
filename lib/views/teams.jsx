@@ -40,8 +40,8 @@ renderCell.propTypes = {
 
 function renderFoot(props) {
   const summary = props.team.sprint.summary
-  let avail = summary.avail
-  let total = summary.total
+  const avail = summary.avail
+  const total = summary.total
   const width = `${avail / total * 100}%`
   return (<div className="percentage" style={{ width }}>{avail}/{total}d available</div>)
 }
@@ -70,7 +70,7 @@ function Team(props) {
       if (member.selected) classNames.push('selected')
       return classNames.join(' ')
     },
-    rowKey: (member) => member.name,
+    rowKey: member => member.name,
     rowHead: renderHead,
     cell: renderCell,
     team,
@@ -105,12 +105,12 @@ export default function renderTeams(props) {
 
   return (
     <ul className={classTeams}>{
-      teams.map((team) =>
-        <li className="team" id={team.name} key={team.name}>
+      teams.map(team =>
+        (<li className="team" id={team.name} key={team.name}>
           <Team {...props} team={team} />
-        </li>
-      )
-    }</ul>
+         </li>))
+    }
+    </ul>
   )
 }
 

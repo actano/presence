@@ -1,12 +1,12 @@
+import bunyan from 'bunyan'
 import express from 'express'
+import { LocalDate } from 'js-joda'
+import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 import socketio from 'socket.io'
-import { LocalDate } from 'js-joda'
+import config from './lib/config'
 import presence from './lib/presence'
 import Page from './lib/views'
-import React from 'react'
-import config from './lib/config'
-import bunyan from 'bunyan'
 
 const logger = bunyan({ name: 'index' })
 

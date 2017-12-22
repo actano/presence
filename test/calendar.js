@@ -67,17 +67,14 @@ describe('ical', () => {
       })
 
       it(`should have Description of '${TEST_DESCRIPTION}'`, () =>
-        expect(event.description()).to.equal(TEST_DESCRIPTION)
-      )
+        expect(event.description()).to.equal(TEST_DESCRIPTION))
 
       const confluenceType = 'leaves'
       it(`should be in confluence subcalendar '${confluenceType}'`, () =>
-        expect(event.confluenceCalendarType()).to.equal(confluenceType)
-      )
+        expect(event.confluenceCalendarType()).to.equal(confluenceType))
 
       it('should be recurring', () =>
-        expect(event.icalEvent.isRecurring()).to.be.true
-      )
+        expect(event.icalEvent.isRecurring()).to.be.true)
 
       it(`should start on ${TEST_DAY}`, () => {
         const startDate = event.startDate()

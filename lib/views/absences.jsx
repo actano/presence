@@ -13,7 +13,7 @@ export default function renderAbsences(props) {
 
         const top = `${start * 100}%`
         const height = `${(end - start) * 100}%`
-        let className = `${absence.type} status`
+        const className = `${absence.type} status`
         return (<span className={className} style={{ top, height }} key={absence.id} />)
       })}
     </div>

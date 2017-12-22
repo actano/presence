@@ -10,7 +10,7 @@ export default function renderPage(props) {
       </head>
       <body>
         <div>
-          <script type="text/javascript" src={props.framed ? 'auto.js' : 'edit.js'}></script>
+          <script type="text/javascript" src={props.framed ? 'auto.js' : 'edit.js'} />
         </div>
       </body>
     </html>

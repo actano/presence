@@ -41,10 +41,10 @@ function dayClass(range, date) {
 
 export default function renderCalendar(props) {
   const range = props.dateRange
-  let Caption = props.caption
-  let Foot = props.foot
-  let Head = props.rowHead
-  let Cell = props.cell
+  const Caption = props.caption
+  const Foot = props.foot
+  const Head = props.rowHead
+  const Cell = props.cell
   const dates = dateArray(range.start, range.end)
   const rows = props.rows
   const _rowClass = props.rowClass
@@ -55,24 +55,24 @@ export default function renderCalendar(props) {
       <caption><Caption {...props} /></caption>
       <colgroup>
         <col className="head" />
-        {dates.map((date) => (
+        {dates.map(date => (
           <col className={dayClass(range, date)} key={date.toISOString()} />))}
       </colgroup>
       <thead>
         <tr>
           <th />
-          {dates.map((date) =>
+          {dates.map(date =>
             (<th
               scope="col"
               className={dayClass(range, date)}
               key={date.toISOString()}
-            >{date.format('D')}</th>)
-          )}
+            >{date.format('D')}
+            </th>))}
         </tr>
       </thead>
       <tbody>
-        {rows.map((row) =>
-          <tr className={_rowClass(row)} key={_rowKey(row)}>
+        {rows.map(row =>
+          (<tr className={_rowClass(row)} key={_rowKey(row)}>
             <th scope="row"><Head {...props} row={row} /></th>
             {dates.map((date) => {
               if (isWeekend(date)) return null
@@ -82,8 +82,7 @@ export default function renderCalendar(props) {
                 </td>
               )
             })}
-          </tr>
-        )}
+           </tr>))}
       </tbody>
       {Foot ? <tfoot>
         <tr>
