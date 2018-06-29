@@ -50,7 +50,7 @@ function webpackConfig() {
     context,
     entry: { edit: './input-date', auto: './follow-the-sun', subpage: './subpage' },
     output: {
-      path: path.join(context, 'build'),
+      path: path.join(__dirname, 'build'),
       pathinfo: true,
       filename: '[name].js',
       chunkFilename: '[id].js',
