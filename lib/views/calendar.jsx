@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import moment from 'moment'
 
 function isWeekend(date) {
@@ -94,12 +95,12 @@ export default function renderCalendar(props) {
 }
 
 renderCalendar.propTypes = {
-  dateRange: React.PropTypes.object.isRequired,
-  caption: React.PropTypes.element.isRequired,
-  foot: React.PropTypes.element.isRequired,
-  rowHead: React.PropTypes.element.isRequired,
-  cell: React.PropTypes.element.isRequired,
-  rows: React.PropTypes.array.isRequired,
-  rowClass: React.PropTypes.func.isRequired,
-  rowKey: React.PropTypes.func.isRequired,
+  dateRange: PropTypes.object.isRequired,
+  caption: PropTypes.element.isRequired,
+  foot: PropTypes.element.isRequired,
+  rowHead: PropTypes.element.isRequired,
+  cell: PropTypes.element.isRequired,
+  rows: PropTypes.array.isRequired,
+  rowClass: PropTypes.func.isRequired,
+  rowKey: PropTypes.func.isRequired,
 }

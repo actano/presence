@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import moment from 'moment'
 
 function format(date) {
@@ -19,5 +20,5 @@ export default function renderTeamHeadline(props) {
 }
 
 renderTeamHeadline.propTypes = {
-  team: React.PropTypes.object.isRequired,
+  team: PropTypes.object.isRequired,
 }

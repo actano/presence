@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Status from './status'
 import TeamHeadline from './team-headline'
 import Absences from './absences'
@@ -21,9 +22,9 @@ function renderHead(props) {
 }
 
 renderHead.propTypes = {
-  row: React.PropTypes.object.isRequired,
-  gravatarPrefix: React.PropTypes.string.isRequired,
-  emailSuffix: React.PropTypes.string.isRequired,
+  row: PropTypes.object.isRequired,
+  gravatarPrefix: PropTypes.string.isRequired,
+  emailSuffix: PropTypes.string.isRequired,
 }
 
 function renderCell(props) {
@@ -34,8 +35,8 @@ function renderCell(props) {
 }
 
 renderCell.propTypes = {
-  date: React.PropTypes.object.isRequired,
-  row: React.PropTypes.object.isRequired,
+  date: PropTypes.object.isRequired,
+  row: PropTypes.object.isRequired,
 }
 
 function renderFoot(props) {
@@ -47,7 +48,7 @@ function renderFoot(props) {
 }
 
 renderFoot.propTypes = {
-  team: React.PropTypes.object.isRequired,
+  team: PropTypes.object.isRequired,
 }
 
 function Team(props) {
@@ -91,9 +92,9 @@ function Team(props) {
 }
 
 Team.propTypes = {
-  team: React.PropTypes.object.isRequired,
-  gravatarPrefix: React.PropTypes.string.isRequired,
-  emailSuffix: React.PropTypes.string.isRequired,
+  team: PropTypes.object.isRequired,
+  gravatarPrefix: PropTypes.string.isRequired,
+  emailSuffix: PropTypes.string.isRequired,
 
 }
 
@@ -115,6 +116,6 @@ export default function renderTeams(props) {
 }
 
 renderTeams.propTypes = {
-  teams: React.PropTypes.array.isRequired,
+  teams: PropTypes.array.isRequired,
 
 }

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import moment from 'moment'
 
@@ -10,6 +11,6 @@ export default function renderStatus(props) {
 }
 
 renderStatus.propTypes = {
-  status: React.PropTypes.string.isRequired,
-  lastModified: React.PropTypes.any.isRequired,
+  status: PropTypes.string.isRequired,
+  lastModified: PropTypes.any.isRequired,
 }

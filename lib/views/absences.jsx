@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 export default function renderAbsences(props) {
   const absences = props.absences
@@ -21,7 +22,7 @@ export default function renderAbsences(props) {
 }
 
 renderAbsences.propTypes = {
-  absences: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-  startOfBusiness: React.PropTypes.number.isRequired,
-  endOfBusiness: React.PropTypes.number.isRequired,
+  absences: PropTypes.arrayOf(PropTypes.object).isRequired,
+  startOfBusiness: PropTypes.number.isRequired,
+  endOfBusiness: PropTypes.number.isRequired,
 }
