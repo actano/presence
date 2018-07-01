@@ -47,7 +47,7 @@ export default function renderCalendar(props) {
   const Head = props.rowHead
   const Cell = props.cell
   const dates = dateArray(range.start, range.end)
-  const rows = props.rows
+  const { rows } = props
   const _rowClass = props.rowClass
   const _rowKey = props.rowKey
 

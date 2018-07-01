@@ -1,11 +1,11 @@
 import React from 'react'
 import { render } from 'react-dom'
+import { connect, Provider } from 'react-redux'
 import io from 'socket.io-client'
-import { Provider, connect } from 'react-redux'
 import store from './redux'
-import { actionCreator as changeServer, select as selectServer } from './redux/server'
 import { actionCreator as changeDate, select as selectDate } from './redux/date'
-import Teams from './views/teams.jsx'
+import { actionCreator as changeServer, select as selectServer } from './redux/server'
+import Teams from './views/teams'
 
 export default function init(uri) {
   const server = io(uri, { path: '/rt' })
@@ -47,18 +47,24 @@ export default function init(uri) {
 
   const App = connect(mapStateToProps)(Teams)
 
-  return function actanoPresence(element, Header) {
+  return (element, Header) => {
     if (Header) {
-      render(<Provider store={store}>
-        <div>
-          <Header />
-          <App />
-        </div>
-      </Provider>, element)
+      const v = (
+        <Provider store={store}>
+          <div>
+            <Header />
+            <App />
+          </div>
+        </Provider>
+      )
+      render(v, element)
     } else {
-      render(<Provider store={store}>
-        <App />
-      </Provider>, element)
+      const v = (
+        <Provider store={store}>
+          <App />
+        </Provider>
+      )
+      render(v, element)
     }
   }
 }

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 export default function renderPage(props) {
   return (
-    <html>
+    <html lang="en">
       <head>
         <title>Actano - Presence</title>
         <meta name="viewport" content="width=device-width" />
@@ -19,4 +19,8 @@ export default function renderPage(props) {
 
 renderPage.propTypes = {
   framed: PropTypes.bool,
+}
+
+renderPage.defaultProps = {
+  framed: false,
 }

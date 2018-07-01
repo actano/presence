@@ -3,6 +3,7 @@ import path from 'path'
 import { expect } from 'chai'
 import { Instant, LocalDate } from 'js-joda'
 import { toLocalDate } from '../lib/util'
+import Calendar from '../lib/calendar'
 
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
@@ -12,16 +13,6 @@ describe('ical', () => {
   const TEST_EVENT = 'Test'
   const TEST_DESCRIPTION = 'Test Description'
   const TEST_USER = 'Test User'
-
-  let Calendar
-
-  function importCalendar(module) {
-    Calendar = module.default
-  }
-
-  before('import', () => {
-    System.import('../lib/calendar').then(importCalendar)
-  })
 
   function read() {
     const content = fs.readFileSync(path.join(__dirname, 'test.ics'), 'utf-8')
@@ -49,7 +40,7 @@ describe('ical', () => {
 
     it(`should iterate ${EVENT_COUNT} events`, () => {
       let count = 0
-      for (const event of calendar.events()) if (event) count++
+      for (const event of calendar.events()) if (event) count += 1
       expect(count).to.equal(EVENT_COUNT)
     })
 

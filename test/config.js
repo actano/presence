@@ -1,17 +1,11 @@
 import { expect } from 'chai'
 import { LocalDate } from 'js-joda'
-import { describe, before, it } from 'mocha'
+import { describe, it } from 'mocha'
+import config from '../lib/config'
 
 /* eslint-disable no-unused-expressions */
 
 describe('configuration', () => {
-  let config
-  function importConfig(module) {
-    config = module.default
-  }
-
-  before('import', () => System.import('../lib/config').then(importConfig))
-
   it('should have correct start date', () => {
     const _config = config(LocalDate.parse('2015-10-01'))
     const team = _config.teams[0]

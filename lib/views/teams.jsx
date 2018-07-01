@@ -11,10 +11,8 @@ function dateKey(date) {
   return date.format('YYYY-MM-DD')
 }
 
-function renderHead(props) {
-  const name = props.row.name
-  const gravatarPrefix = props.gravatarPrefix
-  const emailSuffix = props.emailSuffix
+function renderHead({ row, gravatarPrefix, emailSuffix }) {
+  const { name } = row
   const src = `${gravatarUrlFromName(gravatarPrefix, emailSuffix, name)}?s=${40}`
   return (
     <div><img alt={name} src={src} /><span>{name}</span></div>
@@ -28,9 +26,8 @@ renderHead.propTypes = {
 }
 
 function renderCell(props) {
-  const date = props.date
-  const member = props.row
-  const absences = member.absences[dateKey(date)]
+  const { date, row } = props
+  const absences = row.absences[dateKey(date)]
   return (<Absences {...props} absences={absences || []} />)
 }
 
@@ -40,10 +37,9 @@ renderCell.propTypes = {
 }
 
 function renderFoot(props) {
-  const summary = props.team.sprint.summary
-  const avail = summary.avail
-  const total = summary.total
-  const width = `${avail / total * 100}%`
+  const { summary } = props.team.sprint
+  const { avail, total } = summary
+  const width = `${(100 * avail) / total}%`
   return (<div className="percentage" style={{ width }}>{avail}/{total}d available</div>)
 }
 
@@ -51,12 +47,10 @@ renderFoot.propTypes = {
   team: PropTypes.object.isRequired,
 }
 
-function Team(props) {
-  const team = props.team
-
+function Team({ team, gravatarPrefix, emailSuffix }) {
   const _props = {
-    gravatarPrefix: props.gravatarPrefix,
-    emailSuffix: props.emailSuffix,
+    gravatarPrefix,
+    emailSuffix,
     caption: TeamHeadline,
     dateRange: team.range,
     rows: team.members,
@@ -99,7 +93,7 @@ Team.propTypes = {
 }
 
 export default function renderTeams(props) {
-  const teams = props.teams
+  const { teams } = props
   if (!teams) {
     return null
   }
@@ -117,5 +111,4 @@ export default function renderTeams(props) {
 
 renderTeams.propTypes = {
   teams: PropTypes.array.isRequired,
-
 }

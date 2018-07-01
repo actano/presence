@@ -6,9 +6,8 @@ function format(date) {
   return moment(date).format('DD.MM.')
 }
 
-export default function renderTeamHeadline(props) {
-  const team = props.team
-  const sprint = team.sprint
+export default function renderTeamHeadline({ team }) {
+  const { sprint } = team
 
   return (
     <h2 className="headline">
