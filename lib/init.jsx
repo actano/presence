@@ -8,6 +8,16 @@ import { actionCreator as changeDate, select as selectDate } from './redux/date'
 import Teams from './views/teams.jsx'
 
 export default function init(uri) {
+  const server = io(uri, { path: '/rt' })
+
+  function queryServerUpdate() {
+    const state = store.getState()
+    const date = selectDate(state)
+    if (date) {
+      server.emit('date', date)
+    }
+  }
+
   store.subscribe(() => {
     const state = store.getState()
     const _server = selectServer(state)
@@ -23,24 +33,13 @@ export default function init(uri) {
     }
   })
 
-  const server = io(uri, { path: '/rt' });
-  ['connect', 'reconnect'].forEach((event) => {
-    server.on(event, queryServerUpdate)
-  })
-
+  server.on('connect', queryServerUpdate)
+  server.on('reconnect', queryServerUpdate)
   server.on('update', queryServerUpdate)
 
   server.on('teams', (data) => {
     store.dispatch(changeServer(data))
   })
-
-  function queryServerUpdate() {
-    const state = store.getState()
-    const date = selectDate(state)
-    if (date) {
-      server.emit('date', date)
-    }
-  }
 
   function mapStateToProps(state) {
     return selectServer(state) || {}
