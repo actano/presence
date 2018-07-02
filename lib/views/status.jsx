@@ -2,15 +2,16 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import moment from 'moment'
 
-export default function renderStatus(props) {
-  return (
-    <h2 className="error">Calendar failed: {props.status}, loading data from cache
-      ({moment(props.lastModified).format('L LT')})
+const renderStatus = ({ status, lastModified }) =>
+  (
+    <h2 className="error">Calendar failed: {status}, loading data from cache
+      ({moment(lastModified).format('L LT')})
     </h2>
   )
-}
 
 renderStatus.propTypes = {
   status: PropTypes.string.isRequired,
-  lastModified: PropTypes.any.isRequired,
+  lastModified: PropTypes.number.isRequired,
 }
+
+export default renderStatus
