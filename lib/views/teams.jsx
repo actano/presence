@@ -98,14 +98,14 @@ export default function renderTeams(props) {
     return null
   }
 
+  const renderTeam = team => (
+    <li className="team" id={team.name} key={team.name}>
+      <Team {...props} team={team} />
+    </li>
+  )
+
   return (
-    <ul className={classTeams}>{
-      teams.map(team =>
-        (<li className="team" id={team.name} key={team.name}>
-          <Team {...props} team={team} />
-         </li>))
-    }
-    </ul>
+    <ul className={classTeams}>{teams.map(renderTeam)}</ul>
   )
 }
 

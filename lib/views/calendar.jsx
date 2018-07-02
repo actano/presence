@@ -51,6 +51,32 @@ export default function renderCalendar(props) {
   const _rowClass = props.rowClass
   const _rowKey = props.rowKey
 
+  const renderRow = (row) => {
+    const rowDates = (date) => {
+      if (isWeekend(date)) return null
+      return (
+        <td className={dayClass(range, date)} key={date.toISOString()}>
+          <Cell {...props} row={row} date={date} />
+        </td>
+      )
+    }
+
+    return (
+      <tr className={_rowClass(row)} key={_rowKey(row)}>
+        <th scope="row"><Head {...props} row={row} /></th>
+        {dates.map(rowDates)}
+      </tr>
+    )
+  }
+
+  const renderFoot = () => (
+    <tfoot>
+      <tr>
+        <td colSpan={dates.length + 1}><Foot {...props} cols={dates.length + 1} /></td>
+      </tr>
+    </tfoot>
+  )
+
   return (
     <table>
       <caption><Caption {...props} /></caption>
@@ -62,34 +88,13 @@ export default function renderCalendar(props) {
       <thead>
         <tr>
           <th />
-          {dates.map(date =>
-            (<th
-              scope="col"
-              className={dayClass(range, date)}
-              key={date.toISOString()}
-            >{date.format('D')}
-            </th>))}
+          {dates.map(date => (<th scope="col" className={dayClass(range, date)} key={date.toISOString()}>{date.format('D')}</th>))}
         </tr>
       </thead>
       <tbody>
-        {rows.map(row =>
-          (<tr className={_rowClass(row)} key={_rowKey(row)}>
-            <th scope="row"><Head {...props} row={row} /></th>
-            {dates.map((date) => {
-              if (isWeekend(date)) return null
-              return (
-                <td className={dayClass(range, date)} key={date.toISOString()}>
-                  <Cell {...props} row={row} date={date} />
-                </td>
-              )
-            })}
-           </tr>))}
+        {rows.map(renderRow)}
       </tbody>
-      {Foot ? <tfoot>
-        <tr>
-          <td colSpan={dates.length + 1}><Foot {...props} cols={dates.length + 1} /></td>
-        </tr>
-      </tfoot> : null}
+      {Foot ? renderFoot() : null}
     </table>
   )
 }
