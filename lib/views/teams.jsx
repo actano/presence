@@ -20,7 +20,7 @@ function renderHead({ row, gravatarPrefix, emailSuffix }) {
 }
 
 renderHead.propTypes = {
-  row: PropTypes.object.isRequired,
+  row: PropTypes.shape({ name: PropTypes.string.isRequired }).isRequired,
   gravatarPrefix: PropTypes.string.isRequired,
   emailSuffix: PropTypes.string.isRequired,
 }
@@ -44,14 +44,21 @@ function renderFoot(props) {
 }
 
 renderFoot.propTypes = {
-  team: PropTypes.object.isRequired,
+  team: PropTypes.shape({
+    sprint: PropTypes.shape({
+      summary: PropTypes.shape({
+        avail: PropTypes.number.isRequired,
+        total: PropTypes.number.isRequired,
+      }).isRequired,
+    }).isRequired,
+  }).isRequired,
 }
 
 function Team({ team, gravatarPrefix, emailSuffix }) {
   const _props = {
     gravatarPrefix,
     emailSuffix,
-    caption: TeamHeadline,
+    Caption: TeamHeadline,
     dateRange: team.range,
     rows: team.members,
     rowClass: (member) => {
@@ -66,15 +73,15 @@ function Team({ team, gravatarPrefix, emailSuffix }) {
       return classNames.join(' ')
     },
     rowKey: member => member.name,
-    rowHead: renderHead,
-    cell: renderCell,
+    RowHead: renderHead,
+    Cell: renderCell,
     team,
     startOfBusiness: team.startOfBusiness,
     endOfBusiness: team.endOfBusiness,
   }
 
   if (team.sprint) {
-    _props.foot = renderFoot
+    _props.Foot = renderFoot
   }
 
   return (
@@ -94,9 +101,6 @@ Team.propTypes = {
 
 export default function renderTeams(props) {
   const { teams } = props
-  if (!teams) {
-    return null
-  }
 
   const renderTeam = team => (
     <li className="team" id={team.name} key={team.name}>
@@ -110,5 +114,9 @@ export default function renderTeams(props) {
 }
 
 renderTeams.propTypes = {
-  teams: PropTypes.array.isRequired,
+  teams: PropTypes.arrayOf(PropTypes.object),
+}
+
+renderTeams.defaultProps = {
+  teams: [],
 }

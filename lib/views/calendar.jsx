@@ -41,29 +41,24 @@ function dayClass(range, date) {
 }
 
 export default function renderCalendar(props) {
-  const range = props.dateRange
-  const Caption = props.caption
-  const Foot = props.foot
-  const Head = props.rowHead
-  const Cell = props.cell
-  const dates = dateArray(range.start, range.end)
-  const { rows } = props
-  const _rowClass = props.rowClass
-  const _rowKey = props.rowKey
+  const {
+    Caption, Cell, Foot, RowHead, dateRange, rows, rowClass, rowKey,
+  } = props
+  const dates = dateArray(dateRange.start, dateRange.end)
 
   const renderRow = (row) => {
     const rowDates = (date) => {
       if (isWeekend(date)) return null
       return (
-        <td className={dayClass(range, date)} key={date.toISOString()}>
+        <td className={dayClass(dateRange, date)} key={date.toISOString()}>
           <Cell {...props} row={row} date={date} />
         </td>
       )
     }
 
     return (
-      <tr className={_rowClass(row)} key={_rowKey(row)}>
-        <th scope="row"><Head {...props} row={row} /></th>
+      <tr className={rowClass(row)} key={rowKey(row)}>
+        <th scope="row"><RowHead {...props} row={row} /></th>
         {dates.map(rowDates)}
       </tr>
     )
@@ -83,12 +78,12 @@ export default function renderCalendar(props) {
       <colgroup>
         <col className="head" />
         {dates.map(date => (
-          <col className={dayClass(range, date)} key={date.toISOString()} />))}
+          <col className={dayClass(dateRange, date)} key={date.toISOString()} />))}
       </colgroup>
       <thead>
         <tr>
           <th />
-          {dates.map(date => (<th scope="col" className={dayClass(range, date)} key={date.toISOString()}>{date.format('D')}</th>))}
+          {dates.map(date => (<th scope="col" className={dayClass(dateRange, date)} key={date.toISOString()}>{date.format('D')}</th>))}
         </tr>
       </thead>
       <tbody>
@@ -100,12 +95,19 @@ export default function renderCalendar(props) {
 }
 
 renderCalendar.propTypes = {
-  dateRange: PropTypes.object.isRequired,
-  caption: PropTypes.element.isRequired,
-  foot: PropTypes.element.isRequired,
-  rowHead: PropTypes.element.isRequired,
-  cell: PropTypes.element.isRequired,
-  rows: PropTypes.array.isRequired,
+  dateRange: PropTypes.shape({
+    start: PropTypes.string.isRequired,
+    end: PropTypes.string.isRequired,
+  }).isRequired,
+  Caption: PropTypes.func.isRequired,
+  Foot: PropTypes.func,
+  RowHead: PropTypes.func.isRequired,
+  Cell: PropTypes.func.isRequired,
+  rows: PropTypes.arrayOf(PropTypes.object).isRequired,
   rowClass: PropTypes.func.isRequired,
   rowKey: PropTypes.func.isRequired,
+}
+
+renderCalendar.defaultProps = {
+  Foot: null,
 }

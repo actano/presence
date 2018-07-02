@@ -11,7 +11,7 @@ export default function renderTeamHeadline({ team }) {
 
   return (
     <h2 className="headline">
-      <name>{team.name}</name>
+      <span className="name">{team.name}</span>
       {sprint ? <small>S{sprint.number}</small> : null}
       {sprint ? <time>{format(sprint.start)}–{format(sprint.end)}</time> : null}
     </h2>
@@ -19,5 +19,11 @@ export default function renderTeamHeadline({ team }) {
 }
 
 renderTeamHeadline.propTypes = {
-  team: PropTypes.object.isRequired,
+  team: PropTypes.shape({
+    sprint: PropTypes.shape({
+      number: PropTypes.number.isRequired,
+      start: PropTypes.string.isRequired,
+      end: PropTypes.string.isRequired,
+    }),
+  }).isRequired,
 }
