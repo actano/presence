@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import Status from './status'
 import TeamHeadline from './team-headline'
 import Absences from './absences'
-import Calendar from './calendar'
+import Calendar, { Caption, Footer, Row, RowHead } from './calendar'
 import gravatarUrlFromName from '../gravatar'
 import { teams as classTeams } from './teams.styl'
 
@@ -11,82 +11,67 @@ function dateKey(date) {
   return date.format('YYYY-MM-DD')
 }
 
-function renderHead({ row, gravatarPrefix, emailSuffix }) {
-  const { name } = row
-  const src = `${gravatarUrlFromName(gravatarPrefix, emailSuffix, name)}?s=${40}`
-  return (
-    <div><img alt={name} src={src} /><span>{name}</span></div>
-  )
-}
-
-renderHead.propTypes = {
-  row: PropTypes.shape({ name: PropTypes.string.isRequired }).isRequired,
-  gravatarPrefix: PropTypes.string.isRequired,
-  emailSuffix: PropTypes.string.isRequired,
-}
-
-function renderCell(props) {
-  const { date, row } = props
-  const absences = row.absences[dateKey(date)]
-  return (<Absences {...props} absences={absences || []} />)
-}
-
-renderCell.propTypes = {
-  date: PropTypes.object.isRequired,
-  row: PropTypes.object.isRequired,
-}
-
-function renderFoot(props) {
-  const { summary } = props.team.sprint
-  const { avail, total } = summary
-  const width = `${(100 * avail) / total}%`
-  return (<div className="percentage" style={{ width }}>{avail}/{total}d available</div>)
-}
-
-renderFoot.propTypes = {
-  team: PropTypes.shape({
-    sprint: PropTypes.shape({
-      summary: PropTypes.shape({
-        avail: PropTypes.number.isRequired,
-        total: PropTypes.number.isRequired,
-      }).isRequired,
-    }).isRequired,
-  }).isRequired,
-}
-
 function Team({ team, gravatarPrefix, emailSuffix }) {
-  const _props = {
-    gravatarPrefix,
-    emailSuffix,
-    Caption: TeamHeadline,
-    dateRange: team.range,
-    rows: team.members,
-    rowClass: (member) => {
-      const classNames = []
-      const absences = member.absences[team.range.currentDate]
-      if (absences) {
-        for (const absence of absences) {
-          classNames.push(absence.type)
-        }
+  const rowClass = (member) => {
+    const classNames = []
+    const absences = member.absences[team.range.currentDate]
+    if (absences) {
+      for (const absence of absences) {
+        classNames.push(absence.type)
       }
-      if (member.selected) classNames.push('selected')
-      return classNames.join(' ')
-    },
-    rowKey: member => member.name,
-    RowHead: renderHead,
-    Cell: renderCell,
-    team,
-    startOfBusiness: team.startOfBusiness,
-    endOfBusiness: team.endOfBusiness,
+    }
+    if (member.selected) classNames.push('selected')
+    return classNames.join(' ')
   }
 
+  let footer = null
   if (team.sprint) {
-    _props.Foot = renderFoot
+    const { summary } = team.sprint
+    const { avail, total } = summary
+    const width = `${(100 * avail) / total}%`
+    footer = (
+      <Footer>
+        <div className="percentage" style={{ width }}>{avail}/{total}d available</div>
+      </Footer>
+    )
+  }
+
+  const gravatarSrc = name => `${gravatarUrlFromName(gravatarPrefix, emailSuffix, name)}?s=${40}`
+
+  const MemberRow = (member) => {
+    const MemberCell = ({ date }) => {
+      const absences = member.absences[dateKey(date)] || []
+      return (
+        <Absences
+          startOfBusiness={team.startOfBusiness}
+          endOfBusiness={team.endOfBusiness}
+          absences={absences}
+        />
+      )
+    }
+    MemberCell.propTypes = {
+      date: PropTypes.string.isRequired,
+    }
+
+    return (
+      <Row className={rowClass(member)} key={member.name} dateRange={team.range} >
+        <RowHead>
+          <div>
+            <img alt={member.name} src={gravatarSrc(member.name)} /><span>{member.name}</span>
+          </div>
+        </RowHead>
+        <MemberCell />
+      </Row>
+    )
   }
 
   return (
     <div>
-      <Calendar {..._props} />
+      <Calendar dateRange={team.range}>
+        <Caption><TeamHeadline team={team} /></Caption>
+        {team.members.map(MemberRow)}
+        {footer}
+      </Calendar>
       {team.status ? <Status status={team.status} lastModified={team.cacheTimestamp} /> : null}
     </div>
   )
@@ -96,7 +81,6 @@ Team.propTypes = {
   team: PropTypes.object.isRequired,
   gravatarPrefix: PropTypes.string.isRequired,
   emailSuffix: PropTypes.string.isRequired,
-
 }
 
 export default function renderTeams(props) {

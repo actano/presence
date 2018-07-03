@@ -40,41 +40,90 @@ function dayClass(range, date) {
   return result.join(' ')
 }
 
-export default function renderCalendar(props) {
-  const {
-    Caption, Cell, Foot, RowHead, dateRange, rows, rowClass, rowKey,
-  } = props
-  const dates = dateArray(dateRange.start, dateRange.end)
-
-  const renderRow = (row) => {
-    const rowDates = (date) => {
-      if (isWeekend(date)) return null
-      return (
-        <td className={dayClass(dateRange, date)} key={date.toISOString()}>
-          <Cell {...props} row={row} date={date} />
-        </td>
-      )
+const parseChildren = (children, map) => {
+  const result = {
+    other: [],
+  }
+  const keys = Object.keys(map)
+  React.Children.forEach(children, (child) => {
+    if (!child || !child.type) return
+    const { type } = child
+    for (const key of keys) {
+      if (type !== map[key]) {
+        result.other.push(child)
+      } else if (Array.isArray(result[key])) {
+        result[key].push(child)
+      } else if (result[key]) {
+        result[key] = [result[key], child]
+      } else {
+        result[key] = child
+      }
     }
+  })
+  return result
+}
 
+export const Caption = ({ children }) => <caption>{children}</caption>
+Caption.propTypes = {
+  children: PropTypes.element.isRequired,
+}
+
+export const RowHead = ({ children }) => <th scope="row">{children}</th>
+RowHead.propTypes = {
+  children: PropTypes.element.isRequired,
+}
+
+
+export const Row = ({ className, dateRange, children }) => {
+  const dates = dateArray(dateRange.start, dateRange.end)
+  const Children = parseChildren(children, { RowHead })
+
+  const rowDates = (date) => {
+    if (isWeekend(date)) return null
     return (
-      <tr className={rowClass(row)} key={rowKey(row)}>
-        <th scope="row"><RowHead {...props} row={row} /></th>
-        {dates.map(rowDates)}
-      </tr>
+      <td className={dayClass(dateRange, date)} key={date.toISOString()}>
+        {React.cloneElement(Children.other[0], { date })}
+      </td>
     )
   }
+  return (
+    <tr className={className}>
+      {Children.RowHead}
+      {dates.map(rowDates)}
+    </tr>
+  )
+}
+
+Row.propTypes = {
+  className: PropTypes.string,
+  dateRange: PropTypes.shape({}).isRequired,
+  children: PropTypes.element.isRequired,
+}
+
+Row.defaultProps = {
+  className: '',
+}
+
+export const Footer = ({ children }) => children
+
+export default function renderCalendar({ dateRange, children }) {
+  const Children = parseChildren(children, { Caption, Footer, Row })
+
+  const dates = dateArray(dateRange.start, dateRange.end)
 
   const renderFoot = () => (
     <tfoot>
       <tr>
-        <td colSpan={dates.length + 1}><Foot {...props} cols={dates.length + 1} /></td>
+        <td colSpan={dates.length + 1}>
+          {React.cloneElement(Children.Footer, { cols: dates.length + 1 })}
+        </td>
       </tr>
     </tfoot>
   )
 
   return (
     <table>
-      <caption><Caption {...props} /></caption>
+      {Children.Caption}
       <colgroup>
         <col className="head" />
         {dates.map(date => (
@@ -83,13 +132,17 @@ export default function renderCalendar(props) {
       <thead>
         <tr>
           <th />
-          {dates.map(date => (<th scope="col" className={dayClass(dateRange, date)} key={date.toISOString()}>{date.format('D')}</th>))}
+          {dates.map(date => (
+            <th scope="col" className={dayClass(dateRange, date)} key={date.toISOString()}>
+              {date.format('D')}
+            </th>
+          ))}
         </tr>
       </thead>
       <tbody>
-        {rows.map(renderRow)}
+        {Children.Row}
       </tbody>
-      {Foot ? renderFoot() : null}
+      {Children.Footer ? renderFoot() : null}
     </table>
   )
 }
@@ -99,13 +152,7 @@ renderCalendar.propTypes = {
     start: PropTypes.string.isRequired,
     end: PropTypes.string.isRequired,
   }).isRequired,
-  Caption: PropTypes.func.isRequired,
-  Foot: PropTypes.func,
-  RowHead: PropTypes.func.isRequired,
-  Cell: PropTypes.func.isRequired,
-  rows: PropTypes.arrayOf(PropTypes.object).isRequired,
-  rowClass: PropTypes.func.isRequired,
-  rowKey: PropTypes.func.isRequired,
+  children: PropTypes.renderable.isRequired,
 }
 
 renderCalendar.defaultProps = {
