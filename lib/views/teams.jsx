@@ -77,8 +77,10 @@ function Team({ team, gravatarPrefix, emailSuffix }) {
   )
 }
 
+const teamType = PropTypes.object
+
 Team.propTypes = {
-  team: PropTypes.object.isRequired,
+  team: teamType.isRequired,
   gravatarPrefix: PropTypes.string.isRequired,
   emailSuffix: PropTypes.string.isRequired,
 }
@@ -98,7 +100,7 @@ export default function renderTeams(props) {
 }
 
 renderTeams.propTypes = {
-  teams: PropTypes.arrayOf(PropTypes.object),
+  teams: PropTypes.arrayOf(teamType),
 }
 
 renderTeams.defaultProps = {

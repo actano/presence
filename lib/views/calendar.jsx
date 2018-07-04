@@ -65,12 +65,12 @@ const parseChildren = (children, map) => {
 
 export const Caption = ({ children }) => <caption>{children}</caption>
 Caption.propTypes = {
-  children: PropTypes.element.isRequired,
+  children: PropTypes.node.isRequired,
 }
 
 export const RowHead = ({ children }) => <th scope="row">{children}</th>
 RowHead.propTypes = {
-  children: PropTypes.element.isRequired,
+  children: PropTypes.node.isRequired,
 }
 
 
@@ -97,7 +97,7 @@ export const Row = ({ className, dateRange, children }) => {
 Row.propTypes = {
   className: PropTypes.string,
   dateRange: PropTypes.shape({}).isRequired,
-  children: PropTypes.element.isRequired,
+  children: PropTypes.node.isRequired,
 }
 
 Row.defaultProps = {
@@ -152,7 +152,7 @@ renderCalendar.propTypes = {
     start: PropTypes.string.isRequired,
     end: PropTypes.string.isRequired,
   }).isRequired,
-  children: PropTypes.renderable.isRequired,
+  children: PropTypes.node.isRequired,
 }
 
 renderCalendar.defaultProps = {
