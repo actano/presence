@@ -40,7 +40,7 @@ function Team({ team, gravatarPrefix, emailSuffix }) {
 
   const MemberRow = (member) => {
     const MemberCell = ({ date }) => {
-      const absences = member.absences[dateKey(date)] || []
+      const absences = member.absences[date] || []
       return (
         <Absences
           startOfBusiness={team.startOfBusiness}
@@ -50,7 +50,10 @@ function Team({ team, gravatarPrefix, emailSuffix }) {
       )
     }
     MemberCell.propTypes = {
-      date: PropTypes.string.isRequired,
+      date: PropTypes.string,
+    }
+    MemberCell.defaultProps = {
+      date: '0000-00-00',
     }
 
     return (

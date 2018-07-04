@@ -2,7 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
 
-function isWeekend(date) {
+function isWeekend(sdate) {
+  const date = moment(sdate)
   return date.day() === 0 || date.day() === 6
 }
 
@@ -12,14 +13,15 @@ function dateArray(start, end) {
   let date = moment(start).startOf('day')
   while (!date.isAfter(_end, 'day')) {
     if (date.day() % 6 !== 0) {
-      result.push(date)
+      result.push(date.format('YYYY-MM-DD'))
     }
     date = date.clone().add(1, 'days')
   }
   return result
 }
 
-function dayClass(range, date) {
+function dayClass(range, sdate) {
+  const date = moment(sdate)
   const result = []
   if (date.isSame(range.currentDate, 'day')) {
     result.push('today')
@@ -81,7 +83,7 @@ export const Row = ({ className, dateRange, children }) => {
   const rowDates = (date) => {
     if (isWeekend(date)) return null
     return (
-      <td className={dayClass(dateRange, date)} key={date.toISOString()}>
+      <td className={dayClass(dateRange, date)} key={date}>
         {React.cloneElement(Children.other[0], { date })}
       </td>
     )
@@ -127,14 +129,14 @@ export default function renderCalendar({ dateRange, children }) {
       <colgroup>
         <col className="head" />
         {dates.map(date => (
-          <col className={dayClass(dateRange, date)} key={date.toISOString()} />))}
+          <col className={dayClass(dateRange, date)} key={date} />))}
       </colgroup>
       <thead>
         <tr>
           <th />
           {dates.map(date => (
-            <th scope="col" className={dayClass(dateRange, date)} key={date.toISOString()}>
-              {date.format('D')}
+            <th scope="col" className={dayClass(dateRange, date)} key={date}>
+              {moment(date).format('D')}
             </th>
           ))}
         </tr>
