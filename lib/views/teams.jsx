@@ -7,10 +7,6 @@ import Calendar, { Caption, Footer, Row, RowHead } from './calendar'
 import gravatarUrlFromName from '../gravatar'
 import { teams as classTeams } from './teams.styl'
 
-function dateKey(date) {
-  return date.format('YYYY-MM-DD')
-}
-
 function Team({ team, gravatarPrefix, emailSuffix }) {
   const rowClass = (member) => {
     const classNames = []
