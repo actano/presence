@@ -52,6 +52,9 @@ function Team({ team, gravatarPrefix, emailSuffix }) {
       date: '0000-00-00',
     }
 
+    console.log('MemberRow to be calculated for')
+    console.log(member)
+
     return (
       <Row className={rowClass(member)} key={member.name} dateRange={team.range} >
         <RowHead>
