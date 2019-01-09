@@ -21,6 +21,9 @@
     "mocha": "mocha --compilers js:babel-register",
     "lint": "eslint --ext js,jsx ."
   },
+  "config": {
+    "teams": "teams.yml"
+  },
   "author": "Actano GmbH",
   "license": "MIT",
   "dependencies": {
