@@ -44,7 +44,6 @@
     "autoprefixer": "^7.2.3",
     "babel-loader": "^8.0.0",
     "babel-plugin-system-import-transformer": "^3.1.0",
-    "bunyan": "^1.8.12",
     "cldr-core": "^32.0.0",
     "cldrjs": "^0.5.0",
     "css-loader": "^0.28.7",

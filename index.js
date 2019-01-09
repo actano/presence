@@ -1,4 +1,3 @@
-import bunyan from 'bunyan'
 import express from 'express'
 import { LocalDate } from 'js-joda'
 import React from 'react'
@@ -7,8 +6,6 @@ import socketio from 'socket.io'
 import config from './lib/config'
 import presence from './lib/presence'
 import Page from './lib/views'
-
-const logger = bunyan({ name: 'index' })
 
 const app = express()
 
@@ -62,7 +59,7 @@ app.get('/', (req, res, next) => {
 
 const port = process.env.PORT || 3000
 
-const server = app.listen(port, () => logger.info('Listening on port %s...', port))
+const server = app.listen(port, () => console.log('Listening on port %s...', port))
 const io = socketio(server, { serveClient: false, path: '/rt' })
 io.on('connection', (client) => {
   client.on('date', (date) => {
