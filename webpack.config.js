@@ -29,13 +29,12 @@ function webpackConfig() {
     options: {
       babelrc: false,
       presets: [
-        ['env', {
+        ['@babel/preset-env', {
           targets: {
             browsers: packageJson.browserslist,
           },
         }],
-        'react',
-        'stage-2',
+        '@babel/preset-react',
       ],
     },
   }
