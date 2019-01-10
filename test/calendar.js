@@ -2,8 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import { expect } from 'chai'
 import { Instant, LocalDate } from 'js-joda'
-import { toLocalDate } from '../lib/util'
-import Calendar from '../lib/calendar'
+import { toLocalDate } from '../lib/server/util'
+import Calendar from '../lib/server/calendar'
 
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
