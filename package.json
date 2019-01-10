@@ -18,7 +18,6 @@
     "start": "babel-node index.js",
     "webpack": "webpack",
     "test": "yarn lint && yarn mocha",
-    "mocha": "mocha --compilers js:@babel/register",
     "lint": "eslint --ext js,jsx ."
   },
   "config": {
