@@ -1,7 +1,8 @@
-import fs from 'fs'
 import path from 'path'
 import { expect } from 'chai'
+import fileUrl from 'file-url'
 import { Instant, LocalDate } from 'js-joda'
+import icsFromURL from '../lib/server/ics-from-url'
 import { toLocalDate } from '../lib/server/util'
 import Calendar from '../lib/server/calendar'
 
@@ -14,19 +15,21 @@ describe('ical', () => {
   const TEST_DESCRIPTION = 'Test Description'
   const TEST_USER = 'Test User'
 
-  function read() {
-    const content = fs.readFileSync(path.join(__dirname, 'test.ics'), 'utf-8')
-    return new Calendar(content)
+  async function read() {
+    const { component } = await icsFromURL(fileUrl(path.join(__dirname, 'test.ics')))
+
+    return new Calendar(component)
   }
 
-  it('should parse ics data', () => read())
+  it('should parse ics data', async () => {
+    await read()
+  })
 
   describe('process', () => {
     let calendar = null
 
-    before('read', () => {
-      calendar = read()
-      return calendar
+    before('read', async () => {
+      calendar = await read()
     })
 
     function findEvent(name) {
