@@ -4,7 +4,7 @@ import fileUrl from 'file-url'
 import { Instant, LocalDate } from 'js-joda'
 import icsFromURL from '../lib/server/ics-from-url'
 import { toLocalDate } from '../lib/server/util'
-import Calendar from '../lib/server/calendar'
+import events from '../lib/server/calendar'
 
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
@@ -18,7 +18,7 @@ describe('ical', () => {
   async function read() {
     const { component } = await icsFromURL(fileUrl(path.join(__dirname, 'test.ics')))
 
-    return new Calendar(component)
+    return events(component)
   }
 
   it('should parse ics data', async () => {
@@ -26,14 +26,14 @@ describe('ical', () => {
   })
 
   describe('process', () => {
-    let calendar = null
+    let calendarEvents
 
     before('read', async () => {
-      calendar = await read()
+      calendarEvents = await read()
     })
 
     function findEvent(name) {
-      for (const event of calendar.events()) {
+      for (const event of calendarEvents) {
         if (name === event.name()) {
           return event
         }
@@ -43,7 +43,7 @@ describe('ical', () => {
 
     it(`should iterate ${EVENT_COUNT} events`, () => {
       let count = 0
-      for (const event of calendar.events()) if (event) count += 1
+      for (const event of calendarEvents) if (event) count += 1
       expect(count).to.equal(EVENT_COUNT)
     })
 

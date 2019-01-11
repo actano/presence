@@ -1,3 +1,4 @@
+import _debug from 'debug'
 import React from 'react'
 import { render } from 'react-dom'
 import { connect, Provider } from 'react-redux'
@@ -7,10 +8,13 @@ import { actionCreator as changeDate, select as selectDate } from './redux/date'
 import { actionCreator as changeServer, select as selectServer } from './redux/server'
 import Teams from './views/teams'
 
+const debug = _debug('presence')
+
 export default function init(uri) {
   const server = io(uri, { path: '/rt' })
 
   function queryServerUpdate() {
+    debug('Quering new data')
     const state = store.getState()
     const date = selectDate(state)
     if (date) {
@@ -36,9 +40,10 @@ export default function init(uri) {
   server.on('connect', queryServerUpdate)
   server.on('reconnect', queryServerUpdate)
   server.on('update', queryServerUpdate)
-
   server.on('teams', (data) => {
+    debug('Received new data from server %O', data)
     store.dispatch(changeServer(data))
+    debug('Dispatched new data')
   })
 
   function mapStateToProps(state) {
