@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:10
 WORKDIR /usr/share/local
 COPY package.json yarn.lock ./
 RUN yarn install

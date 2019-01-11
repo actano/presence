@@ -10,7 +10,7 @@
   ],
   "postcss": {},
   "engines": {
-    "node": ">= 8",
+    "node": ">= 10",
     "yarn": ">= 1"
   },
   "scripts": {
