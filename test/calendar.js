@@ -1,6 +1,5 @@
 import path from 'path'
 import { expect } from 'chai'
-import fileUrl from 'file-url'
 import { Instant, LocalDate } from 'js-joda'
 import icsFromURL from '../lib/server/ics-from-url'
 import { toLocalDate } from '../lib/server/util'
@@ -16,7 +15,7 @@ describe('ical', () => {
   const TEST_USER = 'Test User'
 
   async function read() {
-    const { component } = await icsFromURL(fileUrl(path.join(__dirname, 'test.ics')))
+    const { component } = await icsFromURL(path.join(__dirname, 'test.ics'))
 
     return events(component)
   }
