@@ -1,0 +1,10 @@
+version: "3.1"
+services:
+  presence:
+    build: .
+    image: presence
+    ports:
+      - 3000:80
+    environment:
+      CONFIG: ${teams}
+      DEBUG: "presence:*"
