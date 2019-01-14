@@ -20,9 +20,6 @@
     "test": "yarn lint && yarn mocha",
     "lint": "eslint --ext js,jsx ."
   },
-  "config": {
-    "teams": "teams.yml"
-  },
   "author": "Actano GmbH",
   "license": "MIT",
   "dependencies": {
