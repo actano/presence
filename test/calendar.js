@@ -65,7 +65,7 @@ describe('ical', () => {
 
       const confluenceType = 'leaves'
       it(`should be in confluence subcalendar '${confluenceType}'`, () =>
-        expect(event.confluenceCalendarType()).to.equal(confluenceType))
+        expect(event.types.leaves).to.equal('leaves'))
 
       it('should be recurring', () =>
         expect(event.icalEvent.isRecurring()).to.be.true)
