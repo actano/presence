@@ -2,8 +2,9 @@ import path from 'path'
 import { expect } from 'chai'
 import { Instant, LocalDate } from 'js-joda'
 import icsFromURL from '../lib/server/ics-from-url'
+import { instances, instancesAfter } from '../lib/server/instances'
 import { toLocalDate } from '../lib/server/util'
-import events, { instances, instancesAfter } from '../lib/server/calendar'
+import events from '../lib/server/calendar'
 
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
