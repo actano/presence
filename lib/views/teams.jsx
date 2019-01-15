@@ -16,7 +16,6 @@ function Team({ team, gravatarPrefix, emailSuffix }) {
         classNames.push(absence.type)
       }
     }
-    if (member.selected) classNames.push('selected')
     return classNames.join(' ')
   }
 
