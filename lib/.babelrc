@@ -10,13 +10,5 @@
     ],
     "@babel/preset-react"
   ],
-  "sourceMaps": "both",
-  "plugins": [
-    [
-      "system-import-transformer",
-      {
-        "modules": "common"
-      }
-    ]
-  ]
+  "sourceMaps": "both"
 }
