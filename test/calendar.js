@@ -1,10 +1,9 @@
 import path from 'path'
 import { expect } from 'chai'
 import { Instant, LocalDate } from 'js-joda'
-import icsFromURL from '../lib/server/ics-from-url'
 import { instances, instancesAfter } from '../lib/server/instances'
 import { toLocalDate } from '../lib/server/util'
-import events from '../lib/server/calendar'
+import events, { icalFromURL } from '../lib/server/calendar'
 
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
@@ -16,7 +15,7 @@ describe('ical', () => {
   const TEST_USER = 'Test User'
 
   async function read() {
-    const { component } = await icsFromURL(path.join(__dirname, 'test.ics'))
+    const { component } = await icalFromURL(path.join(__dirname, 'test.ics'))
 
     return events(component)
   }
