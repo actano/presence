@@ -33,8 +33,9 @@ describe('ical', () => {
     })
 
     function findEvent(name) {
+      const eventName = (event) => event.icalEvent.summary.split(':')[0]
       for (const event of calendarEvents) {
-        if (name === event.name()) {
+        if (name === eventName(event)) {
           return event
         }
       }
