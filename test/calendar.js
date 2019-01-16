@@ -133,8 +133,8 @@ describe('ical', () => {
       const testAttendee = cn =>
         it(`should have ${cn} as attendee`, () => {
           function find() {
-            for (const attendee of event.attendees()) {
-              if (attendee.cn() === cn) {
+            for (const attendee of event.attendees) {
+              if (attendee === cn) {
                 return attendee
               }
             }
@@ -143,7 +143,7 @@ describe('ical', () => {
 
           const attendee = find()
           expect(attendee).to.exist
-          expect(attendee.cn()).to.equal(cn)
+          expect(attendee).to.equal(cn)
         })
 
       testAttendee(`${TEST_USER}`)
