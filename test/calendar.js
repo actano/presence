@@ -1,11 +1,14 @@
-import path from 'path'
 import { expect } from 'chai'
 import { Instant, LocalDate } from 'js-joda'
-import { LEAVES } from '../lib/server/eventType'
-import { instances, instancesAfter } from '../lib/server/instances'
-import { toInstant, toLocalDate } from '../lib/server/util'
-import events, { icalFromURL } from '../lib/server/calendar'
+import path from 'path'
+import events, {
+  icalEventInstances,
+  icalEventInstancesAfter,
+  icalFromURL,
+} from '../lib/server/calendar'
 import withConfluenceType from '../lib/server/confluence'
+import { LEAVES } from '../lib/server/eventType'
+import { toInstant, toLocalDate } from '../lib/server/util'
 
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
@@ -87,7 +90,7 @@ describe('ical', () => {
       })
 
       it('first occurance should be on correct day', () => {
-        for (const instance of instances(event)) {
+        for (const instance of icalEventInstances(event.icalEvent)) {
           const date = toLocalDate(instance.startDate)
           expect(date.equals(TEST_DAY)).to.be.true
           return
@@ -96,7 +99,7 @@ describe('ical', () => {
       })
 
       it('starting a week later, first occurance should be on next week', () => {
-        for (const instance of instancesAfter(event, toInstant(nextWeek))) {
+        for (const instance of icalEventInstancesAfter(event.icalEvent, toInstant(nextWeek))) {
           const date = toLocalDate(instance.startDate)
           expect(date.equals(nextWeek)).to.be.true
           return
@@ -105,7 +108,8 @@ describe('ical', () => {
       })
 
       it('first occurance should stay on test day, when iterating from a day before', () => {
-        for (const instance of instancesAfter(event, toInstant(TEST_DAY.minusDays(1)))) {
+        const instant = toInstant(TEST_DAY.minusDays(1))
+        for (const instance of icalEventInstancesAfter(event.icalEvent, instant)) {
           const date = toLocalDate(instance.startDate)
           expect(date.equals(TEST_DAY), date.toString()).to.be.true
           return
@@ -115,7 +119,8 @@ describe('ical', () => {
 
       it('should be excluded between christmas and newYear', () => {
         const beforeChristmas = christmas.minusDays(1)
-        for (const instance of instancesAfter(event, toInstant(beforeChristmas))) {
+        const instant = toInstant(beforeChristmas)
+        for (const instance of icalEventInstancesAfter(event.icalEvent, instant)) {
           const date = toLocalDate(instance.startDate)
           expect(newYear.compareTo(date), date.toString()).to.be.below(0)
           return
@@ -124,7 +129,7 @@ describe('ical', () => {
       })
 
       it('should end before endMoment', () => {
-        for (const instance of instancesAfter(event, toInstant(endMoment))) {
+        for (const instance of icalEventInstancesAfter(event.icalEvent, toInstant(endMoment))) {
           const date = instance.startDate
           expect(instance, date.toString()).to.not.exist
         }
