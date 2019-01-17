@@ -4,7 +4,7 @@ import Status from './status'
 import TeamHeadline from './team-headline'
 import Absences from './absences'
 import Calendar, { Caption, Footer, Row, RowHead } from './calendar'
-import gravatarUrlFromName from '../gravatar'
+import gravatarUrlFromName, { urlify } from '../gravatar'
 import { teams as classTeams } from './teams.styl'
 
 function Team({ team, gravatarPrefix, emailSuffix }) {
@@ -31,7 +31,7 @@ function Team({ team, gravatarPrefix, emailSuffix }) {
     )
   }
 
-  const gravatarSrc = name => `${gravatarUrlFromName(gravatarPrefix, emailSuffix, name)}?s=${40}`
+  const gravatarSrc = member => `${gravatarUrlFromName(gravatarPrefix, emailSuffix, member.email || urlify(member.name.toLowerCase()))}?s=${40}`
 
   const MemberRow = (member) => {
     const MemberCell = ({ date }) => {
@@ -51,14 +51,11 @@ function Team({ team, gravatarPrefix, emailSuffix }) {
       date: '0000-00-00',
     }
 
-    console.log('MemberRow to be calculated for')
-    console.log(member)
-
     return (
       <Row className={rowClass(member)} key={member.name} dateRange={team.range} >
         <RowHead>
           <div>
-            <img alt={member.name} src={gravatarSrc(member.name)} /><span>{member.name}</span>
+            <img alt={member.name} src={gravatarSrc(member)} /><span>{member.name}</span>
           </div>
         </RowHead>
         <MemberCell />
