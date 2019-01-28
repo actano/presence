@@ -10,5 +10,4 @@ List of teams indicating the presence and absence of its members
 
 ## open questions
 in case of problems, I'd wish to find the answers or links to the answers of these questions here:
-- where can I find a example team-config.yml? -> TODO
 - how can the app be tested? -> no tests implemented yet.
