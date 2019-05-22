@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+
 export default function renderAbsences({ absences, startOfBusiness, endOfBusiness }) {
   const dayLength = endOfBusiness - startOfBusiness
 
@@ -15,11 +16,22 @@ export default function renderAbsences({ absences, startOfBusiness, endOfBusines
     return (<span className={className} style={{ top, height }} key={id} />)
   }
 
-  return (
-    <div>
-      {absences.map(renderAbsence)}
-    </div>
-  )
+  const orderAbsencesByType = () => {
+    var orderedAbsences = [...absences.slice(0)]
+    orderedAbsences.sort((a,b) => {
+      // prefer type = 'travel' over 'leaves'
+      const a_travel = a.type === 'travel'
+      const b_travel = b.type === 'travel'
+      if (b_travel && ! a_travel)
+        return b
+      return a
+    })
+    return orderedAbsences
+  }
+
+  return <div>
+    {orderAbsencesByType().map(renderAbsence)}
+  </div>
 }
 
 renderAbsences.propTypes = {
