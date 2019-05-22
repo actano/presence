@@ -50,3 +50,8 @@ teams:
         - Trick Duck
         - Track Duck
         - Tick Duck
+        - name: Gargl Blast-Er # The name as the person shall be displayed on the presence board
+          attendee: Gargl Blast Er # The name as Confluence puts it into appointments
+          email: gblast@er.org # Differing email address of the person. See emailSuffix above
+
+
