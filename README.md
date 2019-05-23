@@ -3,7 +3,14 @@ List of teams indicating the presence and absence of its members.
 
 ## Configuration
 
+### Teams 
+
 Define your teams and other settings by providing a team config file. Possible values are visible in the [team config example](./example-team-config.yml).
+
+### Holidays
+
+Download or export a ical file with all holidays that matter for your teams. `
+Store it in ```calendars/public-holidays_de.ics````
 
 ## Running locally
 - Clone this repository
