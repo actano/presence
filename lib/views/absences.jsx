@@ -22,9 +22,11 @@ export default function renderAbsences({ absences, startOfBusiness, endOfBusines
       // prefer type = 'travel' over 'leaves'
       const a_travel = a.type === 'travel'
       const b_travel = b.type === 'travel'
-      if (b_travel && ! a_travel)
-        return b
-      return a
+      if (a_travel && ! b_travel)
+        return -1
+      if (! a_travel && b_travel)
+        return 1
+      return 0
     })
     return orderedAbsences
   }
