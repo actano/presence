@@ -1,0 +1,13 @@
+image:
+  repository: eu.gcr.io/rplan-k8s/presence
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 80
+  annotations: {}
+
+resources: {}
+
+configMapName: ''
