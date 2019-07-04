@@ -28,7 +28,7 @@ spec:
           ports:
             - name: http
               containerPort: 80
-              protocol: HTTP
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: /

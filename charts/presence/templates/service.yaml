@@ -16,7 +16,7 @@ spec:
   ports:
     - port: {{ .Values.service.port }}
       targetPort: http
-      protocol: HTTP
+      protocol: TCP
       name: http
   selector:
     app.kubernetes.io/name: presence
