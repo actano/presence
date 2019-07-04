@@ -1,5 +1,5 @@
 image:
-  repository: eu.gcr.io/rplan-k8s/presence
+  repository: rplan/presence
   tag: latest
   pullPolicy: Always
 
