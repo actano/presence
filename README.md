@@ -24,7 +24,7 @@ Store it in ```calendars/public-holidays_de.ics````
 A [Docker image is available on Docker hub](https://hub.docker.com/r/rplan/presence).
 
 ```bash
-docker run --rm -e CONFIG=https://here/lays/your/team-config.yml --name=presence -p 8080:80 rplan/presence
+docker run -it --rm -e CONFIG=https://here/lays/your/team-config.yml --name=presence -p 8080:80 rplan/presence
 ```
 
 ## open questions
